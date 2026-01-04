@@ -1,0 +1,3 @@
+class DailyReading {
+  const DailyReading();
+}

@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'route_paths.dart';
+
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.child});
 
   final Widget child;
 
   int _indexFromLocation(String location) {
-    if (location.startsWith('/bible')) return 1;
-    if (location.startsWith('/prayers')) return 2;
-    if (location.startsWith('/calendar')) return 3;
+    if (location.startsWith(RoutePaths.bible)) return 1;
+    if (location.startsWith(RoutePaths.prayers)) return 2;
+    if (location.startsWith(RoutePaths.calendar)) return 3;
     return 0;
   }
 
   void _goToIndex(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/today');
+        context.go(RoutePaths.today);
         break;
       case 1:
-        context.go('/bible');
+        context.go(RoutePaths.bible);
         break;
       case 2:
-        context.go('/prayers');
+        context.go(RoutePaths.prayers);
         break;
       case 3:
-        context.go('/calendar');
+        context.go(RoutePaths.calendar);
         break;
     }
   }

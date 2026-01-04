@@ -1,0 +1,3 @@
+class EthiopianDate {
+  const EthiopianDate();
+}

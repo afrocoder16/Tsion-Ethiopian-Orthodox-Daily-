@@ -1,0 +1,3 @@
+class Saint {
+  const Saint();
+}

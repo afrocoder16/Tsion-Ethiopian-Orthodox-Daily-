@@ -1,0 +1,3 @@
+class VerseRef {
+  const VerseRef();
+}
