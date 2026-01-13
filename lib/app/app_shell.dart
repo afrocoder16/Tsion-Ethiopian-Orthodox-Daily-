@@ -12,6 +12,7 @@ class AppShell extends StatelessWidget {
     if (location.startsWith(RoutePaths.bible)) return 1;
     if (location.startsWith(RoutePaths.prayers)) return 2;
     if (location.startsWith(RoutePaths.calendar)) return 3;
+    if (location.startsWith(RoutePaths.explore)) return 4;
     return 0;
   }
 
@@ -29,6 +30,9 @@ class AppShell extends StatelessWidget {
       case 3:
         context.go(RoutePaths.calendar);
         break;
+      case 4:
+        context.go(RoutePaths.explore);
+        break;
     }
   }
 
@@ -44,9 +48,10 @@ class AppShell extends StatelessWidget {
         onDestinationSelected: (i) => _goToIndex(context, i),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.today), label: 'Today'),
-          NavigationDestination(icon: Icon(Icons.menu_book), label: 'Bible'),
+          NavigationDestination(icon: Icon(Icons.menu_book), label: 'Books'),
           NavigationDestination(icon: Icon(Icons.favorite), label: 'Prayers'),
           NavigationDestination(icon: Icon(Icons.calendar_month), label: 'Calendar'),
+          NavigationDestination(icon: Icon(Icons.explore), label: 'Explore'),
         ],
       ),
     );

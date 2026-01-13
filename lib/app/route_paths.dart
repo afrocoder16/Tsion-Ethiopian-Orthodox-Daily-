@@ -5,6 +5,7 @@ class RoutePaths {
   static const bible = '/bible';
   static const prayers = '/prayers';
   static const calendar = '/calendar';
+  static const explore = '/explore';
 
   // Full path template (for consistency)
   static const bibleReader = '/bible/reader/:book/:chapter';

@@ -7,6 +7,7 @@ import '../features/today/presentation/today_screen.dart';
 import '../features/bible/presentation/bible_screen.dart';
 import '../features/prayers/presentation/prayers_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
+import '../features/explore/presentation/explore_screen.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -44,6 +45,10 @@ GoRouter buildRouter() {
           GoRoute(
             path: RoutePaths.calendar,
             builder: (context, state) => const CalendarScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.explore,
+            builder: (context, state) => const ExploreScreen(),
           ),
         ],
       ),
