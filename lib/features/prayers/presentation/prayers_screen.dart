@@ -5,23 +5,35 @@ class PrayersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const schedule = [
-      _PrayerItem('Morning Prayer'),
-      _PrayerItem('Midday Prayer'),
-      _PrayerItem('Evening Prayer'),
-      _PrayerItem('Night Prayer'),
+    const rhythmItems = [
+      _RhythmItem('Morning', Icons.wb_sunny_outlined),
+      _RhythmItem('Midday', Icons.wb_sunny),
+      _RhythmItem('Evening', Icons.nights_stay_outlined),
+      _RhythmItem('Night', Icons.dark_mode_outlined),
     ];
 
-    const reflectionPrompts = [
-      'What are you grateful for today?',
-      'Where did you struggle today?',
-      'Who can you pray for today?',
+    const devotionalItems = [
+      _DevotionalItem(
+        title: 'Light a Candle',
+        subtitle: 'Offer a prayer in silence',
+        icon: Icons.local_fire_department,
+      ),
+      _DevotionalItem(
+        title: 'Daily Reflection',
+        subtitle: 'A quiet question for the heart',
+        icon: Icons.self_improvement,
+      ),
+      _DevotionalItem(
+        title: 'Mezmur (Orthodox Music)',
+        subtitle: 'Chants and hymns for prayer',
+        icon: Icons.library_music,
+      ),
     ];
 
-    const favorites = [
-      _PrayerItem('Trisagion Prayers'),
-      _PrayerItem('Psalm 50'),
-      _PrayerItem('Prayer of St. Ephrem'),
+    const myPrayers = [
+      _PrayerTile('Trisagion Prayers'),
+      _PrayerTile('Psalm 50'),
+      _PrayerTile('Prayer of St. Ephrem'),
     ];
 
     return Scaffold(
@@ -29,37 +41,27 @@ class PrayersScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text(
-              'PRAYERS',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.1,
-              ),
-            ),
+            const _TopBar(),
+            const SizedBox(height: 18),
+            const _PrimaryPrayerCard(),
+            const SizedBox(height: 18),
+            const _QuietDivider(),
             const SizedBox(height: 16),
-            const _SectionHeader(
-              title: 'Today Prayer Schedule',
-              subtitle: 'Daily Orthodox prayer rhythm',
-            ),
+            const _SectionTitle(title: 'DAILY RHYTHM'),
             const SizedBox(height: 12),
-            _PrayerSchedule(items: schedule),
-            const SizedBox(height: 20),
-            _DailyReflectionCard(
-              prompt: reflectionPrompts[0],
-              secondaryPrompt: reflectionPrompts[1],
-            ),
-            const SizedBox(height: 20),
-            const _SectionHeader(title: 'Favorites'),
+            _RhythmRow(items: rhythmItems),
+            const SizedBox(height: 18),
+            const _SectionTitle(title: 'DEVOTIONAL ACTIONS'),
             const SizedBox(height: 12),
-            _PrayerList(items: favorites),
-            const SizedBox(height: 20),
-            const _SectionHeader(title: 'Last Prayed'),
+            _DevotionalGrid(items: devotionalItems),
+            const SizedBox(height: 18),
+            const _SectionTitle(title: 'MY PRAYERS'),
             const SizedBox(height: 12),
-            const _LastPrayedCard(
-              title: 'Midday Prayer',
-              timeLabel: 'Today · 12:40 PM',
-            ),
+            _PrayerTileRow(items: myPrayers),
+            const SizedBox(height: 18),
+            const _SectionTitle(title: 'RECENT'),
+            const SizedBox(height: 8),
+            const _RecentLine(text: 'Last prayed: Midday Prayer · Today'),
           ],
         ),
       ),
@@ -67,132 +69,129 @@ class PrayersScreen extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, this.subtitle});
-
-  final String title;
-  final String? subtitle;
+class _TopBar extends StatelessWidget {
+  const _TopBar();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15,
+        const _StreakIcon(isActive: true),
+        const SizedBox(width: 10),
+        const Text(
+          'PRAYERS',
+          style: TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.w700,
+            letterSpacing: 1.1,
           ),
         ),
-        if (subtitle != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            subtitle!,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
-          ),
-        ],
+        const Spacer(),
+        _IconButton(icon: Icons.library_music),
+        _IconButton(icon: Icons.calendar_today),
+        _IconButton(icon: Icons.person),
       ],
     );
   }
 }
 
-class _PrayerItem {
-  const _PrayerItem(this.title);
+class _StreakIcon extends StatelessWidget {
+  const _StreakIcon({required this.isActive});
 
-  final String title;
-}
-
-class _PrayerSchedule extends StatelessWidget {
-  const _PrayerSchedule({required this.items});
-
-  final List<_PrayerItem> items;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: items
-          .map(
-            (item) => Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF6F3EE),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.schedule, size: 18, color: Colors.black54),
-                  const SizedBox(width: 10),
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-          .toList(),
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFFF6F3EE) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: Icon(
+        Icons.local_fire_department,
+        size: 16,
+        color: isActive ? Colors.black87 : Colors.black26,
+      ),
     );
   }
 }
 
-class _DailyReflectionCard extends StatelessWidget {
-  const _DailyReflectionCard({
-    required this.prompt,
-    required this.secondaryPrompt,
-  });
+class _IconButton extends StatelessWidget {
+  const _IconButton({required this.icon});
 
-  final String prompt;
-  final String secondaryPrompt;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 6),
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, size: 16, color: Colors.black54),
+      ),
+    );
+  }
+}
+
+class _PrimaryPrayerCard extends StatelessWidget {
+  const _PrimaryPrayerCard();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
+        color: const Color(0xFFF6F3EE),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Daily Reflection',
+            'Prayer for This Moment',
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: Colors.black54,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            prompt,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black87,
+          const Text(
+            'Midday Prayer',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            secondaryPrompt,
-            style: const TextStyle(
+          const Text(
+            'The prayer appointed for this hour',
+            style: TextStyle(
               fontSize: 12,
               color: Colors.black54,
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: const [
-              _SmallAction(label: 'Reflect'),
-              SizedBox(width: 10),
-              _SmallAction(label: 'Write'),
-            ],
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'Begin Prayer',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -200,34 +199,99 @@ class _DailyReflectionCard extends StatelessWidget {
   }
 }
 
-class _SmallAction extends StatelessWidget {
-  const _SmallAction({required this.label});
-
-  final String label;
+class _QuietDivider extends StatelessWidget {
+  const _QuietDivider();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
+      height: 1,
+      color: const Color(0xFFE6E6E6),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.1,
+        color: Colors.black54,
       ),
     );
   }
 }
 
-class _PrayerList extends StatelessWidget {
-  const _PrayerList({required this.items});
+class _RhythmItem {
+  const _RhythmItem(this.label, this.icon);
 
-  final List<_PrayerItem> items;
+  final String label;
+  final IconData icon;
+}
+
+class _RhythmRow extends StatelessWidget {
+  const _RhythmRow({required this.items});
+
+  final List<_RhythmItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: items.map((item) {
+        final isCurrent = item.label == 'Midday';
+        return Container(
+          width: 120,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: isCurrent ? const Color(0xFFF6F3EE) : const Color(0xFFF7F7F7),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFE5E5E5)),
+          ),
+          child: Row(
+            children: [
+              Icon(item.icon, size: 16, color: Colors.black54),
+              const SizedBox(width: 8),
+              Text(
+                item.label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _DevotionalItem {
+  const _DevotionalItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+}
+
+class _DevotionalGrid extends StatelessWidget {
+  const _DevotionalGrid({required this.items});
+
+  final List<_DevotionalItem> items;
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +300,7 @@ class _PrayerList extends StatelessWidget {
           .map(
             (item) => Container(
               margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: const Color(0xFFF7F7F7),
                 borderRadius: BorderRadius.circular(14),
@@ -244,13 +308,28 @@ class _PrayerList extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.bookmark, size: 18, color: Colors.black54),
+                  Icon(item.icon, size: 18, color: Colors.black54),
                   const SizedBox(width: 10),
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.subtitle,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -262,45 +341,57 @@ class _PrayerList extends StatelessWidget {
   }
 }
 
-class _LastPrayedCard extends StatelessWidget {
-  const _LastPrayedCard({required this.title, required this.timeLabel});
+class _PrayerTile {
+  const _PrayerTile(this.title);
 
   final String title;
-  final String timeLabel;
+}
+
+class _PrayerTileRow extends StatelessWidget {
+  const _PrayerTileRow({required this.items});
+
+  final List<_PrayerTile> items;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F3EE),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.history, size: 18, color: Colors.black54),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: items
+          .map(
+            (item) => Container(
+              width: 150,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F1F1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                item.title,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                timeLabel,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Colors.black54,
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _RecentLine extends StatelessWidget {
+  const _RecentLine({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 12,
+        color: Colors.black54,
       ),
     );
   }

@@ -47,7 +47,13 @@ class BibleScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            _FilterChips(selected: selectedFilter),
+            Row(
+              children: [
+                const _FilterButton(),
+                const SizedBox(width: 10),
+                Expanded(child: _FilterChips(selected: selectedFilter)),
+              ],
+            ),
             const SizedBox(height: 22),
             const _SectionHeader(
               title: 'Continue Reading',
@@ -57,8 +63,6 @@ class BibleScreen extends StatelessWidget {
             _ContinueReadingShelf(items: continueReading),
             const SizedBox(height: 22),
             const _SectionGroupTitle(title: 'LIBRARY'),
-            const SizedBox(height: 12),
-            _SectionHeader(title: 'Bible', showSeeAll: true),
             const SizedBox(height: 12),
             _SectionBlock(
               isMuted: selectedFilter == _BooksFilter.saints,
@@ -116,6 +120,23 @@ class _SearchBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FilterButton extends StatelessWidget {
+  const _FilterButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F3F3),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(Icons.tune, size: 18, color: Colors.black54),
     );
   }
 }
