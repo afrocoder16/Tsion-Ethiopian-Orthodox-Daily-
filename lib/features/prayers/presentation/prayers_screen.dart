@@ -61,7 +61,7 @@ class PrayersScreen extends StatelessWidget {
             const SizedBox(height: 18),
             const _SectionTitle(title: 'RECENT'),
             const SizedBox(height: 8),
-            const _RecentLine(text: 'Last prayed: Midday Prayer · Today'),
+            const _RecentLine(text: 'Last prayed: Midday Prayer - Today'),
           ],
         ),
       ),
@@ -81,7 +81,7 @@ class _TopBar extends StatelessWidget {
         const Text(
           'PRAYERS',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.1,
           ),
@@ -103,11 +103,11 @@ class _StreakIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 32,
-      height: 32,
+      width: 34,
+      height: 34,
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFFF6F3EE) : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE0E0E0)),
       ),
       child: Icon(
@@ -129,11 +129,11 @@ class _IconButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: Container(
-        width: 32,
-        height: 32,
+        width: 34,
+        height: 34,
         decoration: BoxDecoration(
           color: const Color(0xFFF3F3F3),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, size: 16, color: Colors.black54),
       ),

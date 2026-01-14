@@ -9,8 +9,8 @@ class CalendarScreen extends StatelessWidget {
       _SignalItem('Evangelist', 'Matthew'),
       _SignalItem('Fast Day', 'Wednesday'),
       _SignalItem('Season', 'Advent'),
-      _SignalItem('Cycle', '—'),
-      _SignalItem('Day Number', '—'),
+      _SignalItem('Cycle', '--'),
+      _SignalItem('Day Number', '--'),
     ];
 
     const upcomingDays = [
@@ -43,6 +43,8 @@ class CalendarScreen extends StatelessWidget {
           children: [
             const _TopBar(),
             const SizedBox(height: 16),
+            _MonthSelector(items: months),
+            const SizedBox(height: 16),
             const _TodayStatusCard(),
             const SizedBox(height: 12),
             _SignalsRow(items: signals),
@@ -54,8 +56,6 @@ class CalendarScreen extends StatelessWidget {
             const _SectionTitle(title: 'Upcoming Days'),
             const SizedBox(height: 12),
             _UpcomingList(items: upcomingDays),
-            const SizedBox(height: 16),
-            _MonthSelector(items: months),
           ],
         ),
       ),
@@ -156,15 +156,6 @@ class _TodayStatusCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.wb_sunny_outlined, size: 18),
           ),
         ],
       ),
@@ -288,36 +279,39 @@ class _TodayActionsRow extends StatelessWidget {
       _ActionItem('Fasting Rules', Icons.ramen_dining),
       _ActionItem('Open Prayers', Icons.favorite),
     ];
-    return Row(
-      children: actions
-          .map(
-            (item) => Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF7F7F7),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    Icon(item.icon, size: 18, color: Colors.black54),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.label,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+    final children = <Widget>[];
+    for (var i = 0; i < actions.length; i++) {
+      final item = actions[i];
+      children.add(
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F7F7),
+              borderRadius: BorderRadius.circular(14),
             ),
-          )
-          .toList(),
-    );
+            child: Column(
+              children: [
+                Icon(item.icon, size: 18, color: Colors.black54),
+                const SizedBox(height: 6),
+                Text(
+                  item.label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (i < actions.length - 1) {
+        children.add(const SizedBox(width: 8));
+      }
+    }
+    return Row(children: children);
   }
 }
 

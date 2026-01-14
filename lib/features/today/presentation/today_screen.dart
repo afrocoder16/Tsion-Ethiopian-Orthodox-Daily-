@@ -55,7 +55,7 @@ class TodayScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Monday · January 12',
+                      'Monday - January 12',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black54,
