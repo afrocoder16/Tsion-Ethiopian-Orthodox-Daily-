@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../app/route_paths.dart';
 
 class PrayersScreen extends StatelessWidget {
   const PrayersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const rhythmItems = [
-      _RhythmItem('Morning', Icons.wb_sunny_outlined),
-      _RhythmItem('Midday', Icons.wb_sunny),
-      _RhythmItem('Evening', Icons.nights_stay_outlined),
-      _RhythmItem('Night', Icons.dark_mode_outlined),
-    ];
-
     const devotionalItems = [
       _DevotionalItem(
         title: 'Light a Candle',
-        subtitle: 'Offer a prayer in silence',
+        subtitle: 'Pray for me',
         icon: Icons.local_fire_department,
       ),
       _DevotionalItem(
@@ -24,9 +20,22 @@ class PrayersScreen extends StatelessWidget {
         icon: Icons.self_improvement,
       ),
       _DevotionalItem(
-        title: 'Mezmur (Orthodox Music)',
-        subtitle: 'Chants and hymns for prayer',
+        title: 'Fasting',
+        subtitle: 'Today\'s fasting guidance',
+        icon: Icons.ramen_dining,
+      ),
+    ];
+
+    const mezmurItems = [
+      _DevotionalItem(
+        title: 'Mezmur',
+        subtitle: 'Ethiopian Orthodox mezmurs, like a sacred playlist',
         icon: Icons.library_music,
+      ),
+      _DevotionalItem(
+        title: 'Kidase',
+        subtitle: 'Orthodox Tewahedo daily worship service',
+        icon: Icons.church,
       ),
     ];
 
@@ -47,9 +56,9 @@ class PrayersScreen extends StatelessWidget {
             const SizedBox(height: 18),
             const _QuietDivider(),
             const SizedBox(height: 16),
-            const _SectionTitle(title: 'DAILY RHYTHM'),
+            const _SectionTitle(title: 'MEZMUR AND HYMEN'),
             const SizedBox(height: 12),
-            _RhythmRow(items: rhythmItems),
+            _DevotionalGrid(items: mezmurItems),
             const SizedBox(height: 18),
             const _SectionTitle(title: 'DEVOTIONAL ACTIONS'),
             const SizedBox(height: 12),
@@ -57,7 +66,13 @@ class PrayersScreen extends StatelessWidget {
             const SizedBox(height: 18),
             const _SectionTitle(title: 'MY PRAYERS'),
             const SizedBox(height: 12),
-            _PrayerTileRow(items: myPrayers),
+            _PrayerTileRow(
+              items: myPrayers,
+              onTap: (item) {
+                final id = item.title.toLowerCase().replaceAll(' ', '-');
+                context.go('${RoutePaths.prayers}/detail/$id');
+              },
+            ),
             const SizedBox(height: 18),
             const _SectionTitle(title: 'RECENT'),
             const SizedBox(height: 8),
@@ -76,8 +91,6 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const _StreakIcon(isActive: true),
-        const SizedBox(width: 10),
         const Text(
           'PRAYERS',
           style: TextStyle(
@@ -87,7 +100,9 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        _IconButton(icon: Icons.library_music),
+        _IconButton(icon: Icons.headphones),
+        const SizedBox(width: 6),
+        const _StreakIcon(isActive: true),
         _IconButton(icon: Icons.calendar_today),
         _IconButton(icon: Icons.person),
       ],
@@ -230,52 +245,6 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _RhythmItem {
-  const _RhythmItem(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
-}
-
-class _RhythmRow extends StatelessWidget {
-  const _RhythmRow({required this.items});
-
-  final List<_RhythmItem> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: items.map((item) {
-        final isCurrent = item.label == 'Midday';
-        return Container(
-          width: 120,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: isCurrent ? const Color(0xFFF6F3EE) : const Color(0xFFF7F7F7),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE5E5E5)),
-          ),
-          child: Row(
-            children: [
-              Icon(item.icon, size: 16, color: Colors.black54),
-              const SizedBox(width: 8),
-              Text(
-                item.label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
-
 class _DevotionalItem {
   const _DevotionalItem({
     required this.title,
@@ -348,9 +317,10 @@ class _PrayerTile {
 }
 
 class _PrayerTileRow extends StatelessWidget {
-  const _PrayerTileRow({required this.items});
+  const _PrayerTileRow({required this.items, required this.onTap});
 
   final List<_PrayerTile> items;
+  final void Function(_PrayerTile item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -359,18 +329,21 @@ class _PrayerTileRow extends StatelessWidget {
       runSpacing: 10,
       children: items
           .map(
-            (item) => Container(
-              width: 150,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F1F1),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                item.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+            (item) => GestureDetector(
+              onTap: () => onTap(item),
+              child: Container(
+                width: 150,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F1F1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

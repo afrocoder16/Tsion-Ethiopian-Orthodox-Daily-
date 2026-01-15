@@ -21,8 +21,8 @@ class TodayScreen extends StatelessWidget {
     ];
 
     const carouselTwoItems = [
-      _TodayCarouselItem('Orthodox Music', 'Chants and hymns'),
-      _TodayCarouselItem('Light a Candle', 'Offer a prayer'),
+      _TodayCarouselItem('Mezmur', 'Chants and hymns'),
+      _TodayCarouselItem('Light a Candle', 'Pray for me'),
       _TodayCarouselItem('Find Your Church', 'Nearby parishes'),
     ];
 

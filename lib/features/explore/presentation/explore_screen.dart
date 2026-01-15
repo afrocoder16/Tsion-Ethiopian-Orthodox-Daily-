@@ -22,6 +22,7 @@ class ExploreScreen extends StatelessWidget {
 
     const guidedPaths = [
       _SmallTile('New to Orthodoxy'),
+      _SmallTile('Understanding the Liturgy'),
       _SmallTile('Living the Fast'),
     ];
 
