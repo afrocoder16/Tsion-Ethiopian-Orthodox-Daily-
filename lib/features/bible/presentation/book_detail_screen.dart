@@ -1,17 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class BookDetailScreen extends StatelessWidget {
+import '../../../app/route_paths.dart';
+import '../../../core/actions/user_actions.dart';
+import '../../../core/repos/book_flow_repositories.dart';
+import '../../../core/providers/book_flow_providers.dart';
+import '../../../core/providers/repo_providers.dart';
+
+class BookDetailScreen extends ConsumerWidget {
   const BookDetailScreen({
     super.key,
-    required this.title,
+    required this.bookId,
   });
 
-  final String title;
+  final String bookId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(bookDetailProvider(bookId));
+    return state.when(
+      data: (detail) => _BookDetailContent(detail: detail),
+      loading: () => const _Loading(),
+      error: (error, _) => _ErrorCard(
+        message: 'Unable to load book.',
+        onRetry: () => ref.refresh(bookDetailProvider(bookId)),
+      ),
+    );
+  }
+}
+
+class _BookDetailContent extends ConsumerWidget {
+  const _BookDetailContent({required this.detail});
+
+  final BookDetailState detail;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(detail.title)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -27,37 +54,62 @@ class BookDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            title,
+            detail.title,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
-            'Author Name',
-            style: TextStyle(fontSize: 13, color: Colors.black54),
+          Text(
+            detail.author,
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               _PrimaryButton(
                 label: 'Start',
-                onTap: () {},
+                onTap: () async {
+                  await setReadingProgress(
+                    db: ref.read(dbProvider),
+                    bookId: detail.id,
+                    lastLocation: 'Chapter 1',
+                    progressText: 'Chapter 1',
+                    updatedAtIso: DateTime.now().toIso8601String(),
+                  );
+                  if (context.mounted) {
+                    context.go(RoutePaths.bookReaderPath(detail.id));
+                  }
+                },
               ),
               const SizedBox(width: 10),
               _SecondaryButton(
-                label: 'Resume',
-                onTap: () {},
+                label: detail.resumeLabel,
+                onTap: () async {
+                  await setReadingProgress(
+                    db: ref.read(dbProvider),
+                    bookId: detail.id,
+                    lastLocation: detail.resumeLabel,
+                    progressText: detail.resumeLabel,
+                    updatedAtIso: DateTime.now().toIso8601String(),
+                  );
+                  if (context.mounted) {
+                    context.go(RoutePaths.bookReaderPath(detail.id));
+                  }
+                },
               ),
             ],
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-              _Badge(icon: Icons.download_done, label: 'Offline'),
-              SizedBox(width: 10),
-              _Badge(icon: Icons.cloud_download, label: 'Download'),
+            children: [
+              _Badge(
+                icon: Icons.download_done,
+                label: detail.isDownloaded ? 'Offline' : 'Not downloaded',
+              ),
+              const SizedBox(width: 10),
+              const _Badge(icon: Icons.cloud_download, label: 'Download'),
             ],
           ),
           const SizedBox(height: 20),
@@ -66,11 +118,45 @@ class BookDetailScreen extends StatelessWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
-          _TocItem(title: 'Introduction'),
-          _TocItem(title: 'Chapter 1'),
-          _TocItem(title: 'Chapter 2'),
-          _TocItem(title: 'Chapter 3'),
+          ...detail.toc.map((item) => _TocItem(title: item)),
         ],
+      ),
+    );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class _ErrorCard extends StatelessWidget {
+  const _ErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
       ),
     );
   }

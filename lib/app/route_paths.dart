@@ -6,17 +6,20 @@ class RoutePaths {
   static const prayers = '/prayers';
   static const calendar = '/calendar';
   static const explore = '/explore';
+  static const streak = '/streak';
 
-  // Books
-  static const bookDetail = '/bible/book/:id';
-  static const bookReader = '/bible/book/:id/reader';
+  // Books (preferred)
+  static const booksRoot = '/books';
+  static const bookDetail = '/books/book/:id';
+  static const bookReader = '/books/reader/:id';
 
   // Bible library flow
-  static const bibleLibrary = '/bible/library';
-  static const bibleChapters = '/bible/library/:book';
-  static const biblePassage = '/bible/library/:book/:chapter';
+  static const bibleLibrary = '/books/bible';
+  static const bibleChapters = '/books/bible/:book';
+  static const biblePassage = '/books/bible/:book/:chapter';
 
   // Legacy path template (for consistency)
+  static const legacyBibleRoot = '/bible';
   static const bibleReader = '/bible/reader/:book/:chapter';
 
   // Helper to generate a real path (safe, no logic)
@@ -24,16 +27,29 @@ class RoutePaths {
     required String book,
     required int chapter,
   }) =>
-      '/bible/reader/$book/$chapter';
+      '/books/bible/$book/$chapter';
 
-  static String bookDetailPath(String id) => '/bible/book/$id';
+  static String bookDetailPath(String id) => '/books/book/$id';
 
-  static String bookReaderPath(String id) => '/bible/book/$id/reader';
+  static String bookReaderPath(String id) => '/books/reader/$id';
 
-  static String bibleLibraryPath() => '/bible/library';
+  static String bibleLibraryPath() => '/books/bible';
 
-  static String bibleChaptersPath(String book) => '/bible/library/$book';
+  static String bibleChaptersPath(String book) => '/books/bible/$book';
 
   static String biblePassagePath(String book, int chapter) =>
-      '/bible/library/$book/$chapter';
+      '/books/bible/$book/$chapter';
+
+  static String prayerDetailPath(String id) => '/prayers/detail/$id';
+
+  static String calendarDayLinkPath(String dateKey, String type) =>
+      '/calendar/day/$dateKey/link/$type';
+
+  static String exploreItemPath(String id) => '/explore/item/$id';
+
+  static String explorePathPath(String id) => '/explore/path/$id';
+
+  static String exploreCommunityPath(String id) => '/explore/community/$id';
+
+  static String streakPath() => '/streak';
 }

@@ -1,43 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/providers/book_flow_providers.dart';
 
-class BibleLibraryScreen extends StatelessWidget {
+class BibleLibraryScreen extends ConsumerWidget {
   const BibleLibraryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const books = [
-      'Genesis',
-      'Exodus',
-      'Psalms',
-      'Matthew',
-      'John',
-      'Romans',
-    ];
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Bible Library')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: books
-            .map(
-              (book) => _ListTile(
-                title: book,
-                onTap: () => context.go(RoutePaths.bibleChaptersPath(book)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(bibleLibraryProvider);
+    return state.when(
+      data: (library) => Scaffold(
+        appBar: AppBar(title: const Text('Bible Library')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: library.books
+              .map(
+                (book) => _ListTile(
+                  title: book.title,
+                  subtitle: '${book.chapters} chapters',
+                  onTap: () => context.go(
+                    RoutePaths.bibleChaptersPath(book.id),
+                  ),
+                ),
+              )
+              .toList(growable: false),
+        ),
+      ),
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Unable to load Bible library'),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => ref.refresh(bibleLibraryProvider),
+                child: const Text('Retry'),
               ),
-            )
-            .toList(),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
 class _ListTile extends StatelessWidget {
-  const _ListTile({required this.title, required this.onTap});
+  const _ListTile({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   final String title;
+  final String subtitle;
   final VoidCallback onTap;
 
   @override
@@ -54,9 +76,20 @@ class _ListTile extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style:
+                      const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+              ],
             ),
             const Spacer(),
             const Icon(Icons.chevron_right, color: Colors.black38),

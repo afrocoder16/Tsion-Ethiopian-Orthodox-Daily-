@@ -1,34 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/providers/book_flow_providers.dart';
 
-class BibleChapterScreen extends StatelessWidget {
-  const BibleChapterScreen({
-    super.key,
-    required this.book,
-  });
+class BibleChapterScreen extends ConsumerWidget {
+  const BibleChapterScreen({super.key, required this.bookId});
 
-  final String book;
+  final String bookId;
 
   @override
-  Widget build(BuildContext context) {
-    final chapters = List<int>.generate(10, (index) => index + 1);
-
-    return Scaffold(
-      appBar: AppBar(title: Text(book)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: chapters
-            .map(
-              (chapter) => _ChapterTile(
-                label: 'Chapter $chapter',
-                onTap: () => context.go(
-                  RoutePaths.biblePassagePath(book, chapter),
-                ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final book = ref.watch(bibleChaptersProvider(bookId));
+    return book.when(
+      data: (item) {
+        final chapters = item?.chapters ?? 0;
+        final chapterList = chapters == 0
+            ? <int>[]
+            : List<int>.generate(chapters, (index) => index + 1);
+        return Scaffold(
+          appBar: AppBar(title: Text(item?.title ?? bookId)),
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: chapterList
+                .map(
+                  (chapter) => _ChapterTile(
+                    label: 'Chapter $chapter',
+                    onTap: () => context.go(
+                      RoutePaths.biblePassagePath(bookId, chapter),
+                    ),
+                  ),
+                )
+                .toList(growable: false),
+          ),
+        );
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Unable to load chapters'),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => ref.refresh(bibleChaptersProvider(bookId)),
+                child: const Text('Retry'),
               ),
-            )
-            .toList(),
+            ],
+          ),
+        ),
       ),
     );
   }

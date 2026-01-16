@@ -1,131 +1,200 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/screen_state_providers.dart';
 
-class BibleScreen extends StatelessWidget {
+class BibleScreen extends ConsumerWidget {
   const BibleScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const selectedFilter = _BooksFilter.all;
-
-    final continueReading = [
-      const _BookItem('Psalm 23', subtitle: 'Last chapter: Verse 4'),
-      const _BookItem('Gospel of Matthew', subtitle: 'Last chapter: 5'),
-      const _BookItem('Life of St. Mary', subtitle: 'Last chapter: 2'),
-    ];
-
-    final bibleShelf = [
-      const _BookItem('Bible'),
-      const _BookItem('Audio Bible'),
-      const _BookItem('Reading Plan'),
-    ];
-
-    final saintsShelf = [
-      const _BookItem('Synaxarium'),
-      const _BookItem('Lives of Saints'),
-      const _BookItem('Daily Saint'),
-    ];
-
-    final orthodoxBooks = [
-      const _BookItem('The Divine Liturgy'),
-      const _BookItem('The Ladder'),
-      const _BookItem('On Prayer'),
-      const _BookItem('Sayings of the Desert Fathers'),
-      const _BookItem('The Philokalia'),
-      const _BookItem('Lives of the Saints'),
-    ];
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenState = ref.watch(booksScreenStateProvider);
+    final body = screenState.when(
+      data: (state) => _BooksContent(adapter: BooksAdapter(state)),
+      loading: () => const _BooksLoading(),
+      error: (error, _) => _InlineErrorCard(
+        message: 'Unable to load books.',
+        onRetry: () => ref.refresh(booksScreenStateProvider),
+      ),
+    );
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Row(
-              children: const [
-                _ReadingStreakBadge(compact: true),
-                SizedBox(width: 12),
-                Expanded(child: _SearchBar()),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const _FilterButton(),
-                const SizedBox(width: 10),
-                Expanded(child: _FilterChips(selected: selectedFilter)),
-              ],
-            ),
-            const SizedBox(height: 22),
-            const _SectionHeader(
-              title: 'Continue Reading',
-              subtitle: 'Continue where you left off',
-            ),
-            const SizedBox(height: 12),
-            _ContinueReadingShelf(
-              items: continueReading,
-              onTap: (item) {
-                final id = _bookIdFromTitle(item.title);
-                context.go(RoutePaths.bookReaderPath(id));
-              },
-            ),
-            const SizedBox(height: 22),
-            _SectionHeader(title: 'Saints', showSeeAll: true),
-            const SizedBox(height: 12),
-            const _PatronSaintCard(name: 'Athon'),
-            const SizedBox(height: 12),
-            _SectionBlock(
-              isMuted: selectedFilter == _BooksFilter.bible,
-              child: _HorizontalShelf(
-                items: saintsShelf.take(3).toList(),
-                onTap: (item) {
-                  final id = _bookIdFromTitle(item.title);
-                  context.go(RoutePaths.bookDetailPath(id));
-                },
-              ),
-            ),
-            const SizedBox(height: 22),
-            const _SectionGroupTitle(title: 'LIBRARY'),
-            const SizedBox(height: 12),
-            _SectionBlock(
-              isMuted: selectedFilter == _BooksFilter.saints,
-              child: _HorizontalShelf(
-                items: bibleShelf.take(3).toList(),
-                onTap: (item) {
-                  if (item.title == 'Bible') {
-                    context.go(RoutePaths.bibleLibraryPath());
-                  } else {
-                    final id = _bookIdFromTitle(item.title);
-                    context.go(RoutePaths.bookDetailPath(id));
-                  }
-                },
-              ),
-            ),
-            const SizedBox(height: 28),
-            const _SoftDivider(),
-            const SizedBox(height: 24),
-            const _SectionGroupTitle(title: 'ORTHODOX BOOKS'),
-            const SizedBox(height: 12),
-            _SectionBlock(
-              isMuted: selectedFilter != _BooksFilter.all,
-              child: _BooksGrid(
-                items: orthodoxBooks,
-                onTap: (item) {
-                  final id = _bookIdFromTitle(item.title);
-                  context.go(RoutePaths.bookDetailPath(id));
-                },
-              ),
-            ),
-          ],
-        ),
+        child: body,
       ),
     );
   }
 }
 
+class _BooksContent extends StatelessWidget {
+  const _BooksContent({required this.adapter});
+
+  final BooksAdapter adapter;
+
+  @override
+  Widget build(BuildContext context) {
+    final filters = adapter.filterChips;
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Row(
+          children: [
+            _ReadingStreakBadge(
+              compact: adapter.readingStreakCompact,
+              label: adapter.readingStreakLabel,
+              onTap: () => context.push(RoutePaths.streak),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _SearchBar(placeholder: adapter.searchPlaceholder),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            const _FilterButton(),
+            const SizedBox(width: 10),
+            Expanded(child: _FilterChips(filters: filters)),
+          ],
+        ),
+        const SizedBox(height: 22),
+        _SectionHeader(view: adapter.continueReadingHeader),
+        const SizedBox(height: 12),
+        _ContinueReadingShelf(
+          items: adapter.continueReadingItems,
+          actionLabel: adapter.continueReadingActionLabel,
+          onTap: (item) {
+            context.go(RoutePaths.bookReaderPath(item.routeId));
+          },
+        ),
+        const SizedBox(height: 22),
+        _SectionHeader(view: adapter.saintsHeader),
+        const SizedBox(height: 12),
+        _PatronSaintCard(view: adapter.patronSaint),
+        const SizedBox(height: 12),
+        _SectionBlock(
+          isMuted: adapter.isBibleSelected,
+          child: _HorizontalShelf(
+            items: adapter.saintsShelf.take(3).toList(),
+            onTap: (item) {
+              context.go(RoutePaths.bookDetailPath(item.routeId));
+            },
+          ),
+        ),
+        const SizedBox(height: 22),
+        _SectionGroupTitle(title: adapter.libraryHeader.title),
+        const SizedBox(height: 12),
+        _SectionBlock(
+          isMuted: adapter.isSaintsSelected,
+          child: _HorizontalShelf(
+            items: adapter.bibleShelf.take(3).toList(),
+            onTap: (item) {
+              if (item.isBible) {
+                context.go(RoutePaths.bibleLibraryPath());
+              } else {
+                context.go(RoutePaths.bookDetailPath(item.routeId));
+              }
+            },
+          ),
+        ),
+        const SizedBox(height: 28),
+        const _SoftDivider(),
+        const SizedBox(height: 24),
+        _SectionGroupTitle(title: adapter.orthodoxBooksHeader.title),
+        const SizedBox(height: 12),
+        _SectionBlock(
+          isMuted: !adapter.isAllSelected,
+          child: _BooksGrid(
+            items: adapter.orthodoxBooks,
+            onTap: (item) {
+              context.go(RoutePaths.bookDetailPath(item.routeId));
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BooksLoading extends StatelessWidget {
+  const _BooksLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: const [
+        _SkeletonBox(height: 48),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 36),
+        SizedBox(height: 22),
+        _SkeletonLine(width: 160, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 170),
+        SizedBox(height: 22),
+        _SkeletonLine(width: 100, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 90),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 150),
+        SizedBox(height: 28),
+        _SkeletonBox(height: 1),
+        SizedBox(height: 24),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 220),
+      ],
+    );
+  }
+}
+
+class _InlineErrorCard extends StatelessWidget {
+  const _InlineErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDECEC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFF2B8B5)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+              TextButton(
+                onPressed: onRetry,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  const _SearchBar({required this.placeholder});
+
+  final String placeholder;
 
   @override
   Widget build(BuildContext context) {
@@ -137,12 +206,12 @@ class _SearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        children: const [
-          Icon(Icons.search, size: 20, color: Colors.black45),
-          SizedBox(width: 8),
+        children: [
+          const Icon(Icons.search, size: 20, color: Colors.black45),
+          const SizedBox(width: 8),
           Text(
-            'Search by title',
-            style: TextStyle(
+            placeholder,
+            style: const TextStyle(
               fontSize: 13,
               color: Colors.black45,
             ),
@@ -171,13 +240,19 @@ class _FilterButton extends StatelessWidget {
 }
 
 class _ReadingStreakBadge extends StatelessWidget {
-  const _ReadingStreakBadge({this.compact = false});
+  const _ReadingStreakBadge({
+    required this.label,
+    this.compact = false,
+    this.onTap,
+  });
 
   final bool compact;
+  final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final badge = Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? 10 : 14,
         vertical: compact ? 8 : 10,
@@ -187,12 +262,13 @@ class _ReadingStreakBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        children: const [
-          Icon(Icons.local_fire_department, size: 18, color: Colors.black54),
-          SizedBox(width: 8),
+        children: [
+          const Icon(Icons.local_fire_department,
+              size: 18, color: Colors.black54),
+          const SizedBox(width: 8),
           Text(
-            '7-day reading streak',
-            style: TextStyle(
+            label,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -200,35 +276,29 @@ class _ReadingStreakBadge extends StatelessWidget {
         ],
       ),
     );
+    if (onTap == null) {
+      return badge;
+    }
+    return GestureDetector(onTap: onTap, child: badge);
   }
 }
 
-enum _BooksFilter { all, bible, saints, prayers, teachings, history }
-
 class _FilterChips extends StatelessWidget {
-  const _FilterChips({required this.selected});
+  const _FilterChips({required this.filters});
 
-  final _BooksFilter selected;
+  final List<BooksFilterChipView> filters;
 
   @override
   Widget build(BuildContext context) {
-    const labels = [
-      _FilterLabel('All', _BooksFilter.all),
-      _FilterLabel('Bible', _BooksFilter.bible),
-      _FilterLabel('Saints', _BooksFilter.saints),
-      _FilterLabel('Prayers', _BooksFilter.prayers),
-      _FilterLabel('Teachings', _BooksFilter.teachings),
-      _FilterLabel('History', _BooksFilter.history),
-    ];
     return SizedBox(
       height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: labels.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemCount: filters.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final label = labels[index].text;
-          final isSelected = labels[index].value == selected;
+          final label = filters[index].label;
+          final isSelected = filters[index].isSelected;
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
@@ -253,15 +323,9 @@ class _FilterChips extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    this.subtitle,
-    this.showSeeAll = false,
-  });
+  const _SectionHeader({required this.view});
 
-  final String title;
-  final String? subtitle;
-  final bool showSeeAll;
+  final SectionHeaderView view;
 
   @override
   Widget build(BuildContext context) {
@@ -273,17 +337,17 @@ class _SectionHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                view.title,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
                 ),
               ),
-              if (subtitle != null) ...[
+              if (view.subtitle != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  subtitle!,
+                  view.subtitle!,
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black54,
@@ -293,9 +357,9 @@ class _SectionHeader extends StatelessWidget {
             ],
           ),
         ),
-        if (showSeeAll)
-          const Text(
-            'See all',
+        if (view.showSeeAll)
+          Text(
+            view.seeAllLabel,
             style: TextStyle(
               fontSize: 12,
               color: Colors.black54,
@@ -306,39 +370,32 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _BookItem {
-  const _BookItem(this.title, {this.subtitle});
-
-  final String title;
-  final String? subtitle;
-}
-
 class _HorizontalShelf extends StatelessWidget {
   const _HorizontalShelf({
     required this.items,
     this.onTap,
   });
 
-  final List<_BookItem> items;
-  final double itemWidth;
-  final double itemHeight;
-  final bool showSubtitle;
-  final void Function(_BookItem item)? onTap;
+  final List<BookItemView> items;
+  final void Function(BookItemView item)? onTap;
+
+  static const double _itemWidth = 110;
+  static const double _itemHeight = 150;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: itemHeight,
+      height: _itemHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
           final card = _BookCover(
             title: item.title,
-            subtitle: showSubtitle ? item.subtitle : null,
-            width: itemWidth,
+            subtitle: null,
+            width: _itemWidth,
           );
           return onTap == null
               ? card
@@ -355,11 +412,13 @@ class _HorizontalShelf extends StatelessWidget {
 class _ContinueReadingShelf extends StatelessWidget {
   const _ContinueReadingShelf({
     required this.items,
+    required this.actionLabel,
     required this.onTap,
   });
 
-  final List<_BookItem> items;
-  final void Function(_BookItem item) onTap;
+  final List<BookItemView> items;
+  final String actionLabel;
+  final void Function(BookItemView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -368,12 +427,15 @@ class _ContinueReadingShelf extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
           return GestureDetector(
             onTap: () => onTap(item),
-            child: _ContinueReadingCard(item: item),
+            child: _ContinueReadingCard(
+              item: item,
+              actionLabel: actionLabel,
+            ),
           );
         },
       ),
@@ -382,9 +444,13 @@ class _ContinueReadingShelf extends StatelessWidget {
 }
 
 class _ContinueReadingCard extends StatelessWidget {
-  const _ContinueReadingCard({required this.item});
+  const _ContinueReadingCard({
+    required this.item,
+    required this.actionLabel,
+  });
 
-  final _BookItem item;
+  final BookItemView item;
+  final String actionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -423,9 +489,9 @@ class _ContinueReadingCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'Resume',
-              style: TextStyle(
+            child: Text(
+              actionLabel,
+              style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -490,8 +556,8 @@ class _BooksGrid extends StatelessWidget {
     required this.onTap,
   });
 
-  final List<_BookItem> items;
-  final void Function(_BookItem item) onTap;
+  final List<BookItemView> items;
+  final void Function(BookItemView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -552,9 +618,9 @@ class _SectionGroupTitle extends StatelessWidget {
 }
 
 class _PatronSaintCard extends StatelessWidget {
-  const _PatronSaintCard({required this.name});
+  const _PatronSaintCard({required this.view});
 
-  final String name;
+  final PatronSaintView view;
 
   @override
   Widget build(BuildContext context) {
@@ -567,13 +633,13 @@ class _PatronSaintCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Your Patron Saint',
-            style: TextStyle(fontSize: 12, color: Colors.black54),
+          Text(
+            view.label,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
           const SizedBox(height: 6),
           Text(
-            name,
+            view.name,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ],
@@ -609,13 +675,38 @@ class _SectionBlock extends StatelessWidget {
   }
 }
 
-class _FilterLabel {
-  const _FilterLabel(this.text, this.value);
+class _SkeletonLine extends StatelessWidget {
+  const _SkeletonLine({required this.width, required this.height});
 
-  final String text;
-  final _BooksFilter value;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE6E6E6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
 }
 
-String _bookIdFromTitle(String title) {
-  return title.toLowerCase().replaceAll(' ', '-');
+class _SkeletonBox extends StatelessWidget {
+  const _SkeletonBox({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDEDED),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
 }

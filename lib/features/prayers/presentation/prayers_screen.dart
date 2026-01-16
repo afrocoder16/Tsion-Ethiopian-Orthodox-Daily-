@@ -1,110 +1,200 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/prayer_flow_providers.dart';
+import '../../../core/providers/screen_state_providers.dart';
 
-class PrayersScreen extends StatelessWidget {
+class PrayersScreen extends ConsumerWidget {
   const PrayersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const devotionalItems = [
-      _DevotionalItem(
-        title: 'Light a Candle',
-        subtitle: 'Pray for me',
-        icon: Icons.local_fire_department,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenState = ref.watch(prayersScreenStateProvider);
+    final body = screenState.when(
+      data: (state) => _PrayersContent(adapter: PrayersAdapter(state)),
+      loading: () => const _PrayersLoading(),
+      error: (error, _) => _InlineErrorCard(
+        message: 'Unable to load prayers.',
+        onRetry: () => ref.refresh(prayersScreenStateProvider),
       ),
-      _DevotionalItem(
-        title: 'Daily Reflection',
-        subtitle: 'A quiet question for the heart',
-        icon: Icons.self_improvement,
-      ),
-      _DevotionalItem(
-        title: 'Fasting',
-        subtitle: 'Today\'s fasting guidance',
-        icon: Icons.ramen_dining,
-      ),
-    ];
-
-    const mezmurItems = [
-      _DevotionalItem(
-        title: 'Mezmur',
-        subtitle: 'Ethiopian Orthodox mezmurs, like a sacred playlist',
-        icon: Icons.library_music,
-      ),
-      _DevotionalItem(
-        title: 'Kidase',
-        subtitle: 'Orthodox Tewahedo daily worship service',
-        icon: Icons.church,
-      ),
-    ];
-
-    const myPrayers = [
-      _PrayerTile('Trisagion Prayers'),
-      _PrayerTile('Psalm 50'),
-      _PrayerTile('Prayer of St. Ephrem'),
-    ];
-
+    );
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const _TopBar(),
-            const SizedBox(height: 18),
-            const _PrimaryPrayerCard(),
-            const SizedBox(height: 18),
-            const _QuietDivider(),
-            const SizedBox(height: 16),
-            const _SectionTitle(title: 'MEZMUR AND HYMEN'),
-            const SizedBox(height: 12),
-            _DevotionalGrid(items: mezmurItems),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'DEVOTIONAL ACTIONS'),
-            const SizedBox(height: 12),
-            _DevotionalGrid(items: devotionalItems),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'MY PRAYERS'),
-            const SizedBox(height: 12),
-            _PrayerTileRow(
-              items: myPrayers,
-              onTap: (item) {
-                final id = item.title.toLowerCase().replaceAll(' ', '-');
-                context.go('${RoutePaths.prayers}/detail/$id');
-              },
-            ),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'RECENT'),
-            const SizedBox(height: 8),
-            const _RecentLine(text: 'Last prayed: Midday Prayer - Today'),
-          ],
-        ),
+        child: body,
       ),
     );
   }
 }
 
+class _PrayersContent extends ConsumerWidget {
+  const _PrayersContent({required this.adapter});
+
+  final PrayersAdapter adapter;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _TopBar(
+          title: adapter.topBarTitle,
+          streakActive: adapter.streakActive,
+          icons: adapter.topBarIcons,
+        ),
+        const SizedBox(height: 18),
+        _PrimaryPrayerCard(
+          label: adapter.primaryLabel,
+          title: adapter.primaryTitle,
+          subtitle: adapter.primarySubtitle,
+          actionLabel: adapter.primaryActionLabel,
+          onTap: () {
+            context.go(RoutePaths.prayerDetailPath(adapter.primaryPrayerId));
+          },
+        ),
+        const SizedBox(height: 18),
+        const _QuietDivider(),
+        const SizedBox(height: 16),
+        _SectionTitle(title: adapter.mezmurHeader.title),
+        const SizedBox(height: 12),
+        _DevotionalGrid(items: adapter.mezmurItems),
+        const SizedBox(height: 18),
+        _SectionTitle(title: adapter.devotionalHeader.title),
+        const SizedBox(height: 12),
+        _DevotionalGrid(items: adapter.devotionalItems),
+        const SizedBox(height: 18),
+        _SectionTitle(title: adapter.myPrayersHeader.title),
+        const SizedBox(height: 12),
+        _PrayerTileRow(
+          items: adapter.myPrayers,
+          onTap: (item) {
+            context.go('${RoutePaths.prayers}/detail/${item.routeId}');
+          },
+        ),
+        const SizedBox(height: 18),
+        _SectionTitle(title: adapter.recentHeader.title),
+        const SizedBox(height: 8),
+        _RecentLine(
+          text: adapter.recentText,
+          onTap: () {
+            final recentId = ref.read(recentPrayerIdProvider).valueOrNull ??
+                adapter.primaryPrayerId;
+            context.go(RoutePaths.prayerDetailPath(recentId));
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _PrayersLoading extends StatelessWidget {
+  const _PrayersLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: const [
+        _SkeletonLine(width: 120, height: 16),
+        SizedBox(height: 18),
+        _SkeletonBox(height: 140),
+        SizedBox(height: 18),
+        _SkeletonBox(height: 1),
+        SizedBox(height: 16),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 120),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 120),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 120, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 90),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 100, height: 12),
+        SizedBox(height: 8),
+        _SkeletonLine(width: 200, height: 10),
+      ],
+    );
+  }
+}
+
+class _InlineErrorCard extends StatelessWidget {
+  const _InlineErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDECEC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFF2B8B5)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+              TextButton(
+                onPressed: onRetry,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({
+    required this.title,
+    required this.streakActive,
+    required this.icons,
+  });
+
+  final String title;
+  final bool streakActive;
+  final List<IconData> icons;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
-          'PRAYERS',
-          style: TextStyle(
+        Text(
+          title,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.1,
           ),
         ),
         const Spacer(),
-        _IconButton(icon: Icons.headphones),
+        _IconButton(icon: icons.isNotEmpty ? icons.first : Icons.headphones),
         const SizedBox(width: 6),
-        const _StreakIcon(isActive: true),
-        _IconButton(icon: Icons.calendar_today),
-        _IconButton(icon: Icons.person),
+        GestureDetector(
+          onTap: () => context.push(RoutePaths.streak),
+          child: _StreakIcon(isActive: streakActive),
+        ),
+        if (icons.length > 1) _IconButton(icon: icons[1]),
+        if (icons.length > 2) _IconButton(icon: icons[2]),
       ],
     );
   }
@@ -157,7 +247,19 @@ class _IconButton extends StatelessWidget {
 }
 
 class _PrimaryPrayerCard extends StatelessWidget {
-  const _PrimaryPrayerCard();
+  const _PrimaryPrayerCard({
+    required this.label,
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.onTap,
+  });
+
+  final String label;
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -170,41 +272,44 @@ class _PrimaryPrayerCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Prayer for This Moment',
-            style: TextStyle(
+          Text(
+            label,
+            style: const TextStyle(
               fontSize: 13,
               color: Colors.black54,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Midday Prayer',
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
-            'The prayer appointed for this hour',
-            style: TextStyle(
+          Text(
+            subtitle,
+            style: const TextStyle(
               fontSize: 12,
               color: Colors.black54,
             ),
           ),
           const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text(
-              'Begin Prayer',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                actionLabel,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -245,22 +350,10 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _DevotionalItem {
-  const _DevotionalItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-}
-
 class _DevotionalGrid extends StatelessWidget {
   const _DevotionalGrid({required this.items});
 
-  final List<_DevotionalItem> items;
+  final List<DevotionalItemView> items;
 
   @override
   Widget build(BuildContext context) {
@@ -310,17 +403,11 @@ class _DevotionalGrid extends StatelessWidget {
   }
 }
 
-class _PrayerTile {
-  const _PrayerTile(this.title);
-
-  final String title;
-}
-
 class _PrayerTileRow extends StatelessWidget {
   const _PrayerTileRow({required this.items, required this.onTap});
 
-  final List<_PrayerTile> items;
-  final void Function(_PrayerTile item) onTap;
+  final List<PrayerTileView> items;
+  final void Function(PrayerTileView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -353,18 +440,58 @@ class _PrayerTileRow extends StatelessWidget {
   }
 }
 
-class _RecentLine extends StatelessWidget {
-  const _RecentLine({required this.text});
+class _SkeletonLine extends StatelessWidget {
+  const _SkeletonLine({required this.width, required this.height});
 
-  final String text;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 12,
-        color: Colors.black54,
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE6E6E6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+}
+
+class _SkeletonBox extends StatelessWidget {
+  const _SkeletonBox({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDEDED),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
+}
+
+class _RecentLine extends StatelessWidget {
+  const _RecentLine({required this.text, required this.onTap});
+
+  final String text;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          color: Colors.black54,
+        ),
       ),
     );
   }

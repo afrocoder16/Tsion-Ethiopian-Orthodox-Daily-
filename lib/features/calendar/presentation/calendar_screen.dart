@@ -1,78 +1,159 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/screen_state_providers.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const signals = [
-      _SignalItem('Evangelist', 'Matthew'),
-      _SignalItem('Fast Day', 'Wednesday'),
-      _SignalItem('Season', 'Advent'),
-      _SignalItem('Cycle', '--'),
-      _SignalItem('Day Number', '--'),
-    ];
-
-    const upcomingDays = [
-      _UpcomingDay('Dec 14', 'St. Ignatius', 'No fasting'),
-      _UpcomingDay('Dec 15', 'St. Eleutherius', 'Feast'),
-      _UpcomingDay('Dec 16', 'St. Sophia', 'Friday Fast'),
-      _UpcomingDay('Dec 17', 'St. Daniel', 'No fasting'),
-    ];
-
-    const months = [
-      'Today',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenState = ref.watch(calendarScreenStateProvider);
+    final body = screenState.when(
+      data: (state) => _CalendarContent(adapter: CalendarAdapter(state)),
+      loading: () => const _CalendarLoading(),
+      error: (error, _) => _InlineErrorCard(
+        message: 'Unable to load calendar.',
+        onRetry: () => ref.refresh(calendarScreenStateProvider),
+      ),
+    );
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const _TopBar(),
-            const SizedBox(height: 16),
-            _MonthSelector(items: months),
-            const SizedBox(height: 16),
-            const _TodayStatusCard(),
-            const SizedBox(height: 12),
-            _SignalsRow(items: signals),
-            const SizedBox(height: 16),
-            const _TodayObservanceCard(),
-            const SizedBox(height: 12),
-            const _TodayActionsRow(),
-            const SizedBox(height: 20),
-            const _SectionTitle(title: 'Upcoming Days'),
-            const SizedBox(height: 12),
-            _UpcomingList(
-              items: upcomingDays,
-              onTap: (item) => context.go(
-                '${RoutePaths.calendar}/day/${item.date}',
-              ),
-            ),
-          ],
-        ),
+        child: body,
       ),
     );
   }
 }
 
+class _CalendarContent extends StatelessWidget {
+  const _CalendarContent({required this.adapter});
+
+  final CalendarAdapter adapter;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _TopBar(
+          title: adapter.topBarTitle,
+          subtitle: adapter.topBarSubtitle,
+          icons: adapter.topBarIcons,
+        ),
+        const SizedBox(height: 16),
+        _MonthSelector(items: adapter.months),
+        const SizedBox(height: 16),
+        _TodayStatusCard(
+          ethiopianDate: adapter.ethiopianDate,
+          gregorianDate: adapter.gregorianDate,
+        ),
+        const SizedBox(height: 12),
+        _SignalsRow(items: adapter.signalChips),
+        const SizedBox(height: 16),
+        _TodayObservanceCard(
+          title: adapter.todayObservanceTitle,
+          observances: adapter.observances,
+          onTap: () => context.go(
+            '${RoutePaths.calendar}/day/${adapter.ethiopianDate}',
+          ),
+        ),
+        const SizedBox(height: 12),
+        _TodayActionsRow(items: adapter.todayActions),
+        const SizedBox(height: 20),
+        _SectionTitle(title: adapter.upcomingHeader.title),
+        const SizedBox(height: 12),
+        _UpcomingList(
+          items: adapter.upcomingDays,
+          onTap: (item) => context.go(
+            '${RoutePaths.calendar}/day/${item.date}',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CalendarLoading extends StatelessWidget {
+  const _CalendarLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: const [
+        _SkeletonLine(width: 140, height: 16),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 36),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 90),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 36),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 90),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 70),
+        SizedBox(height: 20),
+        _SkeletonLine(width: 120, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 200),
+      ],
+    );
+  }
+}
+
+class _InlineErrorCard extends StatelessWidget {
+  const _InlineErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDECEC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFF2B8B5)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+              TextButton(
+                onPressed: onRetry,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({
+    required this.title,
+    required this.subtitle,
+    required this.icons,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<IconData> icons;
 
   @override
   Widget build(BuildContext context) {
@@ -81,19 +162,19 @@ class _TopBar extends StatelessWidget {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'CALENDAR',
-              style: TextStyle(
+              title,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
               ),
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(
-              'Orthodox feasts, fasts, and sacred days',
-              style: TextStyle(
+              subtitle,
+              style: const TextStyle(
                 fontSize: 12,
                 color: Colors.black54,
               ),
@@ -101,8 +182,8 @@ class _TopBar extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        _IconButton(icon: Icons.calendar_today),
-        _IconButton(icon: Icons.person),
+        if (icons.isNotEmpty) _IconButton(icon: icons.first),
+        if (icons.length > 1) _IconButton(icon: icons[1]),
       ],
     );
   }
@@ -131,7 +212,13 @@ class _IconButton extends StatelessWidget {
 }
 
 class _TodayStatusCard extends StatelessWidget {
-  const _TodayStatusCard();
+  const _TodayStatusCard({
+    required this.ethiopianDate,
+    required this.gregorianDate,
+  });
+
+  final String ethiopianDate;
+  final String gregorianDate;
 
   @override
   Widget build(BuildContext context) {
@@ -146,18 +233,18 @@ class _TodayStatusCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Tahsas 4',
-                  style: TextStyle(
+                  ethiopianDate,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
-                  'December 13',
-                  style: TextStyle(
+                  gregorianDate,
+                  style: const TextStyle(
                     fontSize: 13,
                     color: Colors.black54,
                   ),
@@ -171,17 +258,10 @@ class _TodayStatusCard extends StatelessWidget {
   }
 }
 
-class _SignalItem {
-  const _SignalItem(this.label, this.value);
-
-  final String label;
-  final String value;
-}
-
 class _SignalsRow extends StatelessWidget {
   const _SignalsRow({required this.items});
 
-  final List<_SignalItem> items;
+  final List<String> items;
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +270,7 @@ class _SignalsRow extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final item = items[index];
           return Container(
@@ -202,7 +282,7 @@ class _SignalsRow extends StatelessWidget {
               border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Text(
-              '${item.label}: ${item.value}',
+              item,
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -217,11 +297,19 @@ class _SignalsRow extends StatelessWidget {
 }
 
 class _TodayObservanceCard extends StatelessWidget {
-  const _TodayObservanceCard();
+  const _TodayObservanceCard({
+    required this.title,
+    required this.observances,
+    this.onTap,
+  });
+
+  final String title;
+  final List<ObservanceView> observances;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFF2F2F2),
@@ -229,36 +317,42 @@ class _TodayObservanceCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Text(
-            'Today Observance',
-            style: TextStyle(
+            title,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 10),
-          _ObservanceRow(label: 'Saint', value: 'St. Lucia'),
-          SizedBox(height: 6),
-          _ObservanceRow(label: 'Fast', value: 'Wednesday Fast'),
+          const SizedBox(height: 10),
+          ...observances.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: _ObservanceRow(item: item),
+            ),
+          ),
         ],
       ),
     );
+    if (onTap == null) {
+      return card;
+    }
+    return InkWell(onTap: onTap, child: card);
   }
 }
 
 class _ObservanceRow extends StatelessWidget {
-  const _ObservanceRow({required this.label, required this.value});
+  const _ObservanceRow({required this.item});
 
-  final String label;
-  final String value;
+  final ObservanceView item;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Text(
-          '$label:',
+          item.labelText,
           style: const TextStyle(
             fontSize: 12,
             color: Colors.black54,
@@ -266,7 +360,7 @@ class _ObservanceRow extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          value,
+          item.valueText,
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -278,18 +372,15 @@ class _ObservanceRow extends StatelessWidget {
 }
 
 class _TodayActionsRow extends StatelessWidget {
-  const _TodayActionsRow();
+  const _TodayActionsRow({required this.items});
+
+  final List<CalendarActionView> items;
 
   @override
   Widget build(BuildContext context) {
-    const actions = [
-      _ActionItem('Read Saint', Icons.menu_book),
-      _ActionItem('Fasting Rules', Icons.ramen_dining),
-      _ActionItem('Open Prayers', Icons.favorite),
-    ];
     final children = <Widget>[];
-    for (var i = 0; i < actions.length; i++) {
-      final item = actions[i];
+    for (var i = 0; i < items.length; i++) {
+      final item = items[i];
       children.add(
         Expanded(
           child: Container(
@@ -315,19 +406,12 @@ class _TodayActionsRow extends StatelessWidget {
           ),
         ),
       );
-      if (i < actions.length - 1) {
+      if (i < items.length - 1) {
         children.add(const SizedBox(width: 8));
       }
     }
     return Row(children: children);
   }
-}
-
-class _ActionItem {
-  const _ActionItem(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
 }
 
 class _SectionTitle extends StatelessWidget {
@@ -347,19 +431,11 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _UpcomingDay {
-  const _UpcomingDay(this.date, this.saint, this.label);
-
-  final String date;
-  final String saint;
-  final String label;
-}
-
 class _UpcomingList extends StatelessWidget {
   const _UpcomingList({required this.items, required this.onTap});
 
-  final List<_UpcomingDay> items;
-  final void Function(_UpcomingDay item) onTap;
+  final List<UpcomingDayView> items;
+  final void Function(UpcomingDayView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -432,7 +508,7 @@ class _UpcomingList extends StatelessWidget {
 class _MonthSelector extends StatelessWidget {
   const _MonthSelector({required this.items});
 
-  final List<String> items;
+  final List<MonthChipView> items;
 
   @override
   Widget build(BuildContext context) {
@@ -441,28 +517,64 @@ class _MonthSelector extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final label = items[index];
-          final isSelected = index == 0;
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFE7E0D6) : Colors.white,
+              color:
+                  label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Text(
-              label,
+              label.label,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.black87 : Colors.black54,
+                color: label.isSelected ? Colors.black87 : Colors.black54,
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _SkeletonLine extends StatelessWidget {
+  const _SkeletonLine({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE6E6E6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+}
+
+class _SkeletonBox extends StatelessWidget {
+  const _SkeletonBox({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDEDED),
+        borderRadius: BorderRadius.circular(16),
       ),
     );
   }

@@ -1,114 +1,192 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class ExploreScreen extends StatelessWidget {
+import '../../../core/actions/user_actions.dart';
+import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/repo_providers.dart';
+import '../../../core/providers/screen_state_providers.dart';
+import '../../../app/route_paths.dart';
+
+class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const studyItems = [
-      _ExploreCardItem(
-        title: 'Mistere Beta Kristiyan',
-        subtitle: 'Foundations of the faith',
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenState = ref.watch(exploreScreenStateProvider);
+    final body = screenState.when(
+      data: (state) => _ExploreContent(adapter: ExploreAdapter(state)),
+      loading: () => const _ExploreLoading(),
+      error: (error, _) => _InlineErrorCard(
+        message: 'Unable to load explore.',
+        onRetry: () => ref.refresh(exploreScreenStateProvider),
       ),
-      _ExploreCardItem(
-        title: 'Life in the Church',
-        subtitle: 'Worship and community',
-      ),
-      _ExploreCardItem(
-        title: 'Sacraments of the Church',
-        subtitle: 'Mysteries and grace',
-      ),
-    ];
-
-    const guidedPaths = [
-      _SmallTile('New to Orthodoxy'),
-      _SmallTile('Understanding the Liturgy'),
-      _SmallTile('Living the Fast'),
-    ];
-
-    const communityItems = [
-      _SmallTile('Ask a Question'),
-      _SmallTile('Read Reflections'),
-      _SmallTile('Community Prayers'),
-    ];
-
-    const categories = [
-      'All',
-      'Life in Christ',
-      'Prayer & Worship',
-      'Saints',
-      'Fasting',
-      'Theology',
-    ];
-
-    const contentItems = [
-      _ExploreContentItem(
-        title: 'Learning the Hours',
-        category: 'Prayer & Worship',
-      ),
-      _ExploreContentItem(
-        title: 'Saints of the Desert',
-        category: 'Saints',
-      ),
-      _ExploreContentItem(
-        title: 'The Gospel Readings',
-        category: 'Life in Christ',
-      ),
-    ];
-
-    const savedItems = [
-      _SavedItem('Faith & Tradition'),
-      _SavedItem('Understanding the Liturgy'),
-    ];
-
+    );
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const _TopBar(),
-            const SizedBox(height: 18),
-            const _SectionTitle(
-              title: 'Sunbit Timhert Bet',
-              subtitle: 'Structured Orthodox learning from trusted books and teachings.',
-            ),
-            const SizedBox(height: 12),
-            _HorizontalCards(items: studyItems),
-            const SizedBox(height: 18),
-            const _SectionTitle(
-              title: 'Guided Paths',
-              subtitle: 'Step-by-step learning journeys.',
-            ),
-            const SizedBox(height: 10),
-            _SmallTileRow(items: guidedPaths),
-            const SizedBox(height: 18),
-            const _SectionTitle(
-              title: 'Community',
-              subtitle: 'Quiet Orthodox community space.',
-            ),
-            const SizedBox(height: 10),
-            _SmallTileRow(items: communityItems),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'Explore Categories'),
-            const SizedBox(height: 10),
-            _CategoryChips(items: categories),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'Explore Content'),
-            const SizedBox(height: 10),
-            _ContentRow(items: contentItems),
-            const SizedBox(height: 18),
-            const _SectionTitle(title: 'Saved Content'),
-            const SizedBox(height: 10),
-            _SavedContainer(child: _SavedList(items: savedItems)),
-          ],
-        ),
+        child: body,
       ),
     );
   }
 }
 
+class _ExploreContent extends StatelessWidget {
+  const _ExploreContent({required this.adapter});
+
+  final ExploreAdapter adapter;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _TopBar(
+          title: adapter.topBarTitle,
+          subtitle: adapter.topBarSubtitle,
+          icons: adapter.topBarIcons,
+        ),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.studyHeader),
+        const SizedBox(height: 12),
+        _HorizontalCards(
+          items: adapter.studyItems,
+          onTap: (item) => context.go(
+            RoutePaths.exploreItemPath(item.routeId),
+          ),
+        ),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.guidedHeader),
+        const SizedBox(height: 10),
+        _SmallTileRow(
+          items: adapter.guidedPaths,
+          onTap: (item) => context.go(
+            RoutePaths.explorePathPath(item.routeId),
+          ),
+        ),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.communityHeader),
+        const SizedBox(height: 10),
+        _SmallTileRow(
+          items: adapter.communityItems,
+          onTap: (item) => context.go(
+            RoutePaths.exploreCommunityPath(item.routeId),
+          ),
+        ),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.categoriesHeader),
+        const SizedBox(height: 10),
+        _CategoryChips(items: adapter.categories),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.contentHeader),
+        const SizedBox(height: 10),
+        _ContentGrid(items: adapter.contentItems),
+        const SizedBox(height: 18),
+        _SectionTitle(view: adapter.savedHeader),
+        const SizedBox(height: 10),
+        _SavedContainer(
+          child: adapter.savedItems.isEmpty
+              ? const _EmptyState(label: 'No saved items yet')
+              : _SavedList(
+                  items: adapter.savedItems,
+                  icon: adapter.savedIcon,
+                  onTap: (item) => context.go(
+                    RoutePaths.exploreItemPath(item.id),
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ExploreLoading extends StatelessWidget {
+  const _ExploreLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: const [
+        _SkeletonLine(width: 140, height: 16),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 200, height: 12),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 170),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 10),
+        _SkeletonBox(height: 80),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 10),
+        _SkeletonBox(height: 80),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 10),
+        _SkeletonBox(height: 36),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 10),
+        _SkeletonBox(height: 190),
+        SizedBox(height: 18),
+        _SkeletonLine(width: 140, height: 12),
+        SizedBox(height: 10),
+        _SkeletonBox(height: 100),
+      ],
+    );
+  }
+}
+
+class _InlineErrorCard extends StatelessWidget {
+  const _InlineErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDECEC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFF2B8B5)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+              TextButton(
+                onPressed: onRetry,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({
+    required this.title,
+    required this.subtitle,
+    required this.icons,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<IconData> icons;
 
   @override
   Widget build(BuildContext context) {
@@ -117,19 +195,19 @@ class _TopBar extends StatelessWidget {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'EXPLORE',
-              style: TextStyle(
+              title,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
               ),
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(
-              'Learn, study, and grow in the Orthodox faith',
-              style: TextStyle(
+              subtitle,
+              style: const TextStyle(
                 fontSize: 12,
                 color: Colors.black54,
               ),
@@ -137,8 +215,8 @@ class _TopBar extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        _IconButton(icon: Icons.calendar_today),
-        _IconButton(icon: Icons.person),
+        if (icons.isNotEmpty) _IconButton(icon: icons.first),
+        if (icons.length > 1) _IconButton(icon: icons[1]),
       ],
     );
   }
@@ -167,10 +245,9 @@ class _IconButton extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, this.subtitle});
+  const _SectionTitle({required this.view});
 
-  final String title;
-  final String? subtitle;
+  final SectionHeaderView view;
 
   @override
   Widget build(BuildContext context) {
@@ -178,16 +255,16 @@ class _SectionTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          view.title,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
         ),
-        if (subtitle != null) ...[
+        if (view.subtitle != null) ...[
           const SizedBox(height: 4),
           Text(
-            subtitle!,
+            view.subtitle!,
             style: const TextStyle(
               fontSize: 12,
               color: Colors.black54,
@@ -199,20 +276,11 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _ExploreCardItem {
-  const _ExploreCardItem({
-    required this.title,
-    required this.subtitle,
-  });
-
-  final String title;
-  final String subtitle;
-}
-
 class _HorizontalCards extends StatelessWidget {
-  const _HorizontalCards({required this.items});
+  const _HorizontalCards({required this.items, this.onTap});
 
-  final List<_ExploreCardItem> items;
+  final List<ExploreCardView> items;
+  final void Function(ExploreCardView item)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -221,10 +289,13 @@ class _HorizontalCards extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
-          return _ExploreCard(item: item);
+          return GestureDetector(
+            onTap: onTap == null ? null : () => onTap!(item),
+            child: _ExploreCard(item: item),
+          );
         },
       ),
     );
@@ -234,7 +305,7 @@ class _HorizontalCards extends StatelessWidget {
 class _ExploreCard extends StatelessWidget {
   const _ExploreCard({required this.item});
 
-  final _ExploreCardItem item;
+  final ExploreCardView item;
 
   @override
   Widget build(BuildContext context) {
@@ -278,16 +349,11 @@ class _ExploreCard extends StatelessWidget {
   }
 }
 
-class _SmallTile {
-  const _SmallTile(this.title);
-
-  final String title;
-}
-
 class _SmallTileRow extends StatelessWidget {
-  const _SmallTileRow({required this.items});
+  const _SmallTileRow({required this.items, this.onTap});
 
-  final List<_SmallTile> items;
+  final List<SmallTileView> items;
+  final void Function(SmallTileView item)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -303,11 +369,14 @@ class _SmallTileRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: const Color(0xFFE5E5E5)),
               ),
-              child: Text(
-                item.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+              child: InkWell(
+                onTap: onTap == null ? null : () => onTap!(item),
+                child: Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -320,7 +389,7 @@ class _SmallTileRow extends StatelessWidget {
 class _CategoryChips extends StatelessWidget {
   const _CategoryChips({required this.items});
 
-  final List<String> items;
+  final List<CategoryChipView> items;
 
   @override
   Widget build(BuildContext context) {
@@ -329,24 +398,23 @@ class _CategoryChips extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final label = items[index];
-          final isSelected = index == 0;
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFE7E0D6) : Colors.white,
+              color: label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
             child: Text(
-              label,
+              label.label,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.black87 : Colors.black54,
+                color: label.isSelected ? Colors.black87 : Colors.black54,
               ),
             ),
           );
@@ -356,34 +424,27 @@ class _CategoryChips extends StatelessWidget {
   }
 }
 
-class _ExploreContentItem {
-  const _ExploreContentItem({
-    required this.title,
-    required this.category,
-  });
+class _ContentGrid extends StatelessWidget {
+  const _ContentGrid({required this.items});
 
-  final String title;
-  final String category;
-}
-
-class _ContentRow extends StatelessWidget {
-  const _ContentRow({required this.items});
-
-  final List<_ExploreContentItem> items;
+  final List<ExploreContentView> items;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 190,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return _ContentCard(item: item);
-        },
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.85,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _ContentCard(item: item);
+      },
     );
   }
 }
@@ -391,60 +452,91 @@ class _ContentRow extends StatelessWidget {
 class _ContentCard extends StatelessWidget {
   const _ContentCard({required this.item});
 
-  final _ExploreContentItem item;
+  final ExploreContentView item;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 80,
+    return Consumer(
+      builder: (context, ref, _) {
+        return GestureDetector(
+          onTap: () => context.go(
+            RoutePaths.exploreItemPath(item.routeId),
+          ),
+          child: Container(
+            width: 200,
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDEDED),
-              borderRadius: BorderRadius.circular(12),
+              color: const Color(0xFFF7F7F7),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5E5E5)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEDEDED),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.category,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.bookmark_border, size: 18),
+                    onPressed: () async {
+                      await toggleSave(
+                        db: ref.read(dbProvider),
+                        id: item.routeId,
+                        title: item.title,
+                        kind: 'explore',
+                        createdAtIso: DateTime.now().toIso8601String(),
+                      );
+                      ref.invalidate(exploreScreenStateProvider);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Saved')),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            item.title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            item.category,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.black54,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-class _SavedItem {
-  const _SavedItem(this.title);
-
-  final String title;
-}
-
 class _SavedList extends StatelessWidget {
-  const _SavedList({required this.items});
+  const _SavedList({
+    required this.items,
+    required this.icon,
+    required this.onTap,
+  });
 
-  final List<_SavedItem> items;
+  final List<SavedItemView> items;
+  final IconData icon;
+  final void Function(SavedItemView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -454,18 +546,21 @@ class _SavedList extends StatelessWidget {
             (item) => Container(
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                children: [
-                  const Icon(Icons.bookmark, size: 18, color: Colors.black54),
-                  const SizedBox(width: 10),
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+              child: InkWell(
+                onTap: () => onTap(item),
+                child: Row(
+                  children: [
+                    Icon(icon, size: 18, color: Colors.black54),
+                    const SizedBox(width: 10),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )
@@ -489,6 +584,59 @@ class _SavedContainer extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: child,
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 12, color: Colors.black54),
+      ),
+    );
+  }
+}
+
+class _SkeletonLine extends StatelessWidget {
+  const _SkeletonLine({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE6E6E6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+}
+
+class _SkeletonBox extends StatelessWidget {
+  const _SkeletonBox({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDEDED),
+        borderRadius: BorderRadius.circular(16),
+      ),
     );
   }
 }
