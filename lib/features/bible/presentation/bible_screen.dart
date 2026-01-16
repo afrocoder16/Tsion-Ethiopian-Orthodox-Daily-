@@ -316,9 +316,6 @@ class _BookItem {
 class _HorizontalShelf extends StatelessWidget {
   const _HorizontalShelf({
     required this.items,
-    this.itemWidth = 110,
-    this.itemHeight = 150,
-    this.showSubtitle = false,
     this.onTap,
   });
 
