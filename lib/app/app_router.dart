@@ -11,6 +11,7 @@ import '../features/bible/presentation/bible_chapter_screen.dart';
 import '../features/bible/presentation/passage_screen.dart';
 import '../features/prayers/presentation/prayers_screen.dart';
 import '../features/prayers/presentation/prayer_detail_screen.dart';
+import '../features/prayers/presentation/mezmur_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/calendar/calendar_day_detail_screen.dart';
 import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
@@ -37,6 +38,10 @@ GoRouter buildRouter() {
             path: RoutePaths.prayers,
             builder: (context, state) => const PrayersScreen(),
             routes: [
+              GoRoute(
+                path: 'mezmur',
+                builder: (context, state) => const MezmurScreen(),
+              ),
               GoRoute(
                 path: 'detail/:id',
                 builder: (context, state) {

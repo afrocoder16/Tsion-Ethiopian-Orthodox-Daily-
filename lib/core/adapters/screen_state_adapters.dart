@@ -101,10 +101,12 @@ class AudioCardView {
 
 class TodayCarouselView {
   const TodayCarouselView({
+    required this.id,
     required this.title,
     required this.subtitle,
   });
 
+  final String id;
   final String title;
   final String subtitle;
 }
@@ -158,6 +160,7 @@ class TodayAdapter {
       state.orthodoxDailyItems
           .map(
             (item) => TodayCarouselView(
+              id: item.id,
               title: _safeText(item.title, '-'),
               subtitle: _safeText(item.subtitle, ''),
             ),
@@ -170,6 +173,7 @@ class TodayAdapter {
   List<TodayCarouselView> get studyWorshipItems => state.studyWorshipItems
       .map(
         (item) => TodayCarouselView(
+          id: item.id,
           title: _safeText(item.title, '-'),
           subtitle: _safeText(item.subtitle, ''),
         ),
@@ -319,11 +323,13 @@ class BooksAdapter {
 
 class DevotionalItemView {
   const DevotionalItemView({
+    required this.id,
     required this.title,
     required this.subtitle,
     required this.icon,
   });
 
+  final String id;
   final String title;
   final String subtitle;
   final IconData icon;
@@ -371,6 +377,7 @@ class PrayersAdapter {
   List<DevotionalItemView> get mezmurItems => state.mezmurItems
       .map(
         (item) => DevotionalItemView(
+          id: item.id,
           title: _safeText(item.title, '-'),
           subtitle: _safeText(item.subtitle, ''),
           icon: iconDataFor(item.iconKey),
@@ -384,6 +391,7 @@ class PrayersAdapter {
   List<DevotionalItemView> get devotionalItems => state.devotionalItems
       .map(
         (item) => DevotionalItemView(
+          id: item.id,
           title: _safeText(item.title, '-'),
           subtitle: _safeText(item.subtitle, ''),
           icon: iconDataFor(item.iconKey),

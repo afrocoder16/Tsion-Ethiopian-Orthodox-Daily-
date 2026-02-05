@@ -6,12 +6,13 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tsion_orthodox_daily_app/app/app.dart';
 
 void main() {
   testWidgets('App builds', (WidgetTester tester) async {
-    await tester.pumpWidget(const TsionApp());
+    await tester.pumpWidget(const ProviderScope(child: TsionApp()));
     expect(find.byType(TsionApp), findsOneWidget);
   });
 }

@@ -4,6 +4,7 @@ class RoutePaths {
   static const today = '/today';
   static const bible = '/bible';
   static const prayers = '/prayers';
+  static const prayersMezmur = '/prayers/mezmur';
   static const calendar = '/calendar';
   static const explore = '/explore';
   static const streak = '/streak';
@@ -41,6 +42,8 @@ class RoutePaths {
       '/books/bible/$book/$chapter';
 
   static String prayerDetailPath(String id) => '/prayers/detail/$id';
+
+  static String mezmurPath() => prayersMezmur;
 
   static String calendarDayLinkPath(String dateKey, String type) =>
       '/calendar/day/$dateKey/link/$type';

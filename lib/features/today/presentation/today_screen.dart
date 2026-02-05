@@ -86,6 +86,8 @@ class _TodayContent extends StatelessWidget {
                 icon: action.icon,
                 onPressed: action.iconKey == iconKeyStreak
                     ? () => context.push(RoutePaths.streak)
+                    : action.iconKey == iconKeyAudio
+                        ? () => context.go(RoutePaths.mezmurPath())
                     : null,
               ),
             ),
@@ -100,14 +102,30 @@ class _TodayContent extends StatelessWidget {
         const SizedBox(height: 24),
         _SectionHeader(view: adapter.orthodoxDailyHeader),
         const SizedBox(height: 12),
-        _Carousel(items: adapter.orthodoxDailyItems),
+        _Carousel(
+          items: adapter.orthodoxDailyItems,
+          onTap: (item) => _handleCarouselTap(context, item),
+        ),
         const SizedBox(height: 24),
         _SectionHeader(view: adapter.studyWorshipHeader),
         const SizedBox(height: 12),
-        _Carousel(items: adapter.studyWorshipItems),
+        _Carousel(
+          items: adapter.studyWorshipItems,
+          onTap: (item) => _handleCarouselTap(context, item),
+        ),
       ],
     );
   }
+}
+
+void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
+  if (item.id == 'today-carousel-mezmur') {
+    context.go(RoutePaths.mezmurPath());
+    return;
+  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('${item.title} is not wired yet')),
+  );
 }
 
 class _TodayLoading extends StatelessWidget {
@@ -436,9 +454,10 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _Carousel extends StatelessWidget {
-  const _Carousel({required this.items});
+  const _Carousel({required this.items, required this.onTap});
 
   final List<TodayCarouselView> items;
+  final void Function(TodayCarouselView item) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -450,7 +469,7 @@ class _Carousel extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
-          return _CarouselCard(item: item);
+          return _CarouselCard(item: item, onTap: () => onTap(item));
         },
       ),
     );
@@ -458,47 +477,52 @@ class _Carousel extends StatelessWidget {
 }
 
 class _CarouselCard extends StatelessWidget {
-  const _CarouselCard({required this.item});
+  const _CarouselCard({required this.item, required this.onTap});
 
   final TodayCarouselView item;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE4E4E4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 70,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEDEDED),
-              borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F7F7),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE4E4E4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEDEDED),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            item.title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: 12),
+            Text(
+              item.title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            item.subtitle,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
+            const SizedBox(height: 4),
+            Text(
+              item.subtitle,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

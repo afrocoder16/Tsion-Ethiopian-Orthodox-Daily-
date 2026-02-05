@@ -59,7 +59,14 @@ class _PrayersContent extends ConsumerWidget {
         const SizedBox(height: 16),
         _SectionTitle(title: adapter.mezmurHeader.title),
         const SizedBox(height: 12),
-        _DevotionalGrid(items: adapter.mezmurItems),
+        _DevotionalGrid(
+          items: adapter.mezmurItems,
+          onTap: (item) {
+            if (item.id == 'devotional-mezmur') {
+              context.go(RoutePaths.mezmurPath());
+            }
+          },
+        ),
         const SizedBox(height: 18),
         _SectionTitle(title: adapter.devotionalHeader.title),
         const SizedBox(height: 12),
@@ -187,7 +194,10 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        _IconButton(icon: icons.isNotEmpty ? icons.first : Icons.headphones),
+        _IconButton(
+          icon: icons.isNotEmpty ? icons.first : Icons.headphones,
+          onTap: () => context.go(RoutePaths.mezmurPath()),
+        ),
         const SizedBox(width: 6),
         GestureDetector(
           onTap: () => context.push(RoutePaths.streak),
@@ -225,22 +235,26 @@ class _StreakIcon extends StatelessWidget {
 }
 
 class _IconButton extends StatelessWidget {
-  const _IconButton({required this.icon});
+  const _IconButton({required this.icon, this.onTap});
 
   final IconData icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 6),
-      child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F3F3),
-          borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F3F3),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 16, color: Colors.black54),
         ),
-        child: Icon(icon, size: 16, color: Colors.black54),
       ),
     );
   }
@@ -351,50 +365,55 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _DevotionalGrid extends StatelessWidget {
-  const _DevotionalGrid({required this.items});
+  const _DevotionalGrid({required this.items, this.onTap});
 
   final List<DevotionalItemView> items;
+  final void Function(DevotionalItemView item)? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: items
           .map(
-            (item) => Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF7F7F7),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFE5E5E5)),
-              ),
-              child: Row(
-                children: [
-                  Icon(item.icon, size: 18, color: Colors.black54),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+            (item) => InkWell(
+              onTap: onTap == null ? null : () => onTap!(item),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF7F7F7),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE5E5E5)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(item.icon, size: 18, color: Colors.black54),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          item.subtitle,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.black54,
+                          const SizedBox(height: 4),
+                          Text(
+                            item.subtitle,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.black54,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )
