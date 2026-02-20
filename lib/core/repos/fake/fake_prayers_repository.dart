@@ -12,9 +12,9 @@ class FakePrayersRepository implements PrayersRepository {
         primaryPrayerCard: const PrimaryPrayerCard(
           id: 'prayer-midday',
           label: 'Prayer for This Moment',
-          title: 'Midday Prayer',
+          title: 'Daily Prayer',
           subtitle: 'The prayer appointed for this hour',
-          actionLabel: 'Begin Prayer',
+          actionLabel: 'Midday Prayer',
         ),
         mezmurHeader: const SectionHeader(title: 'MEZMUR AND HYMEN'),
         mezmurItems: const [

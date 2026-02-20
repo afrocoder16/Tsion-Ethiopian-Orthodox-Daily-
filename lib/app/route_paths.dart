@@ -4,6 +4,7 @@ class RoutePaths {
   static const today = '/today';
   static const bible = '/bible';
   static const prayers = '/prayers';
+  static const prayersDaily = '/prayers/daily';
   static const prayersMezmur = '/prayers/mezmur';
   static const calendar = '/calendar';
   static const explore = '/explore';
@@ -42,6 +43,8 @@ class RoutePaths {
       '/books/bible/$book/$chapter';
 
   static String prayerDetailPath(String id) => '/prayers/detail/$id';
+
+  static String dailyPrayerPath() => prayersDaily;
 
   static String mezmurPath() => prayersMezmur;
 

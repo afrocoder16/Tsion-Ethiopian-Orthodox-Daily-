@@ -17,10 +17,13 @@ class PrayerDetailState {
 }
 
 const Map<String, int> _prayerSlotIds = {
-  'prayer-midday': 1,
-  'trisagion-prayers': 2,
-  'psalm-50': 3,
-  'prayer-of-st-ephrem': 4,
+  'prayer-morning': 1,
+  'prayer-midday': 2,
+  'prayer-afternoon': 3,
+  'prayer-night': 4,
+  'trisagion-prayers': 5,
+  'psalm-50': 6,
+  'prayer-of-st-ephrem': 7,
 };
 
 int slotIdForPrayer(String id) => _prayerSlotIds[id] ?? 0;
