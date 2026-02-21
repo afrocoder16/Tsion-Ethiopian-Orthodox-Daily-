@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,25 +39,23 @@ class _CalendarContent extends StatelessWidget {
           subtitle: adapter.topBarSubtitle,
           icons: adapter.topBarIcons,
         ),
-        const SizedBox(height: 16),
-        _MonthSelector(items: adapter.months),
-        const SizedBox(height: 16),
-        _TodayStatusCard(view: adapter.status),
-        const SizedBox(height: 12),
-        _SignalsRow(items: adapter.signalChips),
-        const SizedBox(height: 16),
-        _TodayObservanceCard(
-          title: adapter.todayObservanceTitle,
-          fastingToday: adapter.fastingToday,
-          fastingType: adapter.fastingType,
-          reasons: adapter.fastReasons,
-          quickRules: adapter.quickRules,
-          onTap: () => context.go('${RoutePaths.calendar}/day/${_todayYmd()}'),
+        const SizedBox(height: 14),
+        _MonthCalendarScroller(
+          months: adapter.monthGrids,
+          years: adapter.availableYears,
+          onDayTap: (dateKey) =>
+              context.go('${RoutePaths.calendar}/day/$dateKey'),
         ),
         const SizedBox(height: 12),
-        _DailyReadingsCard(view: adapter.dailyReadings),
+        _SaintPreviewCard(
+          view: adapter.saintPreview,
+          onReadSaint: () =>
+              context.go('${RoutePaths.calendar}/day/${_todayYmd()}'),
+        ),
         const SizedBox(height: 12),
-        _SaintPreviewCard(view: adapter.saintPreview),
+        _DayPlannerCard(view: adapter.dayPlanner),
+        const SizedBox(height: 12),
+        _SpiritualTrackerCard(view: adapter.spiritualTracker),
         const SizedBox(height: 20),
         _SectionTitle(title: adapter.upcomingHeader.title),
         const SizedBox(height: 12),
@@ -68,6 +65,297 @@ class _CalendarContent extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _CalendarMonthGrid extends StatelessWidget {
+  const _CalendarMonthGrid({
+    required this.view,
+    required this.years,
+    required this.onPickYear,
+    required this.onGoToToday,
+    required this.onDayTap,
+  });
+
+  final CalendarMonthGridView view;
+  final List<int> years;
+  final ValueChanged<int> onPickYear;
+  final VoidCallback onGoToToday;
+  final ValueChanged<String> onDayTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFCBCBCB), width: 2),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  view.ethiopianMonthLabel,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                view.gregorianRangeLabel,
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () => _showYearPicker(
+                  context: context,
+                  years: years,
+                  selectedYear: view.gregorianYear,
+                  onPickYear: onPickYear,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.calendar_view_month, size: 18),
+                ),
+              ),
+              const SizedBox(width: 6),
+              TextButton(
+                onPressed: onGoToToday,
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(44, 28),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                child: const Text('Today'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: view.weekdayLabels
+                  .map(
+                    (d) => Expanded(
+                      child: Center(
+                        child: Text(
+                          d,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          const SizedBox(height: 6),
+          ...view.weeks.map(
+            (week) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              child: Row(
+                children: week
+                    .map(
+                      (cell) => Expanded(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(10),
+                          onTap: () => onDayTap(cell.dateKey),
+                          child: Container(
+                            height: 68,
+                            margin: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: cell.isToday
+                                        ? Border.all(
+                                            color: Colors.green,
+                                            width: 2,
+                                          )
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    '${cell.gregorianDay}',
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w700,
+                                      color: cell.isCurrentMonth
+                                          ? Colors.black87
+                                          : Colors.black38,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${cell.ethiopianDay}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: cell.isCurrentMonth
+                                        ? Colors.black54
+                                        : Colors.black38,
+                                  ),
+                                ),
+                                if (cell.hasDot)
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 2),
+                                    child: Icon(
+                                      Icons.circle,
+                                      size: 6,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
+
+class _MonthCalendarScroller extends StatefulWidget {
+  const _MonthCalendarScroller({
+    required this.months,
+    required this.years,
+    required this.onDayTap,
+  });
+
+  final List<CalendarMonthGridView> months;
+  final List<int> years;
+  final ValueChanged<String> onDayTap;
+
+  @override
+  State<_MonthCalendarScroller> createState() => _MonthCalendarScrollerState();
+}
+
+class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
+  late final PageController _pageController;
+  late final int _todayIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    final index = widget.months.indexWhere(
+      (item) =>
+          item.gregorianYear == now.year && item.gregorianMonth == now.month,
+    );
+    _todayIndex = index >= 0 ? index : (widget.months.length ~/ 2);
+    final initialIndex = _todayIndex;
+    _pageController = PageController(initialPage: initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _jumpToYear(int year) {
+    final targetIndex = widget.months.indexWhere(
+      (item) => item.gregorianYear == year,
+    );
+    if (targetIndex == -1) {
+      return;
+    }
+    _pageController.animateToPage(
+      targetIndex,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _jumpToToday() {
+    _pageController.animateToPage(
+      _todayIndex,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 560,
+      child: PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: widget.months.length,
+        itemBuilder: (context, index) {
+          final month = widget.months[index];
+          return _CalendarMonthGrid(
+            view: month,
+            years: widget.years,
+            onPickYear: _jumpToYear,
+            onGoToToday: _jumpToToday,
+            onDayTap: widget.onDayTap,
+          );
+        },
+      ),
+    );
+  }
+}
+
+Future<void> _showYearPicker({
+  required BuildContext context,
+  required List<int> years,
+  required int selectedYear,
+  required ValueChanged<int> onPickYear,
+}) async {
+  final selected = await showModalBottomSheet<int>(
+    context: context,
+    builder: (context) {
+      return SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: years
+              .map(
+                (year) => ListTile(
+                  title: Text('$year'),
+                  trailing: year == selectedYear
+                      ? const Icon(Icons.check, size: 18)
+                      : null,
+                  onTap: () => Navigator.of(context).pop(year),
+                ),
+              )
+              .toList(),
+        ),
+      );
+    },
+  );
+  if (selected != null) {
+    onPickYear(selected);
   }
 }
 
@@ -143,287 +431,11 @@ class _IconButton extends StatelessWidget {
   }
 }
 
-class _TodayStatusCard extends StatelessWidget {
-  const _TodayStatusCard({required this.view});
-
-  final CalendarStatusView view;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F3EE),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            view.weekday,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  view.ethiopianDate,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.copy, size: 16),
-                onPressed: () async {
-                  await Clipboard.setData(
-                    ClipboardData(text: view.ethiopianDate),
-                  );
-                },
-                splashRadius: 16,
-                constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
-              ),
-            ],
-          ),
-          if (view.ethiopianDateAmharic != null) ...[
-            Text(
-              view.ethiopianDateAmharic!,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-            const SizedBox(height: 4),
-          ],
-          Text(
-            view.gregorianDate,
-            style: const TextStyle(fontSize: 13, color: Colors.black54),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SignalsRow extends StatelessWidget {
-  const _SignalsRow({required this.items});
-
-  final List<SignalChipView> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 54,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${item.title}: ${item.value}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black54,
-                  ),
-                ),
-                if (item.subtitle != null)
-                  Text(
-                    item.subtitle!,
-                    style: const TextStyle(fontSize: 10, color: Colors.black45),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _TodayObservanceCard extends StatelessWidget {
-  const _TodayObservanceCard({
-    required this.title,
-    required this.fastingToday,
-    required this.fastingType,
-    required this.reasons,
-    required this.quickRules,
-    this.onTap,
-  });
-
-  final String title;
-  final bool fastingToday;
-  final String fastingType;
-  final List<String> reasons;
-  final List<String> quickRules;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final card = Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 10),
-          _StatusLine(
-            label: 'Fasting today',
-            value: fastingToday ? 'Yes' : 'No',
-          ),
-          _StatusLine(label: 'Type', value: fastingType),
-          const SizedBox(height: 8),
-          ...reasons.map(
-            (reason) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text('- $reason', style: const TextStyle(fontSize: 12)),
-            ),
-          ),
-          if (quickRules.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            ...quickRules.map(
-              (rule) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  rule,
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-    if (onTap == null) {
-      return card;
-    }
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: card,
-    );
-  }
-}
-
-class _StatusLine extends StatelessWidget {
-  const _StatusLine({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Text(
-            '$label:',
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DailyReadingsCard extends StatelessWidget {
-  const _DailyReadingsCard({required this.view});
-
-  final DailyReadingsView view;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Daily Readings',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 10),
-          if (view.isLoaded) ...[
-            _ReadingLine(label: 'Morning', refs: view.morning),
-            _ReadingLine(label: 'Liturgy', refs: view.liturgy),
-            _ReadingLine(label: 'Evening', refs: view.evening),
-          ] else
-            Text(
-              view.fallbackText,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              FilledButton(onPressed: () {}, child: Text(view.ctaLabel)),
-              if (view.downloadLabel != null)
-                OutlinedButton(
-                  onPressed: () {},
-                  child: Text(view.downloadLabel!),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReadingLine extends StatelessWidget {
-  const _ReadingLine({required this.label, required this.refs});
-
-  final String label;
-  final List<String> refs;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = refs.isEmpty ? '-' : refs.join(', ');
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text('$label: $text', style: const TextStyle(fontSize: 12)),
-    );
-  }
-}
-
 class _SaintPreviewCard extends StatelessWidget {
-  const _SaintPreviewCard({required this.view});
+  const _SaintPreviewCard({required this.view, required this.onReadSaint});
 
   final SaintPreviewView view;
+  final VoidCallback onReadSaint;
 
   @override
   Widget build(BuildContext context) {
@@ -453,8 +465,125 @@ class _SaintPreviewCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           FilledButton(
-            onPressed: view.isAvailable ? () {} : null,
+            onPressed: view.isAvailable ? onReadSaint : null,
             child: Text(view.ctaLabel),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DayPlannerCard extends StatefulWidget {
+  const _DayPlannerCard({required this.view});
+
+  final PersonalDayPlannerView view;
+
+  @override
+  State<_DayPlannerCard> createState() => _DayPlannerCardState();
+}
+
+class _DayPlannerCardState extends State<_DayPlannerCard> {
+  late final Map<String, bool> _checked = {
+    for (final item in widget.view.tasks) item.id: item.isDone,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Personal Day Planner',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          ...widget.view.tasks.map(
+            (task) => CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _checked[task.id] ?? false,
+              dense: true,
+              title: Text(task.label, style: const TextStyle(fontSize: 13)),
+              onChanged: (value) {
+                setState(() {
+                  _checked[task.id] = value ?? false;
+                });
+              },
+            ),
+          ),
+          if (widget.view.event != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Event: ${widget.view.event!}',
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+          if (widget.view.notes != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Notes: ${widget.view.notes!}',
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SpiritualTrackerCard extends StatefulWidget {
+  const _SpiritualTrackerCard({required this.view});
+
+  final SpiritualTrackerView view;
+
+  @override
+  State<_SpiritualTrackerCard> createState() => _SpiritualTrackerCardState();
+}
+
+class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
+  late final Map<String, bool> _checked = {
+    for (final item in widget.view.habits) item.id: item.isDone,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Spiritual Tracker',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          ...widget.view.habits.map(
+            (habit) => CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _checked[habit.id] ?? false,
+              dense: true,
+              title: Text(
+                habit.isOptional ? '${habit.label} (optional)' : habit.label,
+                style: const TextStyle(fontSize: 13),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _checked[habit.id] = value ?? false;
+                });
+              },
+            ),
           ),
         ],
       ),
@@ -585,44 +714,6 @@ class _UpcomingList extends StatelessWidget {
             ),
           )
           .toList(),
-    );
-  }
-}
-
-class _MonthSelector extends StatelessWidget {
-  const _MonthSelector({required this.items});
-
-  final List<MonthChipView> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final label = items[index];
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-            ),
-            child: Text(
-              label.label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: label.isSelected ? Colors.black87 : Colors.black54,
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

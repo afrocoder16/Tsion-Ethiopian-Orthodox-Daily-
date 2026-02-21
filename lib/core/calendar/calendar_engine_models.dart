@@ -179,10 +179,10 @@ class SeasonProgressData {
   final int daysRemaining;
 
   Map<String, dynamic> toJson() => {
-        'dayIndex': dayIndex,
-        'totalDays': totalDays,
-        'daysRemaining': daysRemaining,
-      };
+    'dayIndex': dayIndex,
+    'totalDays': totalDays,
+    'daysRemaining': daysRemaining,
+  };
 
   static SeasonProgressData fromJson(Map<String, dynamic> json) =>
       SeasonProgressData(
@@ -206,11 +206,11 @@ class DailyReadingsData {
   final bool isLoaded;
 
   Map<String, dynamic> toJson() => {
-        'morning': morning,
-        'liturgy': liturgy,
-        'evening': evening,
-        'isLoaded': isLoaded,
-      };
+    'morning': morning,
+    'liturgy': liturgy,
+    'evening': evening,
+    'isLoaded': isLoaded,
+  };
 
   static DailyReadingsData fromJson(Map<String, dynamic> json) =>
       DailyReadingsData(
@@ -222,20 +222,18 @@ class DailyReadingsData {
 }
 
 class SaintPreviewData {
-  const SaintPreviewData({
-    required this.nameKey,
-    required this.shortSnippet,
-  });
+  const SaintPreviewData({required this.nameKey, required this.shortSnippet});
 
   final String nameKey;
   final String shortSnippet;
 
   Map<String, dynamic> toJson() => {
-        'nameKey': nameKey,
-        'shortSnippet': shortSnippet,
-      };
+    'nameKey': nameKey,
+    'shortSnippet': shortSnippet,
+  };
 
-  static SaintPreviewData fromJson(Map<String, dynamic> json) => SaintPreviewData(
+  static SaintPreviewData fromJson(Map<String, dynamic> json) =>
+      SaintPreviewData(
         nameKey: json['nameKey'] as String,
         shortSnippet: json['shortSnippet'] as String,
       );
@@ -295,4 +293,89 @@ class CalendarYearAnchors {
   final EthDate ascension;
   final EthDate pentecost;
   final EthDate apostlesFastStart;
+}
+
+class BahireHasabStats {
+  const BahireHasabStats({
+    required this.evangelist,
+    required this.ameteAlem,
+    required this.abekte,
+    required this.metkih,
+    required this.wenber,
+    required this.meskeremOneWeekday,
+  });
+
+  final String evangelist;
+  final int ameteAlem;
+  final int abekte;
+  final int metkih;
+  final int wenber;
+  final String meskeremOneWeekday;
+
+  Map<String, dynamic> toJson() => {
+    'evangelist': evangelist,
+    'ameteAlem': ameteAlem,
+    'abekte': abekte,
+    'metkih': metkih,
+    'wenber': wenber,
+    'meskeremOneWeekday': meskeremOneWeekday,
+  };
+
+  static BahireHasabStats fromJson(Map<String, dynamic> json) =>
+      BahireHasabStats(
+        evangelist: json['evangelist'] as String,
+        ameteAlem: json['ameteAlem'] as int,
+        abekte: json['abekte'] as int,
+        metkih: json['metkih'] as int,
+        wenber: json['wenber'] as int,
+        meskeremOneWeekday: json['meskeremOneWeekday'] as String,
+      );
+}
+
+class Celebration {
+  const Celebration({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.ethDateKey,
+  });
+
+  final String id;
+  final String title;
+  final String subtitle;
+  final String ethDateKey;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'subtitle': subtitle,
+    'ethDateKey': ethDateKey,
+  };
+
+  static Celebration fromJson(Map<String, dynamic> json) => Celebration(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    subtitle: json['subtitle'] as String,
+    ethDateKey: json['ethDateKey'] as String,
+  );
+}
+
+class SaintSummary {
+  const SaintSummary({
+    required this.id,
+    required this.name,
+    required this.snippet,
+  });
+
+  final String id;
+  final String name;
+  final String snippet;
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'snippet': snippet};
+
+  static SaintSummary fromJson(Map<String, dynamic> json) => SaintSummary(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    snippet: json['snippet'] as String,
+  );
 }

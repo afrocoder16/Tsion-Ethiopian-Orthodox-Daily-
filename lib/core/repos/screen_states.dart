@@ -98,11 +98,16 @@ class CalendarScreenState {
   const CalendarScreenState({
     required this.topBar,
     required this.months,
+    required this.monthGrid,
+    required this.monthGrids,
     required this.todayStatus,
     required this.fastStatus,
     required this.quickRules,
     required this.dailyReadings,
+    required this.prayerOfDay,
     required this.saintPreview,
+    required this.dayPlanner,
+    required this.spiritualTracker,
     required this.signals,
     required this.observances,
     required this.todayActions,
@@ -112,11 +117,16 @@ class CalendarScreenState {
 
   final CalendarTopBar topBar;
   final List<MonthSelectorItem> months;
+  final CalendarMonthGrid monthGrid;
+  final List<CalendarMonthGrid> monthGrids;
   final TodayStatusCard todayStatus;
   final FastStatus fastStatus;
   final List<String> quickRules;
   final DailyReadingsPreview dailyReadings;
+  final PrayerOfDayPreview prayerOfDay;
   final SaintPreview saintPreview;
+  final PersonalDayPlanner dayPlanner;
+  final SpiritualTracker spiritualTracker;
   final List<SignalItem> signals;
   final List<ObservanceItem> observances;
   final List<ActionItem> todayActions;

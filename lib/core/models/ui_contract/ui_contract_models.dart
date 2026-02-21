@@ -289,12 +289,50 @@ class TodayStatusCard {
   final String weekday;
 }
 
-class SignalItem {
-  const SignalItem({
-    required this.label,
-    required this.value,
-    this.subtitle,
+class CalendarMonthCell {
+  const CalendarMonthCell({
+    required this.gregorianDateKey,
+    required this.gregorianDay,
+    required this.ethiopianDay,
+    required this.isCurrentMonth,
+    required this.isToday,
+    required this.hasDot,
   });
+
+  final String gregorianDateKey;
+  final int gregorianDay;
+  final int ethiopianDay;
+  final bool isCurrentMonth;
+  final bool isToday;
+  final bool hasDot;
+}
+
+class CalendarMonthWeek {
+  const CalendarMonthWeek({required this.days});
+
+  final List<CalendarMonthCell> days;
+}
+
+class CalendarMonthGrid {
+  const CalendarMonthGrid({
+    required this.gregorianYear,
+    required this.gregorianMonth,
+    required this.ethiopianMonthLabel,
+    required this.gregorianRangeLabel,
+    required this.weekdayLabels,
+    required this.weeks,
+  });
+
+  final int gregorianYear;
+  final int gregorianMonth;
+  final String ethiopianMonthLabel;
+  final String gregorianRangeLabel;
+  final List<String> weekdayLabels;
+  final List<CalendarMonthWeek> weeks;
+}
+
+class SignalItem {
+  const SignalItem({required this.label, required this.value, this.subtitle});
 
   final String label;
   final String value;
@@ -371,6 +409,20 @@ class DailyReadingsPreview {
   final String? downloadLabel;
 }
 
+class PrayerOfDayPreview {
+  const PrayerOfDayPreview({
+    required this.title,
+    required this.preview,
+    required this.openPrayersLabel,
+    required this.openReadingsLabel,
+  });
+
+  final String title;
+  final String preview;
+  final String openPrayersLabel;
+  final String openReadingsLabel;
+}
+
 class SaintPreview {
   const SaintPreview({
     required this.name,
@@ -383,6 +435,46 @@ class SaintPreview {
   final String summary;
   final bool isAvailable;
   final String ctaLabel;
+}
+
+class PlannerTask {
+  const PlannerTask({
+    required this.id,
+    required this.label,
+    required this.isDone,
+  });
+
+  final String id;
+  final String label;
+  final bool isDone;
+}
+
+class PersonalDayPlanner {
+  const PersonalDayPlanner({required this.tasks, this.notes, this.event});
+
+  final List<PlannerTask> tasks;
+  final String? notes;
+  final String? event;
+}
+
+class TrackerHabit {
+  const TrackerHabit({
+    required this.id,
+    required this.label,
+    required this.isDone,
+    this.isOptional,
+  });
+
+  final String id;
+  final String label;
+  final bool isDone;
+  final bool? isOptional;
+}
+
+class SpiritualTracker {
+  const SpiritualTracker({required this.habits});
+
+  final List<TrackerHabit> habits;
 }
 
 class UpcomingDay {

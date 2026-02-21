@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../app/route_paths.dart';
 import '../../core/adapters/calendar_day_detail_adapter.dart';
 import '../../core/providers/calendar_day_detail_providers.dart';
 import '../../core/repos/calendar_day_detail_repositories.dart';
@@ -17,9 +15,8 @@ class CalendarDayDetailScreen extends ConsumerWidget {
     final state = ref.watch(calendarDayDetailProvider(dateKey));
     return state.when(
       data: (detail) => _CalendarDayContent(detail: detail),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, _) => Scaffold(
         body: Center(
           child: Column(
@@ -59,72 +56,67 @@ class _CalendarDayContent extends StatelessWidget {
             adapter.ethiopianDate,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 12),
-          const _LabelText(text: 'Gregorian Date'),
-          const SizedBox(height: 6),
-          Text(
-            adapter.gregorianDate,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            adapter.bahireTitle,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
           const SizedBox(height: 8),
           Text(
-            adapter.bahireDescription,
-            style: const TextStyle(fontSize: 13, height: 1.4, color: Colors.black54),
+            adapter.gregorianDate,
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            adapter.weekday,
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Bahire Hasab',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: adapter.bahireTags
-                .map((tag) => _Chip(label: tag))
+            children: adapter.bahireStats
+                .map((item) => _StatChip(label: item.label, value: item.value))
                 .toList(growable: false),
           ),
           const SizedBox(height: 20),
           const Text(
-            'Observances',
+            'Today in the Church',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
           ...adapter.observances.map(
-            (item) => _ObservanceRow(
-              label: item.label,
-              value: item.value,
-            ),
+            (item) => _ObservanceRow(label: item.label, value: item.value),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
           const Text(
-            'Links',
+            'Celebrations',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
-          ...adapter.links.map(
-            (link) => _LinkTile(
-              label: link.label,
-              onTap: () => _handleLink(context, detail.dateKey, link),
+          if (adapter.celebrations.isEmpty)
+            const _EmptyLine(text: 'No celebrations yet')
+          else
+            ...adapter.celebrations.map(
+              (item) => _InfoCard(title: item.title, subtitle: item.subtitle),
             ),
+          const SizedBox(height: 18),
+          const Text(
+            'Saints of the Day',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
+          const SizedBox(height: 10),
+          if (adapter.saints.isEmpty)
+            const _EmptyLine(text: 'No saint data yet')
+          else
+            ...adapter.saints.map(
+              (item) => _SaintCard(title: item.name, subtitle: item.snippet),
+            ),
+          const SizedBox(height: 12),
+          const _DailyTodoCard(),
         ],
       ),
     );
-  }
-}
-
-void _handleLink(BuildContext context, String dateKey, CalendarLink link) {
-  switch (link.type) {
-    case CalendarLinkType.prayers:
-      context.go(RoutePaths.prayers);
-      break;
-    case CalendarLinkType.readings:
-      context.go(RoutePaths.calendarDayLinkPath(dateKey, 'readings'));
-      break;
-    case CalendarLinkType.saint:
-      context.go(RoutePaths.calendarDayLinkPath(dateKey, 'saint'));
-      break;
   }
 }
 
@@ -142,23 +134,35 @@ class _LabelText extends StatelessWidget {
   }
 }
 
-class _Chip extends StatelessWidget {
-  const _Chip({required this.label});
+class _StatChip extends StatelessWidget {
+  const _StatChip({required this.label, required this.value});
 
   final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      width: (MediaQuery.of(context).size.width - 56) / 3,
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE0E0E0)),
       ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          ),
+        ],
       ),
     );
   }
@@ -199,34 +203,151 @@ class _ObservanceRow extends StatelessWidget {
   }
 }
 
-class _LinkTile extends StatelessWidget {
-  const _LinkTile({required this.label, required this.onTap});
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({required this.title, required this.subtitle});
 
-  final String label;
-  final VoidCallback onTap;
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFFF7F7F7),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE0E0E0)),
       ),
-      child: InkWell(
-        onTap: onTap,
-        child: Row(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SaintCard extends StatelessWidget {
+  const _SaintCard({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ],
             ),
-            const Spacer(),
-            const Icon(Icons.chevron_right, color: Colors.black38),
-          ],
-        ),
+          ),
+          FilledButton(onPressed: () {}, child: const Text('Read Saint')),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyLine extends StatelessWidget {
+  const _EmptyLine({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 12, color: Colors.black54),
+      ),
+    );
+  }
+}
+
+class _DailyTodoCard extends StatefulWidget {
+  const _DailyTodoCard();
+
+  @override
+  State<_DailyTodoCard> createState() => _DailyTodoCardState();
+}
+
+class _DailyTodoCardState extends State<_DailyTodoCard> {
+  bool _prayerDone = false;
+  bool _readingDone = false;
+  bool _mercyDone = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Daily To-do',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          CheckboxListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Prayer done', style: TextStyle(fontSize: 13)),
+            value: _prayerDone,
+            onChanged: (value) => setState(() => _prayerDone = value ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Read Scripture', style: TextStyle(fontSize: 13)),
+            value: _readingDone,
+            onChanged: (value) => setState(() => _readingDone = value ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Act of mercy', style: TextStyle(fontSize: 13)),
+            value: _mercyDone,
+            onChanged: (value) => setState(() => _mercyDone = value ?? false),
+          ),
+        ],
       ),
     );
   }

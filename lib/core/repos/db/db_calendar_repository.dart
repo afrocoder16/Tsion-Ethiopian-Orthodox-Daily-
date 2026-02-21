@@ -23,6 +23,7 @@ class DbCalendarRepository implements CalendarRepository {
       today.add(const Duration(days: 1)),
       7,
     );
+    final monthGrids = _buildMonthGrids(engine, today);
 
     final fastReasons = _fastReasonLabels(todayObservance.fastStatus.reasons);
     final topReason = _topReasonLabel(todayObservance.fastStatus, fastReasons);
@@ -40,6 +41,13 @@ class DbCalendarRepository implements CalendarRepository {
         subtitle: 'Calendar',
       ),
       months: _monthChips(today),
+      monthGrid: monthGrids.firstWhere(
+        (grid) =>
+            grid.gregorianYear == today.year &&
+            grid.gregorianMonth == today.month,
+        orElse: () => monthGrids.first,
+      ),
+      monthGrids: monthGrids,
       todayStatus: ui.TodayStatusCard(
         ethiopianDate: _formatEthDate(todayEth),
         ethiopianDateAmharic: _formatEthDateAmharic(todayEth),
@@ -75,6 +83,7 @@ class DbCalendarRepository implements CalendarRepository {
             ? null
             : 'Download monthly readings',
       ),
+      prayerOfDay: _prayerOfDay(todayObservance),
       saintPreview: todayObservance.saintsPreview.isEmpty
           ? const ui.SaintPreview(
               name: 'Not available yet',
@@ -88,6 +97,8 @@ class DbCalendarRepository implements CalendarRepository {
               isAvailable: true,
               ctaLabel: 'Read Synaxarium',
             ),
+      dayPlanner: _dayPlanner(todayObservance),
+      spiritualTracker: _spiritualTracker(),
       signals: [
         ui.SignalItem(
           label: 'Evangelist',
@@ -129,6 +140,165 @@ class DbCalendarRepository implements CalendarRepository {
 
     return state;
   }
+}
+
+List<ui.CalendarMonthGrid> _buildMonthGrids(
+  CalendarEngine engine,
+  DateTime today,
+) {
+  final grids = <ui.CalendarMonthGrid>[];
+  for (var offset = -120; offset <= 24; offset++) {
+    final monthDate = DateTime(today.year, today.month + offset, 1, 12);
+    grids.add(_buildMonthGrid(engine, monthDate, today));
+  }
+  return grids;
+}
+
+ui.CalendarMonthGrid _buildMonthGrid(
+  CalendarEngine engine,
+  DateTime monthDate,
+  DateTime today,
+) {
+  final monthStart = DateTime(monthDate.year, monthDate.month, 1, 12);
+  final monthEnd = DateTime(monthDate.year, monthDate.month + 1, 0, 12);
+  final startOffset = monthStart.weekday % 7;
+  final visibleStart = monthStart.subtract(Duration(days: startOffset));
+  final endOffset = 6 - (monthEnd.weekday % 7);
+  final visibleEnd = monthEnd.add(Duration(days: endOffset));
+  final totalDays = visibleEnd.difference(visibleStart).inDays + 1;
+  final dayList = <ui.CalendarMonthCell>[];
+
+  for (var i = 0; i < totalDays; i++) {
+    final date = visibleStart.add(Duration(days: i));
+    final day = engine.getDayObservance(date);
+    dayList.add(
+      ui.CalendarMonthCell(
+        gregorianDateKey: _formatYmd(date),
+        gregorianDay: date.day,
+        ethiopianDay: day.ethDate.day,
+        isCurrentMonth:
+            date.month == monthStart.month && date.year == monthStart.year,
+        isToday: _sameDate(date, today),
+        hasDot: day.fastStatus.isFastingDay || day.feasts.isNotEmpty,
+      ),
+    );
+  }
+
+  var padding = 0;
+  while (dayList.length % 7 != 0) {
+    padding++;
+    final date = visibleEnd.add(Duration(days: padding));
+    final day = engine.getDayObservance(date);
+    dayList.add(
+      ui.CalendarMonthCell(
+        gregorianDateKey: _formatYmd(date),
+        gregorianDay: date.day,
+        ethiopianDay: day.ethDate.day,
+        isCurrentMonth:
+            date.month == monthStart.month && date.year == monthStart.year,
+        isToday: _sameDate(date, today),
+        hasDot: day.fastStatus.isFastingDay || day.feasts.isNotEmpty,
+      ),
+    );
+  }
+
+  final weeks = <ui.CalendarMonthWeek>[];
+  for (var i = 0; i < dayList.length; i += 7) {
+    weeks.add(ui.CalendarMonthWeek(days: dayList.sublist(i, i + 7)));
+  }
+
+  final monthEth = engine.ethDateFromGregorian(monthStart);
+  final range = monthStart.month == monthEnd.month
+      ? '${_monthAbbr(monthStart.month)} ${monthStart.year}'
+      : '${_monthAbbr(monthStart.month)} - ${_monthAbbr(monthEnd.month)} ${monthEnd.year}';
+  return ui.CalendarMonthGrid(
+    gregorianYear: monthStart.year,
+    gregorianMonth: monthStart.month,
+    ethiopianMonthLabel: _ethMonthAmharic(monthEth.month),
+    gregorianRangeLabel: range,
+    weekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+    weeks: weeks,
+  );
+}
+
+bool _sameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+String _formatYmd(DateTime date) {
+  final y = date.year.toString().padLeft(4, '0');
+  final m = date.month.toString().padLeft(2, '0');
+  final d = date.day.toString().padLeft(2, '0');
+  return '$y-$m-$d';
+}
+
+ui.PrayerOfDayPreview _prayerOfDay(DayObservance day) {
+  final text = day.fastStatus.isFastingDay
+      ? 'Lord, grant me repentance, humility, and mercy today.'
+      : 'Lord Jesus Christ, Son of God, have mercy on me.';
+  return ui.PrayerOfDayPreview(
+    title: 'Prayer of the Day',
+    preview: text,
+    openPrayersLabel: 'Open Prayers',
+    openReadingsLabel: 'Open Readings',
+  );
+}
+
+ui.PersonalDayPlanner _dayPlanner(DayObservance day) {
+  final tasks = <ui.PlannerTask>[
+    const ui.PlannerTask(
+      id: 'morning-prayer',
+      label: 'Morning prayer',
+      isDone: false,
+    ),
+    const ui.PlannerTask(
+      id: 'daily-reading',
+      label: 'Read today\'s passage',
+      isDone: false,
+    ),
+    ui.PlannerTask(
+      id: 'fasting-intent',
+      label: day.fastStatus.isFastingDay
+          ? 'Keep fasting with humility'
+          : 'Practice gratitude and restraint',
+      isDone: false,
+    ),
+  ];
+  final event = day.feasts.isNotEmpty
+      ? 'Feast: ${day.feasts.first.nameKey}'
+      : null;
+  return ui.PersonalDayPlanner(
+    tasks: tasks,
+    notes: day.fastStatus.notesKey,
+    event: event,
+  );
+}
+
+ui.SpiritualTracker _spiritualTracker() {
+  return const ui.SpiritualTracker(
+    habits: [
+      ui.TrackerHabit(id: 'prayer', label: 'Prayer done', isDone: false),
+      ui.TrackerHabit(id: 'bible', label: 'Bible read', isDone: false),
+      ui.TrackerHabit(
+        id: 'fasting',
+        label: 'Fasting followed',
+        isDone: false,
+        isOptional: true,
+      ),
+      ui.TrackerHabit(
+        id: 'church',
+        label: 'Church attended',
+        isDone: false,
+        isOptional: true,
+      ),
+      ui.TrackerHabit(
+        id: 'confession',
+        label: 'Confession/communion',
+        isDone: false,
+        isOptional: true,
+      ),
+    ],
+  );
 }
 
 List<String> _quickRules(bool isFastingDay) {

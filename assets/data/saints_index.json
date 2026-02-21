@@ -1,0 +1,83 @@
+{
+  "by_mm_dd": {
+    "05-12": [
+      {
+        "id": "saint-michael",
+        "name": "Archangel Michael",
+        "snippet": "Intercessor and protector of the faithful."
+      }
+    ],
+    "05-16": [
+      {
+        "id": "kidane-mihret",
+        "name": "Kidane Mihret",
+        "snippet": "Commemoration of the Covenant of Mercy."
+      }
+    ],
+    "05-21": [
+      {
+        "id": "saint-mary-21",
+        "name": "St Mary",
+        "snippet": "Monthly commemoration of the Theotokos."
+      }
+    ],
+    "05-27": [
+      {
+        "id": "medhane-alem-27",
+        "name": "Medhane Alem",
+        "snippet": "Remembrance of the Savior, Medhane Alem."
+      }
+    ],
+    "05-29": [
+      {
+        "id": "birth-of-christ-29",
+        "name": "Birth of Christ",
+        "snippet": "Monthly remembrance of the Lord's Nativity."
+      }
+    ],
+    "06-01": [
+      {
+        "id": "saint-george",
+        "name": "St George",
+        "snippet": "Martyr and victorious witness of Christ."
+      }
+    ],
+    "06-03": [
+      {
+        "id": "saint-gabriel",
+        "name": "Archangel Gabriel",
+        "snippet": "Messenger of divine announcements and grace."
+      }
+    ],
+    "06-07": [
+      {
+        "id": "holy-trinity",
+        "name": "Holy Trinity",
+        "snippet": "Commemoration of the Holy and Consubstantial Trinity."
+      }
+    ],
+    "06-13": [
+      {
+        "id": "abba-antonios",
+        "name": "Abba Antonios",
+        "snippet": "Model of ascetic life and repentance."
+      }
+    ],
+    "06-18": [
+      {
+        "id": "saint-teklehaymanot",
+        "name": "St Tekle Haymanot",
+        "snippet": "Beloved Ethiopian saint and teacher."
+      }
+    ]
+  },
+  "by_eth_date": {
+    "2018-06-13": [
+      {
+        "id": "special-2018-06-13",
+        "name": "St Yohannes",
+        "snippet": "Commemorated in local parish tradition."
+      }
+    ]
+  }
+}

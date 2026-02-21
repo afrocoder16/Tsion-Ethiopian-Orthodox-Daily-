@@ -283,6 +283,49 @@ Future<void> runRepoSmokeTest() async {
     checkRequired('calendar.months.label', item.label);
   }
   checkRequired(
+    'calendar.monthGrid.ethiopianMonthLabel',
+    calendarState.monthGrid.ethiopianMonthLabel,
+  );
+  checkRequired(
+    'calendar.monthGrid.gregorianRangeLabel',
+    calendarState.monthGrid.gregorianRangeLabel,
+  );
+  for (final label in calendarState.monthGrid.weekdayLabels) {
+    checkRequired('calendar.monthGrid.weekdayLabels', label);
+  }
+  for (final week in calendarState.monthGrid.weeks) {
+    if (week.days.length != 7) {
+      errors.add('calendar.monthGrid.weeks must contain 7 days each');
+    }
+    for (final day in week.days) {
+      checkId(
+        'calendar.monthGrid.weeks.days.gregorianDateKey',
+        day.gregorianDateKey,
+      );
+    }
+  }
+  for (final grid in calendarState.monthGrids) {
+    checkRequired(
+      'calendar.monthGrids.ethiopianMonthLabel',
+      grid.ethiopianMonthLabel,
+    );
+    checkRequired(
+      'calendar.monthGrids.gregorianRangeLabel',
+      grid.gregorianRangeLabel,
+    );
+    for (final week in grid.weeks) {
+      if (week.days.length != 7) {
+        errors.add('calendar.monthGrids.weeks must contain 7 days each');
+      }
+      for (final day in week.days) {
+        checkId(
+          'calendar.monthGrids.weeks.days.gregorianDateKey',
+          day.gregorianDateKey,
+        );
+      }
+    }
+  }
+  checkRequired(
     'calendar.todayStatus.ethiopianDate',
     calendarState.todayStatus.ethiopianDate,
   );
@@ -305,6 +348,19 @@ Future<void> runRepoSmokeTest() async {
     'calendar.dailyReadings.fallbackText',
     calendarState.dailyReadings.fallbackText,
   );
+  checkRequired('calendar.prayerOfDay.title', calendarState.prayerOfDay.title);
+  checkRequired(
+    'calendar.prayerOfDay.preview',
+    calendarState.prayerOfDay.preview,
+  );
+  checkRequired(
+    'calendar.prayerOfDay.openPrayersLabel',
+    calendarState.prayerOfDay.openPrayersLabel,
+  );
+  checkRequired(
+    'calendar.prayerOfDay.openReadingsLabel',
+    calendarState.prayerOfDay.openReadingsLabel,
+  );
   checkRequired('calendar.saintPreview.name', calendarState.saintPreview.name);
   checkRequired(
     'calendar.saintPreview.summary',
@@ -314,6 +370,14 @@ Future<void> runRepoSmokeTest() async {
     'calendar.saintPreview.ctaLabel',
     calendarState.saintPreview.ctaLabel,
   );
+  for (final task in calendarState.dayPlanner.tasks) {
+    checkId('calendar.dayPlanner.tasks', task.id);
+    checkRequired('calendar.dayPlanner.tasks.label', task.label);
+  }
+  for (final habit in calendarState.spiritualTracker.habits) {
+    checkId('calendar.spiritualTracker.habits', habit.id);
+    checkRequired('calendar.spiritualTracker.habits.label', habit.label);
+  }
   if (calendarState.fastStatus.isFasting) {
     checkRequired(
       'calendar.fastStatus.fastName',

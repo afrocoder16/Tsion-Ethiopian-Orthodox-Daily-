@@ -226,6 +226,49 @@ void assertValidCalendarScreen(CalendarScreenState state) {
     _require(item.label, 'calendar.months.label');
   }
   _require(
+    state.monthGrid.ethiopianMonthLabel,
+    'calendar.monthGrid.ethiopianMonthLabel',
+  );
+  _require(
+    state.monthGrid.gregorianRangeLabel,
+    'calendar.monthGrid.gregorianRangeLabel',
+  );
+  for (final day in state.monthGrid.weekdayLabels) {
+    _require(day, 'calendar.monthGrid.weekdayLabels');
+  }
+  for (final week in state.monthGrid.weeks) {
+    if (week.days.length != 7) {
+      throw StateError('calendar.monthGrid.weeks must contain 7 days each');
+    }
+    for (final day in week.days) {
+      _requireId(
+        day.gregorianDateKey,
+        'calendar.monthGrid.weeks.days.gregorianDateKey',
+      );
+    }
+  }
+  for (final grid in state.monthGrids) {
+    _require(
+      grid.ethiopianMonthLabel,
+      'calendar.monthGrids.ethiopianMonthLabel',
+    );
+    _require(
+      grid.gregorianRangeLabel,
+      'calendar.monthGrids.gregorianRangeLabel',
+    );
+    for (final week in grid.weeks) {
+      if (week.days.length != 7) {
+        throw StateError('calendar.monthGrids.weeks must contain 7 days each');
+      }
+      for (final day in week.days) {
+        _requireId(
+          day.gregorianDateKey,
+          'calendar.monthGrids.weeks.days.gregorianDateKey',
+        );
+      }
+    }
+  }
+  _require(
     state.todayStatus.ethiopianDate,
     'calendar.todayStatus.ethiopianDate',
   );
@@ -242,9 +285,27 @@ void assertValidCalendarScreen(CalendarScreenState state) {
     state.dailyReadings.fallbackText,
     'calendar.dailyReadings.fallbackText',
   );
+  _require(state.prayerOfDay.title, 'calendar.prayerOfDay.title');
+  _require(state.prayerOfDay.preview, 'calendar.prayerOfDay.preview');
+  _require(
+    state.prayerOfDay.openPrayersLabel,
+    'calendar.prayerOfDay.openPrayersLabel',
+  );
+  _require(
+    state.prayerOfDay.openReadingsLabel,
+    'calendar.prayerOfDay.openReadingsLabel',
+  );
   _require(state.saintPreview.name, 'calendar.saintPreview.name');
   _require(state.saintPreview.summary, 'calendar.saintPreview.summary');
   _require(state.saintPreview.ctaLabel, 'calendar.saintPreview.ctaLabel');
+  for (final task in state.dayPlanner.tasks) {
+    _requireId(task.id, 'calendar.dayPlanner.tasks.id');
+    _require(task.label, 'calendar.dayPlanner.tasks.label');
+  }
+  for (final habit in state.spiritualTracker.habits) {
+    _requireId(habit.id, 'calendar.spiritualTracker.habits.id');
+    _require(habit.label, 'calendar.spiritualTracker.habits.label');
+  }
   for (final item in state.signals) {
     _require(item.label, 'calendar.signals.label');
     _require(item.value, 'calendar.signals.value');

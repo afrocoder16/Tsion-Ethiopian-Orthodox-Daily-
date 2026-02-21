@@ -6,15 +6,147 @@ import '../screen_states.dart';
 class FakeCalendarRepository implements CalendarRepository {
   @override
   Future<CalendarScreenState> fetchCalendarScreen() {
+    const monthGrid = CalendarMonthGrid(
+      gregorianYear: 2026,
+      gregorianMonth: 2,
+      ethiopianMonthLabel: 'የካቲት',
+      gregorianRangeLabel: 'Feb - Mar 2026',
+      weekdayLabels: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+      weeks: [
+        CalendarMonthWeek(
+          days: [
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-01',
+              gregorianDay: 1,
+              ethiopianDay: 8,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-02',
+              gregorianDay: 2,
+              ethiopianDay: 9,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-03',
+              gregorianDay: 3,
+              ethiopianDay: 10,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-04',
+              gregorianDay: 4,
+              ethiopianDay: 11,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-05',
+              gregorianDay: 5,
+              ethiopianDay: 12,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-06',
+              gregorianDay: 6,
+              ethiopianDay: 13,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-07',
+              gregorianDay: 7,
+              ethiopianDay: 14,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+          ],
+        ),
+        CalendarMonthWeek(
+          days: [
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-08',
+              gregorianDay: 8,
+              ethiopianDay: 15,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-09',
+              gregorianDay: 9,
+              ethiopianDay: 16,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-10',
+              gregorianDay: 10,
+              ethiopianDay: 17,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-11',
+              gregorianDay: 11,
+              ethiopianDay: 18,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-12',
+              gregorianDay: 12,
+              ethiopianDay: 19,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-13',
+              gregorianDay: 13,
+              ethiopianDay: 20,
+              isCurrentMonth: true,
+              isToday: false,
+              hasDot: true,
+            ),
+            CalendarMonthCell(
+              gregorianDateKey: '2026-02-14',
+              gregorianDay: 14,
+              ethiopianDay: 21,
+              isCurrentMonth: true,
+              isToday: true,
+              hasDot: true,
+            ),
+          ],
+        ),
+      ],
+    );
+
     const signals = [
       SignalItem(label: 'Evangelist', value: 'Matthew'),
-      SignalItem(label: 'Fasting', value: 'Wed/Fri'),
+      SignalItem(label: 'Fasting', value: 'Great Lent +1'),
       SignalItem(
         label: 'Season',
         value: 'Great Lent',
         subtitle: 'Day 12 of 55',
       ),
+      SignalItem(label: 'Feast', value: 'St Mary'),
     ];
+
     const observances = [
       ObservanceItem(type: 'Fasting today', label: 'Yes'),
       ObservanceItem(type: 'Type', label: 'Great Lent'),
@@ -27,24 +159,12 @@ class FakeCalendarRepository implements CalendarRepository {
         title: 'Orthodox Calendar',
         subtitle: 'Calendar',
       ),
-      months: const [
-        MonthSelectorItem(label: 'Today'),
-        MonthSelectorItem(label: 'Jan'),
-        MonthSelectorItem(label: 'Feb'),
-        MonthSelectorItem(label: 'Mar'),
-        MonthSelectorItem(label: 'Apr'),
-        MonthSelectorItem(label: 'May'),
-        MonthSelectorItem(label: 'Jun'),
-        MonthSelectorItem(label: 'Jul'),
-        MonthSelectorItem(label: 'Aug'),
-        MonthSelectorItem(label: 'Sep'),
-        MonthSelectorItem(label: 'Oct'),
-        MonthSelectorItem(label: 'Nov'),
-        MonthSelectorItem(label: 'Dec'),
-      ],
+      months: const [MonthSelectorItem(label: 'Today')],
+      monthGrid: monthGrid,
+      monthGrids: const [monthGrid],
       todayStatus: const TodayStatusCard(
         ethiopianDate: 'Yekatit 13, 2018 E.C.',
-        ethiopianDateAmharic: 'Yekatit 13, 2018',
+        ethiopianDateAmharic: 'የካቲት 13, 2018',
         gregorianDate: 'Feb 20, 2026',
         weekday: 'Thursday',
       ),
@@ -62,11 +182,43 @@ class FakeCalendarRepository implements CalendarRepository {
         fallbackText: 'Readings not loaded',
         downloadLabel: 'Download monthly readings',
       ),
+      prayerOfDay: const PrayerOfDayPreview(
+        title: 'Prayer of the Day',
+        preview: 'Lord Jesus Christ, Son of God, have mercy on me.',
+        openPrayersLabel: 'Open Prayers',
+        openReadingsLabel: 'Open Readings',
+      ),
       saintPreview: const SaintPreview(
         name: 'St Mary',
         summary: 'Tap to read',
         isAvailable: true,
         ctaLabel: 'Read Synaxarium',
+      ),
+      dayPlanner: const PersonalDayPlanner(
+        tasks: [
+          PlannerTask(
+            id: 'morning-prayer',
+            label: 'Morning prayer',
+            isDone: false,
+          ),
+          PlannerTask(
+            id: 'daily-reading',
+            label: 'Read today\'s passage',
+            isDone: false,
+          ),
+        ],
+      ),
+      spiritualTracker: const SpiritualTracker(
+        habits: [
+          TrackerHabit(id: 'prayer', label: 'Prayer done', isDone: false),
+          TrackerHabit(id: 'bible', label: 'Bible read', isDone: false),
+          TrackerHabit(
+            id: 'fasting',
+            label: 'Fasting followed',
+            isDone: false,
+            isOptional: true,
+          ),
+        ],
       ),
       signals: signals,
       observances: observances,
@@ -78,38 +230,13 @@ class FakeCalendarRepository implements CalendarRepository {
       upcomingHeader: const SectionHeader(title: 'Next 7 days'),
       upcomingDays: const [
         UpcomingDay(
-          id: 'upcoming-dec-14',
+          id: '2026-02-21',
           date: 'Feb 21',
           ethDate: 'Yekatit 14',
           saint: 'St Ignatius',
           label: 'Fasting Day',
           subtitle: 'Great Lent',
           badges: ['FAST'],
-        ),
-        UpcomingDay(
-          id: 'upcoming-dec-15',
-          date: 'Feb 22',
-          ethDate: 'Yekatit 15',
-          saint: 'St Eleutherius',
-          label: 'Feast: St Eleutherius',
-          subtitle: 'Great Lent',
-          badges: ['FAST', 'FEAST'],
-        ),
-        UpcomingDay(
-          id: 'upcoming-dec-16',
-          date: 'Feb 23',
-          ethDate: 'Yekatit 16',
-          saint: 'St Sophia',
-          label: 'Regular Day',
-          subtitle: 'No fasting',
-        ),
-        UpcomingDay(
-          id: 'upcoming-dec-17',
-          date: 'Feb 24',
-          ethDate: 'Yekatit 17',
-          saint: 'St Daniel',
-          label: 'Regular Day',
-          subtitle: 'No fasting',
         ),
       ],
     );
@@ -126,7 +253,7 @@ FastStatus _deriveFastStatus(
   List<ObservanceItem> observances,
 ) {
   final fastObservance = observances.firstWhere(
-    (item) => item.type.trim().toLowerCase() == 'fast',
+    (item) => item.type.trim().toLowerCase() == 'type',
     orElse: () => const ObservanceItem(type: '', label: ''),
   );
   final isFasting = fastObservance.label.trim().isNotEmpty;
@@ -141,7 +268,7 @@ FastStatus _deriveFastStatus(
     (item) => item.label.trim().toLowerCase() == 'fasting',
     orElse: () => const SignalItem(label: '', value: ''),
   );
-  final fastName = fastObservance.label.trim().isNotEmpty
+  final fastName = fastSignal.value.trim().isEmpty
       ? fastObservance.label
       : fastSignal.value;
   return FastStatus(

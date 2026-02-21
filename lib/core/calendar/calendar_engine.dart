@@ -20,7 +20,11 @@ class CalendarEngine {
     final anchors = getAnchorsForYear(eth.year);
     final feasts = _feastsForDate(eth, anchors);
     final fastStatus = _fastStatusForDate(normalized, eth, anchors, feasts);
-    final progress = _seasonProgress(eth, fastStatus.seasonStart, fastStatus.seasonEnd);
+    final progress = _seasonProgress(
+      eth,
+      fastStatus.seasonStart,
+      fastStatus.seasonEnd,
+    );
     return DayObservance(
       gregorianDateYmd: _formatYmd(normalized),
       ethDate: eth,
@@ -106,6 +110,47 @@ class CalendarEngine {
       pentecost: pentecost,
       apostlesFastStart: apostlesFastStart,
     );
+  }
+
+  BahireHasabStats getBahireHasabStatsForYear(int ethYear) {
+    final bahire = BahireHasab(year: ethYear);
+    return BahireHasabStats(
+      evangelist: _evangelistDisplay(bahire.getEvangelist(returnName: true)),
+      ameteAlem: int.tryParse('${bahire.ameteAlem}') ?? 0,
+      abekte: bahire.abekte,
+      metkih: bahire.metkih,
+      wenber: bahire.wenber,
+      meskeremOneWeekday: _weekdayFromMeskeremOne(bahire.getMeskeremOne()),
+    );
+  }
+
+  List<Celebration> getMovableCelebrationsForYear(int ethYear) {
+    final bahire = BahireHasab(year: ethYear);
+    final all = bahire.allAtswamat;
+    final result = <Celebration>[];
+    for (final item in all) {
+      if (item is! Map) {
+        continue;
+      }
+      final beal = '${item['beal'] ?? ''}'.trim();
+      final dayRaw = item['day'];
+      if (beal.isEmpty || dayRaw is! Map) {
+        continue;
+      }
+      final ethDate = _ethDateFromBahireMap(ethYear, {
+        'month': dayRaw['month'],
+        'date': dayRaw['date'],
+      });
+      result.add(
+        Celebration(
+          id: 'movable_${_slug(beal)}_${ethDate.key}',
+          title: beal,
+          subtitle: 'Movable feast/fast',
+          ethDateKey: ethDate.key,
+        ),
+      );
+    }
+    return result;
   }
 
   EthDate ethDateFromGregorian(DateTime gregorianDateLocal) {
@@ -437,7 +482,11 @@ class CalendarEngine {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  SeasonProgressData? _seasonProgress(EthDate target, EthDate? start, EthDate? end) {
+  SeasonProgressData? _seasonProgress(
+    EthDate target,
+    EthDate? start,
+    EthDate? end,
+  ) {
     if (start == null || end == null) {
       return null;
     }
@@ -502,6 +551,31 @@ class CalendarEngine {
           ),
         )
         .toList();
+  }
+
+  String _weekdayFromMeskeremOne(dynamic weekdayRaw) {
+    final weekday = int.tryParse('$weekdayRaw') ?? 0;
+    const names = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    return names[weekday % 7];
+  }
+
+  String _slug(String value) {
+    final lower = value.trim().toLowerCase();
+    if (lower.isEmpty) {
+      return 'item';
+    }
+    return lower
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+        .replaceAll(RegExp(r'_+'), '_')
+        .replaceAll(RegExp(r'^_|_$'), '');
   }
 
   DateTime _normalizeLocalDate(DateTime localDate) {

@@ -598,6 +598,42 @@ class CalendarStatusView {
   final String weekday;
 }
 
+class CalendarMonthCellView {
+  const CalendarMonthCellView({
+    required this.dateKey,
+    required this.gregorianDay,
+    required this.ethiopianDay,
+    required this.isCurrentMonth,
+    required this.isToday,
+    required this.hasDot,
+  });
+
+  final String dateKey;
+  final int gregorianDay;
+  final int ethiopianDay;
+  final bool isCurrentMonth;
+  final bool isToday;
+  final bool hasDot;
+}
+
+class CalendarMonthGridView {
+  const CalendarMonthGridView({
+    required this.gregorianYear,
+    required this.gregorianMonth,
+    required this.ethiopianMonthLabel,
+    required this.gregorianRangeLabel,
+    required this.weekdayLabels,
+    required this.weeks,
+  });
+
+  final int gregorianYear;
+  final int gregorianMonth;
+  final String ethiopianMonthLabel;
+  final String gregorianRangeLabel;
+  final List<String> weekdayLabels;
+  final List<List<CalendarMonthCellView>> weeks;
+}
+
 class SignalChipView {
   const SignalChipView({
     required this.title,
@@ -630,6 +666,20 @@ class DailyReadingsView {
   final String? downloadLabel;
 }
 
+class PrayerOfDayView {
+  const PrayerOfDayView({
+    required this.title,
+    required this.preview,
+    required this.openPrayersLabel,
+    required this.openReadingsLabel,
+  });
+
+  final String title;
+  final String preview;
+  final String openPrayersLabel;
+  final String openReadingsLabel;
+}
+
 class SaintPreviewView {
   const SaintPreviewView({
     required this.name,
@@ -642,6 +692,46 @@ class SaintPreviewView {
   final String summary;
   final bool isAvailable;
   final String ctaLabel;
+}
+
+class PlannerTaskView {
+  const PlannerTaskView({
+    required this.id,
+    required this.label,
+    required this.isDone,
+  });
+
+  final String id;
+  final String label;
+  final bool isDone;
+}
+
+class PersonalDayPlannerView {
+  const PersonalDayPlannerView({required this.tasks, this.notes, this.event});
+
+  final List<PlannerTaskView> tasks;
+  final String? notes;
+  final String? event;
+}
+
+class TrackerHabitView {
+  const TrackerHabitView({
+    required this.id,
+    required this.label,
+    required this.isDone,
+    required this.isOptional,
+  });
+
+  final String id;
+  final String label;
+  final bool isDone;
+  final bool isOptional;
+}
+
+class SpiritualTrackerView {
+  const SpiritualTrackerView({required this.habits});
+
+  final List<TrackerHabitView> habits;
 }
 
 class UpcomingDayView {
@@ -692,6 +782,75 @@ class CalendarAdapter {
     gregorianDate: _safeText(state.todayStatus.gregorianDate, '-'),
     weekday: _safeText(state.todayStatus.weekday, '-'),
   );
+
+  CalendarMonthGridView get monthGrid => CalendarMonthGridView(
+    gregorianYear: state.monthGrid.gregorianYear,
+    gregorianMonth: state.monthGrid.gregorianMonth,
+    ethiopianMonthLabel: _safeText(state.monthGrid.ethiopianMonthLabel, '-'),
+    gregorianRangeLabel: _safeText(state.monthGrid.gregorianRangeLabel, '-'),
+    weekdayLabels: state.monthGrid.weekdayLabels
+        .map((d) => _safeText(d, '-'))
+        .toList(),
+    weeks: state.monthGrid.weeks
+        .map(
+          (week) => week.days
+              .map(
+                (day) => CalendarMonthCellView(
+                  dateKey: _safeText(day.gregorianDateKey, _todayKey()),
+                  gregorianDay: day.gregorianDay,
+                  ethiopianDay: day.ethiopianDay,
+                  isCurrentMonth: day.isCurrentMonth,
+                  isToday: day.isToday,
+                  hasDot: day.hasDot,
+                ),
+              )
+              .toList(),
+        )
+        .toList(),
+  );
+
+  List<CalendarMonthGridView> get monthGrids {
+    final dynamic dynamicState = state;
+    final dynamic raw = dynamicState.monthGrids;
+    final List<CalendarMonthGrid> gridsSource;
+    if (raw is List && raw.whereType<CalendarMonthGrid>().isNotEmpty) {
+      gridsSource = raw.whereType<CalendarMonthGrid>().toList();
+    } else {
+      gridsSource = <CalendarMonthGrid>[state.monthGrid];
+    }
+    return gridsSource
+        .map(
+          (grid) => CalendarMonthGridView(
+            gregorianYear: grid.gregorianYear,
+            gregorianMonth: grid.gregorianMonth,
+            ethiopianMonthLabel: _safeText(grid.ethiopianMonthLabel, '-'),
+            gregorianRangeLabel: _safeText(grid.gregorianRangeLabel, '-'),
+            weekdayLabels: grid.weekdayLabels
+                .map((value) => _safeText(value, '-'))
+                .toList(),
+            weeks: grid.weeks
+                .map(
+                  (week) => week.days
+                      .map(
+                        (day) => CalendarMonthCellView(
+                          dateKey: _safeText(day.gregorianDateKey, _todayKey()),
+                          gregorianDay: day.gregorianDay,
+                          ethiopianDay: day.ethiopianDay,
+                          isCurrentMonth: day.isCurrentMonth,
+                          isToday: day.isToday,
+                          hasDot: day.hasDot,
+                        ),
+                      )
+                      .toList(),
+                )
+                .toList(),
+          ),
+        )
+        .toList();
+  }
+
+  List<int> get availableYears =>
+      monthGrids.map((grid) => grid.gregorianYear).toSet().toList()..sort();
 
   List<SignalChipView> get signalChips => state.signals
       .map(
@@ -813,11 +972,51 @@ class CalendarAdapter {
     downloadLabel: _safeOptional(state.dailyReadings.downloadLabel),
   );
 
+  PrayerOfDayView get prayerOfDay => PrayerOfDayView(
+    title: _safeText(state.prayerOfDay.title, 'Prayer of the Day'),
+    preview: _safeText(state.prayerOfDay.preview, '-'),
+    openPrayersLabel: _safeText(
+      state.prayerOfDay.openPrayersLabel,
+      'Open Prayers',
+    ),
+    openReadingsLabel: _safeText(
+      state.prayerOfDay.openReadingsLabel,
+      'Open Readings',
+    ),
+  );
+
   SaintPreviewView get saintPreview => SaintPreviewView(
     name: _safeText(state.saintPreview.name, 'Not available yet'),
     summary: _safeText(state.saintPreview.summary, 'Tap to read'),
     isAvailable: state.saintPreview.isAvailable,
     ctaLabel: _safeText(state.saintPreview.ctaLabel, 'Read Synaxarium'),
+  );
+
+  PersonalDayPlannerView get dayPlanner => PersonalDayPlannerView(
+    tasks: state.dayPlanner.tasks
+        .map(
+          (task) => PlannerTaskView(
+            id: _safeId(task.id, task.label),
+            label: _safeText(task.label, '-'),
+            isDone: task.isDone,
+          ),
+        )
+        .toList(),
+    notes: _safeOptional(state.dayPlanner.notes),
+    event: _safeOptional(state.dayPlanner.event),
+  );
+
+  SpiritualTrackerView get spiritualTracker => SpiritualTrackerView(
+    habits: state.spiritualTracker.habits
+        .map(
+          (habit) => TrackerHabitView(
+            id: _safeId(habit.id, habit.label),
+            label: _safeText(habit.label, '-'),
+            isDone: habit.isDone,
+            isOptional: habit.isOptional ?? false,
+          ),
+        )
+        .toList(),
   );
 }
 
@@ -998,6 +1197,14 @@ String _slugFromTitle(String title) {
     return 'item';
   }
   return trimmed.toLowerCase().replaceAll(' ', '-');
+}
+
+String _todayKey() {
+  final now = DateTime.now();
+  final y = now.year.toString().padLeft(4, '0');
+  final m = now.month.toString().padLeft(2, '0');
+  final d = now.day.toString().padLeft(2, '0');
+  return '$y-$m-$d';
 }
 
 String _titleCase(String value) {
