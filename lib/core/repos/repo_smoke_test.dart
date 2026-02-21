@@ -48,9 +48,15 @@ Future<void> runRepoSmokeTest() async {
   checkId('today.audioCard', todayState.audioCard.id);
   checkRequired('today.audioCard.title', todayState.audioCard.title);
   checkRequired('today.audioCard.subtitle', todayState.audioCard.subtitle);
-  checkRequired('today.audioCard.durationText', todayState.audioCard.durationText);
+  checkRequired(
+    'today.audioCard.durationText',
+    todayState.audioCard.durationText,
+  );
   checkRequired('today.memoryCue.text', todayState.memoryCue.text);
-  checkSectionHeader('today.orthodoxDailyHeader', todayState.orthodoxDailyHeader);
+  checkSectionHeader(
+    'today.orthodoxDailyHeader',
+    todayState.orthodoxDailyHeader,
+  );
   for (final item in todayState.orthodoxDailyItems) {
     checkId('today.orthodoxDailyItems', item.id);
     checkRequired('today.orthodoxDailyItems.title', item.title);
@@ -63,23 +69,89 @@ Future<void> runRepoSmokeTest() async {
     checkRequired('today.studyWorshipItems.subtitle', item.subtitle);
   }
 
-  checkRequired('books.readingStreakBadge.label', booksState.readingStreakBadge.label);
-  checkRequired('books.searchBar.placeholder', booksState.searchBar.placeholder);
+  checkRequired(
+    'books.readingStreakBadge.label',
+    booksState.readingStreakBadge.label,
+  );
+  checkRequired(
+    'books.searchBar.placeholder',
+    booksState.searchBar.placeholder,
+  );
   for (final filter in booksState.filters) {
     checkRequired('books.filters.text', filter.text);
     checkRequired('books.filters.value', filter.value);
   }
-  checkRequired('books.filterSelection.selected', booksState.filterSelection.selected);
-  checkSectionHeader('books.continueReadingHeader', booksState.continueReadingHeader);
+  checkRequired(
+    'books.filterSelection.selected',
+    booksState.filterSelection.selected,
+  );
+  checkSectionHeader(
+    'books.continueReadingHeader',
+    booksState.continueReadingHeader,
+  );
   for (final item in booksState.continueReadingItems) {
     checkId('books.continueReadingItems', item.id);
     checkRequired('books.continueReadingItems.title', item.title);
   }
-  checkRequired('books.continueReadingAction.label', booksState.continueReadingAction.label);
+  checkRequired(
+    'books.continueReadingAction.label',
+    booksState.continueReadingAction.label,
+  );
   checkSectionHeader('books.saintsHeader', booksState.saintsHeader);
   checkId('books.patronSaint', booksState.patronSaint.id);
   checkRequired('books.patronSaint.label', booksState.patronSaint.label);
   checkRequired('books.patronSaint.name', booksState.patronSaint.name);
+  checkRequired(
+    'books.patronSaintProfile.title',
+    booksState.patronSaintProfile.title,
+  );
+  checkRequired(
+    'books.patronSaintProfile.feastDayLabel',
+    booksState.patronSaintProfile.feastDayLabel,
+  );
+  checkRequired(
+    'books.patronSaintProfile.summary',
+    booksState.patronSaintProfile.summary,
+  );
+  for (final tag in booksState.patronSaintProfile.tags) {
+    checkRequired('books.patronSaintProfile.tags', tag);
+  }
+  checkRequired(
+    'books.patronSaintProfile.changeTitle',
+    booksState.patronSaintProfile.changeTitle,
+  );
+  checkRequired(
+    'books.patronSaintProfile.changeSubtitle',
+    booksState.patronSaintProfile.changeSubtitle,
+  );
+  checkRequired(
+    'books.patronSaintProfile.reminderTitle',
+    booksState.patronSaintProfile.reminderTitle,
+  );
+  checkRequired(
+    'books.patronSaintProfile.lifeTitle',
+    booksState.patronSaintProfile.lifeTitle,
+  );
+  checkRequired(
+    'books.patronSaintProfile.lifeReadTime',
+    booksState.patronSaintProfile.lifeReadTime,
+  );
+  checkRequired(
+    'books.patronSaintProfile.lifeBody',
+    booksState.patronSaintProfile.lifeBody,
+  );
+  checkRequired(
+    'books.patronSaintProfile.hymnTitle',
+    booksState.patronSaintProfile.hymnTitle,
+  );
+  checkRequired(
+    'books.patronSaintProfile.hymnReadTime',
+    booksState.patronSaintProfile.hymnReadTime,
+  );
+  checkRequired(
+    'books.patronSaintProfile.hymnBody',
+    booksState.patronSaintProfile.hymnBody,
+  );
   for (final item in booksState.saintsShelf) {
     checkId('books.saintsShelf', item.id);
     checkRequired('books.saintsShelf.title', item.title);
@@ -89,19 +161,37 @@ Future<void> runRepoSmokeTest() async {
     checkId('books.bibleShelf', item.id);
     checkRequired('books.bibleShelf.title', item.title);
   }
-  checkSectionHeader('books.orthodoxBooksHeader', booksState.orthodoxBooksHeader);
+  checkSectionHeader(
+    'books.orthodoxBooksHeader',
+    booksState.orthodoxBooksHeader,
+  );
   for (final item in booksState.orthodoxBooks) {
     checkId('books.orthodoxBooks', item.id);
     checkRequired('books.orthodoxBooks.title', item.title);
   }
 
   checkRequired('prayers.topBar.title', prayersState.topBar.title);
-  checkRequired('prayers.streakIcon.isActive', prayersState.streakIcon.isActive.toString());
+  checkRequired(
+    'prayers.streakIcon.isActive',
+    prayersState.streakIcon.isActive.toString(),
+  );
   checkId('prayers.primaryPrayerCard', prayersState.primaryPrayerCard.id);
-  checkRequired('prayers.primaryPrayerCard.label', prayersState.primaryPrayerCard.label);
-  checkRequired('prayers.primaryPrayerCard.title', prayersState.primaryPrayerCard.title);
-  checkRequired('prayers.primaryPrayerCard.subtitle', prayersState.primaryPrayerCard.subtitle);
-  checkRequired('prayers.primaryPrayerCard.actionLabel', prayersState.primaryPrayerCard.actionLabel);
+  checkRequired(
+    'prayers.primaryPrayerCard.label',
+    prayersState.primaryPrayerCard.label,
+  );
+  checkRequired(
+    'prayers.primaryPrayerCard.title',
+    prayersState.primaryPrayerCard.title,
+  );
+  checkRequired(
+    'prayers.primaryPrayerCard.subtitle',
+    prayersState.primaryPrayerCard.subtitle,
+  );
+  checkRequired(
+    'prayers.primaryPrayerCard.actionLabel',
+    prayersState.primaryPrayerCard.actionLabel,
+  );
   checkSectionHeader('prayers.mezmurHeader', prayersState.mezmurHeader);
   for (final item in prayersState.mezmurItems) {
     checkId('prayers.mezmurItems', item.id);
@@ -122,14 +212,114 @@ Future<void> runRepoSmokeTest() async {
   }
   checkSectionHeader('prayers.recentHeader', prayersState.recentHeader);
   checkRequired('prayers.recentLine.text', prayersState.recentLine.text);
+  checkRequired(
+    'prayers.reflectionJournal.title',
+    prayersState.reflectionJournal.title,
+  );
+  checkRequired(
+    'prayers.reflectionJournal.gratitudeQuestion',
+    prayersState.reflectionJournal.gratitudeQuestion,
+  );
+  checkRequired(
+    'prayers.reflectionJournal.honestCheckQuestion',
+    prayersState.reflectionJournal.honestCheckQuestion,
+  );
+  checkRequired(
+    'prayers.reflectionJournal.smallStepQuestion',
+    prayersState.reflectionJournal.smallStepQuestion,
+  );
+  checkRequired(
+    'prayers.reflectionJournal.closingLine',
+    prayersState.reflectionJournal.closingLine,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.title',
+    prayersState.lightCandleContent.title,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.cancelLabel',
+    prayersState.lightCandleContent.cancelLabel,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.description',
+    prayersState.lightCandleContent.description,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.livingTitle',
+    prayersState.lightCandleContent.livingTitle,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.livingSubtitle',
+    prayersState.lightCandleContent.livingSubtitle,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.departedTitle',
+    prayersState.lightCandleContent.departedTitle,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.departedSubtitle',
+    prayersState.lightCandleContent.departedSubtitle,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.namesLabel',
+    prayersState.lightCandleContent.namesLabel,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.namesHint',
+    prayersState.lightCandleContent.namesHint,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.flashLabel',
+    prayersState.lightCandleContent.flashLabel,
+  );
+  checkRequired(
+    'prayers.lightCandleContent.submitLabel',
+    prayersState.lightCandleContent.submitLabel,
+  );
 
   checkRequired('calendar.topBar.title', calendarState.topBar.title);
   checkRequired('calendar.topBar.subtitle', calendarState.topBar.subtitle);
   for (final item in calendarState.months) {
     checkRequired('calendar.months.label', item.label);
   }
-  checkRequired('calendar.todayStatus.ethiopianDate', calendarState.todayStatus.ethiopianDate);
-  checkRequired('calendar.todayStatus.gregorianDate', calendarState.todayStatus.gregorianDate);
+  checkRequired(
+    'calendar.todayStatus.ethiopianDate',
+    calendarState.todayStatus.ethiopianDate,
+  );
+  checkRequired(
+    'calendar.todayStatus.gregorianDate',
+    calendarState.todayStatus.gregorianDate,
+  );
+  checkRequired(
+    'calendar.todayStatus.weekday',
+    calendarState.todayStatus.weekday,
+  );
+  for (final rule in calendarState.quickRules) {
+    checkRequired('calendar.quickRules', rule);
+  }
+  checkRequired(
+    'calendar.dailyReadings.ctaLabel',
+    calendarState.dailyReadings.ctaLabel,
+  );
+  checkRequired(
+    'calendar.dailyReadings.fallbackText',
+    calendarState.dailyReadings.fallbackText,
+  );
+  checkRequired('calendar.saintPreview.name', calendarState.saintPreview.name);
+  checkRequired(
+    'calendar.saintPreview.summary',
+    calendarState.saintPreview.summary,
+  );
+  checkRequired(
+    'calendar.saintPreview.ctaLabel',
+    calendarState.saintPreview.ctaLabel,
+  );
+  if (calendarState.fastStatus.isFasting) {
+    checkRequired(
+      'calendar.fastStatus.fastName',
+      calendarState.fastStatus.fastName ?? '',
+    );
+  }
   for (final item in calendarState.signals) {
     checkRequired('calendar.signals.label', item.label);
     checkRequired('calendar.signals.value', item.value);
@@ -146,6 +336,7 @@ Future<void> runRepoSmokeTest() async {
   for (final item in calendarState.upcomingDays) {
     checkId('calendar.upcomingDays', item.id);
     checkRequired('calendar.upcomingDays.date', item.date);
+    checkRequired('calendar.upcomingDays.ethDate', item.ethDate);
     checkRequired('calendar.upcomingDays.saint', item.saint);
     checkRequired('calendar.upcomingDays.label', item.label);
   }

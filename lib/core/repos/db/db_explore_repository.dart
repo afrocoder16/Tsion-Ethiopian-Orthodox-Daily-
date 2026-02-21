@@ -11,12 +11,18 @@ class DbExploreRepository implements ExploreRepository {
 
   @override
   Future<ExploreScreenState> fetchExploreScreen() async {
-    final savedRows = await db.savedItemsDao.listSavedItems();
+    var savedRows = <Object>[];
+    try {
+      savedRows = await db.savedItemsDao.listSavedItems();
+    } catch (_) {
+      // Keep Explore screen available even if local DB schema lags behind.
+      savedRows = <Object>[];
+    }
     final savedItems = savedRows
         .map(
           (row) => ui.SavedItem(
-            id: row.id,
-            title: row.title,
+            id: '${(row as dynamic).id}',
+            title: '${(row as dynamic).title}',
           ),
         )
         .toList();
@@ -28,7 +34,8 @@ class DbExploreRepository implements ExploreRepository {
       ),
       studyHeader: const ui.SectionHeader(
         title: 'Sunbit Timhert Bet',
-        subtitle: 'Structured Orthodox learning from trusted books and teachings.',
+        subtitle:
+            'Structured Orthodox learning from trusted books and teachings.',
       ),
       studyItems: const [
         ui.ExploreCardItem(

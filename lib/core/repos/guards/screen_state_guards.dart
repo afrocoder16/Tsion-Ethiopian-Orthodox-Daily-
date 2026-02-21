@@ -43,16 +43,70 @@ void assertValidBooksScreen(BooksScreenState state) {
     _require(filter.value, 'books.filters.value');
   }
   _require(state.filterSelection.selected, 'books.filterSelection.selected');
-  _require(state.continueReadingHeader.title, 'books.continueReadingHeader.title');
+  _require(
+    state.continueReadingHeader.title,
+    'books.continueReadingHeader.title',
+  );
   for (final item in state.continueReadingItems) {
     _requireId(item.id, 'books.continueReadingItems.id');
     _require(item.title, 'books.continueReadingItems.title');
   }
-  _require(state.continueReadingAction.label, 'books.continueReadingAction.label');
+  _require(
+    state.continueReadingAction.label,
+    'books.continueReadingAction.label',
+  );
   _require(state.saintsHeader.title, 'books.saintsHeader.title');
   _requireId(state.patronSaint.id, 'books.patronSaint.id');
   _require(state.patronSaint.label, 'books.patronSaint.label');
   _require(state.patronSaint.name, 'books.patronSaint.name');
+  _require(state.patronSaintProfile.title, 'books.patronSaintProfile.title');
+  _require(
+    state.patronSaintProfile.feastDayLabel,
+    'books.patronSaintProfile.feastDayLabel',
+  );
+  _require(
+    state.patronSaintProfile.summary,
+    'books.patronSaintProfile.summary',
+  );
+  for (final tag in state.patronSaintProfile.tags) {
+    _require(tag, 'books.patronSaintProfile.tags');
+  }
+  _require(
+    state.patronSaintProfile.changeTitle,
+    'books.patronSaintProfile.changeTitle',
+  );
+  _require(
+    state.patronSaintProfile.changeSubtitle,
+    'books.patronSaintProfile.changeSubtitle',
+  );
+  _require(
+    state.patronSaintProfile.reminderTitle,
+    'books.patronSaintProfile.reminderTitle',
+  );
+  _require(
+    state.patronSaintProfile.lifeTitle,
+    'books.patronSaintProfile.lifeTitle',
+  );
+  _require(
+    state.patronSaintProfile.lifeReadTime,
+    'books.patronSaintProfile.lifeReadTime',
+  );
+  _require(
+    state.patronSaintProfile.lifeBody,
+    'books.patronSaintProfile.lifeBody',
+  );
+  _require(
+    state.patronSaintProfile.hymnTitle,
+    'books.patronSaintProfile.hymnTitle',
+  );
+  _require(
+    state.patronSaintProfile.hymnReadTime,
+    'books.patronSaintProfile.hymnReadTime',
+  );
+  _require(
+    state.patronSaintProfile.hymnBody,
+    'books.patronSaintProfile.hymnBody',
+  );
   for (final item in state.saintsShelf) {
     _requireId(item.id, 'books.saintsShelf.id');
     _require(item.title, 'books.saintsShelf.title');
@@ -74,8 +128,14 @@ void assertValidPrayersScreen(PrayersScreenState state) {
   _require(state.primaryPrayerCard.id, 'prayers.primaryPrayerCard.id');
   _require(state.primaryPrayerCard.label, 'prayers.primaryPrayerCard.label');
   _require(state.primaryPrayerCard.title, 'prayers.primaryPrayerCard.title');
-  _require(state.primaryPrayerCard.subtitle, 'prayers.primaryPrayerCard.subtitle');
-  _require(state.primaryPrayerCard.actionLabel, 'prayers.primaryPrayerCard.actionLabel');
+  _require(
+    state.primaryPrayerCard.subtitle,
+    'prayers.primaryPrayerCard.subtitle',
+  );
+  _require(
+    state.primaryPrayerCard.actionLabel,
+    'prayers.primaryPrayerCard.actionLabel',
+  );
   _require(state.mezmurHeader.title, 'prayers.mezmurHeader.title');
   for (final item in state.mezmurItems) {
     _requireId(item.id, 'prayers.mezmurItems.id');
@@ -96,16 +156,95 @@ void assertValidPrayersScreen(PrayersScreenState state) {
   }
   _require(state.recentHeader.title, 'prayers.recentHeader.title');
   _require(state.recentLine.text, 'prayers.recentLine.text');
+  _require(state.reflectionJournal.title, 'prayers.reflectionJournal.title');
+  _require(
+    state.reflectionJournal.gratitudeQuestion,
+    'prayers.reflectionJournal.gratitudeQuestion',
+  );
+  _require(
+    state.reflectionJournal.honestCheckQuestion,
+    'prayers.reflectionJournal.honestCheckQuestion',
+  );
+  _require(
+    state.reflectionJournal.smallStepQuestion,
+    'prayers.reflectionJournal.smallStepQuestion',
+  );
+  _require(
+    state.reflectionJournal.closingLine,
+    'prayers.reflectionJournal.closingLine',
+  );
+  _require(state.lightCandleContent.title, 'prayers.lightCandleContent.title');
+  _require(
+    state.lightCandleContent.cancelLabel,
+    'prayers.lightCandleContent.cancelLabel',
+  );
+  _require(
+    state.lightCandleContent.description,
+    'prayers.lightCandleContent.description',
+  );
+  _require(
+    state.lightCandleContent.livingTitle,
+    'prayers.lightCandleContent.livingTitle',
+  );
+  _require(
+    state.lightCandleContent.livingSubtitle,
+    'prayers.lightCandleContent.livingSubtitle',
+  );
+  _require(
+    state.lightCandleContent.departedTitle,
+    'prayers.lightCandleContent.departedTitle',
+  );
+  _require(
+    state.lightCandleContent.departedSubtitle,
+    'prayers.lightCandleContent.departedSubtitle',
+  );
+  _require(
+    state.lightCandleContent.namesLabel,
+    'prayers.lightCandleContent.namesLabel',
+  );
+  _require(
+    state.lightCandleContent.namesHint,
+    'prayers.lightCandleContent.namesHint',
+  );
+  _require(
+    state.lightCandleContent.flashLabel,
+    'prayers.lightCandleContent.flashLabel',
+  );
+  _require(
+    state.lightCandleContent.submitLabel,
+    'prayers.lightCandleContent.submitLabel',
+  );
 }
 
 void assertValidCalendarScreen(CalendarScreenState state) {
   _require(state.topBar.title, 'calendar.topBar.title');
   _require(state.topBar.subtitle, 'calendar.topBar.subtitle');
+  if (state.fastStatus.isFasting) {
+    _require(state.fastStatus.fastName ?? '', 'calendar.fastStatus.fastName');
+  }
   for (final item in state.months) {
     _require(item.label, 'calendar.months.label');
   }
-  _require(state.todayStatus.ethiopianDate, 'calendar.todayStatus.ethiopianDate');
-  _require(state.todayStatus.gregorianDate, 'calendar.todayStatus.gregorianDate');
+  _require(
+    state.todayStatus.ethiopianDate,
+    'calendar.todayStatus.ethiopianDate',
+  );
+  _require(
+    state.todayStatus.gregorianDate,
+    'calendar.todayStatus.gregorianDate',
+  );
+  _require(state.todayStatus.weekday, 'calendar.todayStatus.weekday');
+  for (final rule in state.quickRules) {
+    _require(rule, 'calendar.quickRules');
+  }
+  _require(state.dailyReadings.ctaLabel, 'calendar.dailyReadings.ctaLabel');
+  _require(
+    state.dailyReadings.fallbackText,
+    'calendar.dailyReadings.fallbackText',
+  );
+  _require(state.saintPreview.name, 'calendar.saintPreview.name');
+  _require(state.saintPreview.summary, 'calendar.saintPreview.summary');
+  _require(state.saintPreview.ctaLabel, 'calendar.saintPreview.ctaLabel');
   for (final item in state.signals) {
     _require(item.label, 'calendar.signals.label');
     _require(item.value, 'calendar.signals.value');
@@ -122,6 +261,7 @@ void assertValidCalendarScreen(CalendarScreenState state) {
   for (final item in state.upcomingDays) {
     _requireId(item.id, 'calendar.upcomingDays.id');
     _require(item.date, 'calendar.upcomingDays.date');
+    _require(item.ethDate, 'calendar.upcomingDays.ethDate');
     _require(item.saint, 'calendar.upcomingDays.saint');
     _require(item.label, 'calendar.upcomingDays.label');
   }

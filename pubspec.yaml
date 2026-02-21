@@ -36,6 +36,7 @@ dependencies:
   go_router: ^14.6.2
   collection: ^1.18.0
   sqlite3: ^2.9.4
+  abushakir: ^1.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

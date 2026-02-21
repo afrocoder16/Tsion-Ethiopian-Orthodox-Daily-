@@ -6,9 +6,13 @@ class RoutePaths {
   static const prayers = '/prayers';
   static const prayersDaily = '/prayers/daily';
   static const prayersMezmur = '/prayers/mezmur';
+  static const prayersReflection = '/prayers/reflection';
+  static const prayersLightCandle = '/prayers/light-candle';
   static const calendar = '/calendar';
+  static const calendarFasting = '/calendar/fasting';
   static const explore = '/explore';
   static const streak = '/streak';
+  static const patronSaint = '/patron-saint/:name';
 
   // Books (preferred)
   static const booksRoot = '/books';
@@ -25,10 +29,7 @@ class RoutePaths {
   static const bibleReader = '/bible/reader/:book/:chapter';
 
   // Helper to generate a real path (safe, no logic)
-  static String bibleReaderPath({
-    required String book,
-    required int chapter,
-  }) =>
+  static String bibleReaderPath({required String book, required int chapter}) =>
       '/books/bible/$book/$chapter';
 
   static String bookDetailPath(String id) => '/books/book/$id';
@@ -48,6 +49,10 @@ class RoutePaths {
 
   static String mezmurPath() => prayersMezmur;
 
+  static String reflectionPath() => prayersReflection;
+
+  static String lightCandlePath() => prayersLightCandle;
+
   static String calendarDayLinkPath(String dateKey, String type) =>
       '/calendar/day/$dateKey/link/$type';
 
@@ -58,4 +63,9 @@ class RoutePaths {
   static String exploreCommunityPath(String id) => '/explore/community/$id';
 
   static String streakPath() => '/streak';
+
+  static String calendarFastingPath() => calendarFasting;
+
+  static String patronSaintPath(String name) =>
+      '/patron-saint/${Uri.encodeComponent(name)}';
 }

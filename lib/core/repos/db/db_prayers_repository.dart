@@ -13,8 +13,15 @@ class DbPrayersRepository implements PrayersRepository {
   @override
   Future<PrayersScreenState> fetchPrayersScreen() async {
     final todayYmd = _formatYmd(DateTime.now());
-    final completions =
-        await PrayerCompletionsDao(db).listTodaysCompletions(todayYmd);
+    var completions = <Object>[];
+    try {
+      completions = await PrayerCompletionsDao(
+        db,
+      ).listTodaysCompletions(todayYmd);
+    } catch (_) {
+      // Keep Prayers screen available even if local DB schema lags behind.
+      completions = <Object>[];
+    }
     final completionCount = completions.length;
     final hasCompletions = completionCount > 0;
 
@@ -76,6 +83,27 @@ class DbPrayersRepository implements PrayersRepository {
       ],
       recentHeader: const ui.SectionHeader(title: 'RECENT'),
       recentLine: ui.RecentLine(text: recentText),
+      reflectionJournal: const ui.ReflectionJournal(
+        title: 'Daily Reflection',
+        gratitudeQuestion: 'What\'s 1 thing I\'m thankful for today?',
+        honestCheckQuestion: 'Where did I fall short (word, thought, action)?',
+        smallStepQuestion:
+            'What\'s 1 small thing I will do tomorrow to live the verse better?',
+        closingLine: '"Lord, have mercy and guide me tomorrow."',
+      ),
+      lightCandleContent: const ui.LightCandleContent(
+        title: 'LIGHT A CANDLE',
+        cancelLabel: 'Cancel',
+        description: 'Enter names of those you\'d like to pray for',
+        livingTitle: 'Living',
+        livingSubtitle: 'Health & salvation',
+        departedTitle: 'Departed',
+        departedSubtitle: 'Repose of the soul',
+        namesLabel: 'Names (separate with commas or new lines)',
+        namesHint: 'Enter names for health and salvation',
+        flashLabel: 'Turn on phone light when lighting the candle',
+        submitLabel: 'Light Candle',
+      ),
     );
     assert(() {
       assertValidPrayersScreen(state);

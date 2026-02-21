@@ -29,19 +29,27 @@ class DbBooksRepository implements BooksRepository {
       ),
     ];
 
-    final progressRow = await db.readingProgressDao
-        .getReadingProgress(defaultContinueReadingItems[0].id);
-    final progressText = progressRow?.progressText;
-
-    final updatedContinueReading = progressRow == null
-        ? <ui.BookItem>[]
-        : [
-            ui.BookItem(
-              id: defaultContinueReadingItems[0].id,
-              title: defaultContinueReadingItems[0].title,
-              subtitle: progressRow.progressText,
-            ),
-          ];
+    String? progressText;
+    List<ui.BookItem> updatedContinueReading = <ui.BookItem>[];
+    try {
+      final progressRow = await db.readingProgressDao.getReadingProgress(
+        defaultContinueReadingItems[0].id,
+      );
+      progressText = progressRow?.progressText;
+      updatedContinueReading = progressRow == null
+          ? <ui.BookItem>[]
+          : [
+              ui.BookItem(
+                id: defaultContinueReadingItems[0].id,
+                title: defaultContinueReadingItems[0].title,
+                subtitle: progressRow.progressText,
+              ),
+            ];
+    } catch (_) {
+      // Keep Books screen available even if local DB schema lags behind.
+      progressText = null;
+      updatedContinueReading = <ui.BookItem>[];
+    }
 
     final state = BooksScreenState(
       readingStreakBadge: const ui.ReadingStreakBadge(
@@ -67,14 +75,29 @@ class DbBooksRepository implements BooksRepository {
         label: 'Resume',
         progressText: progressText,
       ),
-      saintsHeader: const ui.SectionHeader(
-        title: 'Saints',
-        showSeeAll: true,
-      ),
+      saintsHeader: const ui.SectionHeader(title: 'Saints', showSeeAll: true),
       patronSaint: const ui.PatronSaintCard(
         id: 'patron-saint-athon',
         label: 'Your Patron Saint',
         name: 'Athon',
+      ),
+      patronSaintProfile: const ui.PatronSaintProfile(
+        title: 'Saint Athon',
+        feastDayLabel: 'Feast Day - January 7',
+        summary:
+            'The prophet who prepared the way for Christ through repentance and truth.',
+        tags: ['Humility', 'Repentance', 'Truthfulness'],
+        changeTitle: 'Change Patron Saint',
+        changeSubtitle: 'Select your guardian saint',
+        reminderTitle: 'Remind me on feast day',
+        lifeTitle: 'LIFE',
+        lifeReadTime: '1 min read',
+        lifeBody:
+            'Saint John the Baptist and Forerunner is the last and greatest of the prophets, chosen by God to prepare hearts for the coming of Christ.',
+        hymnTitle: 'HYMN OF PRAISE',
+        hymnReadTime: '1 min read',
+        hymnBody:
+            'O glorious Prophet John, voice crying in the wilderness, prepare our hearts in repentance, that we may welcome the Light of Christ.',
       ),
       saintsShelf: const [
         ui.BookItem(id: 'book-synaxarium', title: 'Synaxarium'),

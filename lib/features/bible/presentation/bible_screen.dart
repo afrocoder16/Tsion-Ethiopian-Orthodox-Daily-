@@ -20,11 +20,7 @@ class BibleScreen extends ConsumerWidget {
         onRetry: () => ref.refresh(booksScreenStateProvider),
       ),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: body,
-      ),
-    );
+    return Scaffold(body: SafeArea(child: body));
   }
 }
 
@@ -39,19 +35,7 @@ class _BooksContent extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Row(
-          children: [
-            _ReadingStreakBadge(
-              compact: adapter.readingStreakCompact,
-              label: adapter.readingStreakLabel,
-              onTap: () => context.push(RoutePaths.streak),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _SearchBar(placeholder: adapter.searchPlaceholder),
-            ),
-          ],
-        ),
+        _SearchBar(placeholder: adapter.searchPlaceholder),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -73,7 +57,12 @@ class _BooksContent extends StatelessWidget {
         const SizedBox(height: 22),
         _SectionHeader(view: adapter.saintsHeader),
         const SizedBox(height: 12),
-        _PatronSaintCard(view: adapter.patronSaint),
+        _PatronSaintCard(
+          view: adapter.patronSaint,
+          onTap: () => context.push(
+            RoutePaths.patronSaintPath(adapter.patronSaint.name),
+          ),
+        ),
         const SizedBox(height: 12),
         _SectionBlock(
           isMuted: adapter.isBibleSelected,
@@ -174,15 +163,9 @@ class _InlineErrorCard extends StatelessWidget {
               const Icon(Icons.error_outline, color: Color(0xFFB00020)),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                child: Text(message, style: const TextStyle(fontSize: 12)),
               ),
-              TextButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
             ],
           ),
         ),
@@ -211,10 +194,7 @@ class _SearchBar extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             placeholder,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black45,
-            ),
+            style: const TextStyle(fontSize: 13, color: Colors.black45),
           ),
         ],
       ),
@@ -236,50 +216,6 @@ class _FilterButton extends StatelessWidget {
       ),
       child: const Icon(Icons.tune, size: 18, color: Colors.black54),
     );
-  }
-}
-
-class _ReadingStreakBadge extends StatelessWidget {
-  const _ReadingStreakBadge({
-    required this.label,
-    this.compact = false,
-    this.onTap,
-  });
-
-  final bool compact;
-  final String label;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final badge = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? 10 : 14,
-        vertical: compact ? 8 : 10,
-      ),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F2E8),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.local_fire_department,
-              size: 18, color: Colors.black54),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) {
-      return badge;
-    }
-    return GestureDetector(onTap: onTap, child: badge);
   }
 }
 
@@ -348,10 +284,7 @@ class _SectionHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   view.subtitle!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
               ],
             ],
@@ -360,10 +293,7 @@ class _SectionHeader extends StatelessWidget {
         if (view.showSeeAll)
           Text(
             view.seeAllLabel,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.black54),
           ),
       ],
     );
@@ -371,10 +301,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _HorizontalShelf extends StatelessWidget {
-  const _HorizontalShelf({
-    required this.items,
-    this.onTap,
-  });
+  const _HorizontalShelf({required this.items, this.onTap});
 
   final List<BookItemView> items;
   final void Function(BookItemView item)? onTap;
@@ -399,10 +326,7 @@ class _HorizontalShelf extends StatelessWidget {
           );
           return onTap == null
               ? card
-              : GestureDetector(
-                  onTap: () => onTap!(item),
-                  child: card,
-                );
+              : GestureDetector(onTap: () => onTap!(item), child: card);
         },
       ),
     );
@@ -432,10 +356,7 @@ class _ContinueReadingShelf extends StatelessWidget {
           final item = items[index];
           return GestureDetector(
             onTap: () => onTap(item),
-            child: _ContinueReadingCard(
-              item: item,
-              actionLabel: actionLabel,
-            ),
+            child: _ContinueReadingCard(item: item, actionLabel: actionLabel),
           );
         },
       ),
@@ -444,10 +365,7 @@ class _ContinueReadingShelf extends StatelessWidget {
 }
 
 class _ContinueReadingCard extends StatelessWidget {
-  const _ContinueReadingCard({
-    required this.item,
-    required this.actionLabel,
-  });
+  const _ContinueReadingCard({required this.item, required this.actionLabel});
 
   final BookItemView item;
   final String actionLabel;
@@ -467,19 +385,13 @@ class _ContinueReadingCard extends StatelessWidget {
           const Spacer(),
           Text(
             item.title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
           ),
           if (item.subtitle != null) ...[
             const SizedBox(height: 6),
             Text(
               item.subtitle!,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 11, color: Colors.black54),
             ),
           ],
           const SizedBox(height: 10),
@@ -491,10 +403,7 @@ class _ContinueReadingCard extends StatelessWidget {
             ),
             child: Text(
               actionLabel,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -504,11 +413,7 @@ class _ContinueReadingCard extends StatelessWidget {
 }
 
 class _BookCover extends StatelessWidget {
-  const _BookCover({
-    required this.title,
-    this.subtitle,
-    required this.width,
-  });
+  const _BookCover({required this.title, this.subtitle, required this.width});
 
   final String title;
   final String? subtitle;
@@ -529,19 +434,13 @@ class _BookCover extends StatelessWidget {
           const Spacer(),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
           ),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
             Text(
               subtitle!,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 11, color: Colors.black54),
             ),
           ],
         ],
@@ -551,10 +450,7 @@ class _BookCover extends StatelessWidget {
 }
 
 class _BooksGrid extends StatelessWidget {
-  const _BooksGrid({
-    required this.items,
-    required this.onTap,
-  });
+  const _BooksGrid({required this.items, required this.onTap});
 
   final List<BookItemView> items;
   final void Function(BookItemView item) onTap;
@@ -618,31 +514,36 @@ class _SectionGroupTitle extends StatelessWidget {
 }
 
 class _PatronSaintCard extends StatelessWidget {
-  const _PatronSaintCard({required this.view});
+  const _PatronSaintCard({required this.view, this.onTap});
 
   final PatronSaintView view;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEDE7DD),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            view.label,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            view.name,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEDE7DD),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              view.label,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              view.name,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -653,10 +554,7 @@ class _SoftDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 1,
-      color: const Color(0xFFE5E5E5),
-    );
+    return Container(height: 1, color: const Color(0xFFE5E5E5));
   }
 }
 
@@ -668,10 +566,7 @@ class _SectionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: isMuted ? 0.4 : 1,
-      child: child,
-    );
+    return Opacity(opacity: isMuted ? 0.4 : 1, child: child);
   }
 }
 

@@ -57,10 +57,7 @@ class TodayHeaderView {
 }
 
 class TodayHeaderActionView {
-  const TodayHeaderActionView({
-    required this.iconKey,
-    required this.icon,
-  });
+  const TodayHeaderActionView({required this.iconKey, required this.icon});
 
   final String iconKey;
   final IconData icon;
@@ -117,55 +114,54 @@ class TodayAdapter {
   final TodayScreenState state;
 
   TodayHeaderView get header => TodayHeaderView(
-        title: _safeText(state.header.title, 'TODAY'),
-        greeting: _safeText(state.header.greeting, 'Bless you'),
-        dateText: _safeText(state.header.dateText, '-'),
-        calendarLabel: _safeText(state.header.calendarLabel, '-'),
-        actions: state.headerActions
-            .map(
-              (action) => TodayHeaderActionView(
-                iconKey: action.iconKey,
-                icon: iconDataFor(action.iconKey),
-              ),
-            )
-            .toList(),
-      );
+    title: _safeText(state.header.title, 'TODAY'),
+    greeting: _safeText(state.header.greeting, 'Bless you'),
+    dateText: _safeText(state.header.dateText, '-'),
+    calendarLabel: _safeText(state.header.calendarLabel, '-'),
+    actions: state.headerActions
+        .map(
+          (action) => TodayHeaderActionView(
+            iconKey: action.iconKey,
+            icon: iconDataFor(action.iconKey),
+          ),
+        )
+        .toList(),
+  );
 
   VerseCardView get verseCard => VerseCardView(
-        title: _safeText(state.verseCard.title, 'Verse of the Day'),
-        reference: _safeText(state.verseCard.reference, '-'),
-        body: _safeText(state.verseCard.body, '-'),
-        stats: state.verseStats
-            .map(
-              (stat) => ActionStatView(
-                icon: iconDataFor(stat.iconKey),
-                label: _safeText(stat.label, '-'),
-              ),
-            )
-            .toList(),
-      );
+    title: _safeText(state.verseCard.title, 'Verse of the Day'),
+    reference: _safeText(state.verseCard.reference, '-'),
+    body: _safeText(state.verseCard.body, '-'),
+    stats: state.verseStats
+        .map(
+          (stat) => ActionStatView(
+            icon: iconDataFor(stat.iconKey),
+            label: _safeText(stat.label, '-'),
+          ),
+        )
+        .toList(),
+  );
 
   AudioCardView get audioCard => AudioCardView(
-        title: _safeText(state.audioCard.title, 'Audio'),
-        subtitle: _safeText(state.audioCard.subtitle, ''),
-        durationText: _safeText(state.audioCard.durationText, '-'),
-      );
+    title: _safeText(state.audioCard.title, 'Audio'),
+    subtitle: _safeText(state.audioCard.subtitle, ''),
+    durationText: _safeText(state.audioCard.durationText, '-'),
+  );
 
   String get memoryCueText => _safeText(state.memoryCue.text, 'Continue');
 
   SectionHeaderView get orthodoxDailyHeader =>
       _sectionHeaderView(state.orthodoxDailyHeader, 'ORTHODOX DAILY');
 
-  List<TodayCarouselView> get orthodoxDailyItems =>
-      state.orthodoxDailyItems
-          .map(
-            (item) => TodayCarouselView(
-              id: item.id,
-              title: _safeText(item.title, '-'),
-              subtitle: _safeText(item.subtitle, ''),
-            ),
-          )
-          .toList();
+  List<TodayCarouselView> get orthodoxDailyItems => state.orthodoxDailyItems
+      .map(
+        (item) => TodayCarouselView(
+          id: item.id,
+          title: _safeText(item.title, '-'),
+          subtitle: _safeText(item.subtitle, ''),
+        ),
+      )
+      .toList();
 
   SectionHeaderView get studyWorshipHeader =>
       _sectionHeaderView(state.studyWorshipHeader, 'STUDY & WORSHIP');
@@ -216,6 +212,38 @@ class PatronSaintView {
   final String name;
 }
 
+class PatronSaintProfileView {
+  const PatronSaintProfileView({
+    required this.title,
+    required this.feastDayLabel,
+    required this.summary,
+    required this.tags,
+    required this.changeTitle,
+    required this.changeSubtitle,
+    required this.reminderTitle,
+    required this.lifeTitle,
+    required this.lifeReadTime,
+    required this.lifeBody,
+    required this.hymnTitle,
+    required this.hymnReadTime,
+    required this.hymnBody,
+  });
+
+  final String title;
+  final String feastDayLabel;
+  final String summary;
+  final List<String> tags;
+  final String changeTitle;
+  final String changeSubtitle;
+  final String reminderTitle;
+  final String lifeTitle;
+  final String lifeReadTime;
+  final String lifeBody;
+  final String hymnTitle;
+  final String hymnReadTime;
+  final String hymnBody;
+}
+
 class BooksAdapter {
   BooksAdapter(this.state);
 
@@ -253,18 +281,17 @@ class BooksAdapter {
   SectionHeaderView get continueReadingHeader =>
       _sectionHeaderView(state.continueReadingHeader, 'Continue Reading');
 
-  List<BookItemView> get continueReadingItems =>
-      state.continueReadingItems
-          .map(
-            (item) => BookItemView(
-              id: item.id,
-              routeId: _safeId(item.id, item.title),
-              title: _safeText(item.title, '-'),
-              subtitle: _safeOptional(item.subtitle),
-              isBible: _isBibleItem(item.id, item.title),
-            ),
-          )
-          .toList();
+  List<BookItemView> get continueReadingItems => state.continueReadingItems
+      .map(
+        (item) => BookItemView(
+          id: item.id,
+          routeId: _safeId(item.id, item.title),
+          title: _safeText(item.title, '-'),
+          subtitle: _safeOptional(item.subtitle),
+          isBible: _isBibleItem(item.id, item.title),
+        ),
+      )
+      .toList();
 
   String get continueReadingActionLabel =>
       _safeText(state.continueReadingAction.label, 'Resume');
@@ -273,22 +300,48 @@ class BooksAdapter {
       _sectionHeaderView(state.saintsHeader, 'Saints');
 
   PatronSaintView get patronSaint => PatronSaintView(
-        label: _safeText(state.patronSaint.label, 'Patron Saint'),
-        name: _safeText(state.patronSaint.name, '-'),
-      );
+    label: _safeText(state.patronSaint.label, 'Patron Saint'),
+    name: _safeText(state.patronSaint.name, '-'),
+  );
 
-  List<BookItemView> get saintsShelf =>
-      state.saintsShelf
-          .map(
-            (item) => BookItemView(
-              id: item.id,
-              routeId: _safeId(item.id, item.title),
-              title: _safeText(item.title, '-'),
-              subtitle: _safeOptional(item.subtitle),
-              isBible: _isBibleItem(item.id, item.title),
-            ),
-          )
-          .toList();
+  PatronSaintProfileView get patronSaintProfile => PatronSaintProfileView(
+    title: _safeText(state.patronSaintProfile.title, 'Saint'),
+    feastDayLabel: _safeText(
+      state.patronSaintProfile.feastDayLabel,
+      'Feast Day',
+    ),
+    summary: _safeText(state.patronSaintProfile.summary, '-'),
+    tags: state.patronSaintProfile.tags
+        .map((tag) => _safeText(tag, '-'))
+        .toList(),
+    changeTitle: _safeText(state.patronSaintProfile.changeTitle, 'Change'),
+    changeSubtitle: _safeText(
+      state.patronSaintProfile.changeSubtitle,
+      'Update',
+    ),
+    reminderTitle: _safeText(
+      state.patronSaintProfile.reminderTitle,
+      'Reminder',
+    ),
+    lifeTitle: _safeText(state.patronSaintProfile.lifeTitle, 'LIFE'),
+    lifeReadTime: _safeText(state.patronSaintProfile.lifeReadTime, '-'),
+    lifeBody: _safeText(state.patronSaintProfile.lifeBody, '-'),
+    hymnTitle: _safeText(state.patronSaintProfile.hymnTitle, 'HYMN'),
+    hymnReadTime: _safeText(state.patronSaintProfile.hymnReadTime, '-'),
+    hymnBody: _safeText(state.patronSaintProfile.hymnBody, '-'),
+  );
+
+  List<BookItemView> get saintsShelf => state.saintsShelf
+      .map(
+        (item) => BookItemView(
+          id: item.id,
+          routeId: _safeId(item.id, item.title),
+          title: _safeText(item.title, '-'),
+          subtitle: _safeOptional(item.subtitle),
+          isBible: _isBibleItem(item.id, item.title),
+        ),
+      )
+      .toList();
 
   SectionHeaderView get libraryHeader =>
       _sectionHeaderView(state.libraryHeader, 'LIBRARY');
@@ -342,6 +395,50 @@ class PrayerTileView {
   final String routeId;
 }
 
+class ReflectionJournalView {
+  const ReflectionJournalView({
+    required this.title,
+    required this.gratitudeQuestion,
+    required this.honestCheckQuestion,
+    required this.smallStepQuestion,
+    required this.closingLine,
+  });
+
+  final String title;
+  final String gratitudeQuestion;
+  final String honestCheckQuestion;
+  final String smallStepQuestion;
+  final String closingLine;
+}
+
+class LightCandleView {
+  const LightCandleView({
+    required this.title,
+    required this.cancelLabel,
+    required this.description,
+    required this.livingTitle,
+    required this.livingSubtitle,
+    required this.departedTitle,
+    required this.departedSubtitle,
+    required this.namesLabel,
+    required this.namesHint,
+    required this.flashLabel,
+    required this.submitLabel,
+  });
+
+  final String title;
+  final String cancelLabel;
+  final String description;
+  final String livingTitle;
+  final String livingSubtitle;
+  final String departedTitle;
+  final String departedSubtitle;
+  final String namesLabel;
+  final String namesHint;
+  final String flashLabel;
+  final String submitLabel;
+}
+
 class PrayersAdapter {
   PrayersAdapter(this.state);
 
@@ -352,18 +449,16 @@ class PrayersAdapter {
   bool get streakActive => state.streakIcon.isActive;
 
   List<IconData> get topBarIcons => const [
-        Icons.headphones,
-        Icons.calendar_today,
-        Icons.person,
-      ];
+    Icons.headphones,
+    Icons.calendar_today,
+    Icons.person,
+  ];
 
-  String get primaryLabel =>
-      _safeText(state.primaryPrayerCard.label, 'Prayer');
+  String get primaryLabel => _safeText(state.primaryPrayerCard.label, 'Prayer');
 
   String get primaryPrayerId => state.primaryPrayerCard.id;
 
-  String get primaryTitle =>
-      _safeText(state.primaryPrayerCard.title, '-');
+  String get primaryTitle => _safeText(state.primaryPrayerCard.title, '-');
 
   String get primarySubtitle =>
       _safeText(state.primaryPrayerCard.subtitle, '-');
@@ -415,6 +510,43 @@ class PrayersAdapter {
       _sectionHeaderView(state.recentHeader, 'RECENT');
 
   String get recentText => _safeText(state.recentLine.text, '-');
+
+  ReflectionJournalView get reflectionJournal => ReflectionJournalView(
+    title: _safeText(state.reflectionJournal.title, 'Daily Reflection'),
+    gratitudeQuestion: _safeText(
+      state.reflectionJournal.gratitudeQuestion,
+      '-',
+    ),
+    honestCheckQuestion: _safeText(
+      state.reflectionJournal.honestCheckQuestion,
+      '-',
+    ),
+    smallStepQuestion: _safeText(
+      state.reflectionJournal.smallStepQuestion,
+      '-',
+    ),
+    closingLine: _safeText(state.reflectionJournal.closingLine, '-'),
+  );
+
+  LightCandleView get lightCandle => LightCandleView(
+    title: _safeText(state.lightCandleContent.title, 'LIGHT A CANDLE'),
+    cancelLabel: _safeText(state.lightCandleContent.cancelLabel, 'Cancel'),
+    description: _safeText(state.lightCandleContent.description, '-'),
+    livingTitle: _safeText(state.lightCandleContent.livingTitle, 'Living'),
+    livingSubtitle: _safeText(state.lightCandleContent.livingSubtitle, '-'),
+    departedTitle: _safeText(
+      state.lightCandleContent.departedTitle,
+      'Departed',
+    ),
+    departedSubtitle: _safeText(state.lightCandleContent.departedSubtitle, '-'),
+    namesLabel: _safeText(state.lightCandleContent.namesLabel, 'Names'),
+    namesHint: _safeText(state.lightCandleContent.namesHint, '-'),
+    flashLabel: _safeText(state.lightCandleContent.flashLabel, '-'),
+    submitLabel: _safeText(
+      state.lightCandleContent.submitLabel,
+      'Light Candle',
+    ),
+  );
 }
 
 class MonthChipView {
@@ -425,35 +557,111 @@ class MonthChipView {
 }
 
 class ObservanceView {
-  const ObservanceView({
-    required this.labelText,
-    required this.valueText,
-  });
+  const ObservanceView({required this.labelText, required this.valueText});
 
   final String labelText;
   final String valueText;
 }
 
 class CalendarActionView {
-  const CalendarActionView({
-    required this.label,
-    required this.icon,
-  });
+  const CalendarActionView({required this.label, required this.icon});
 
   final String label;
   final IconData icon;
 }
 
-class UpcomingDayView {
-  const UpcomingDayView({
-    required this.date,
-    required this.saint,
-    required this.label,
+class FastingGuidanceView {
+  const FastingGuidanceView({
+    required this.title,
+    this.subtitle,
+    required this.bullets,
+    this.notes,
   });
 
+  final String title;
+  final String? subtitle;
+  final List<String> bullets;
+  final String? notes;
+}
+
+class CalendarStatusView {
+  const CalendarStatusView({
+    required this.ethiopianDate,
+    this.ethiopianDateAmharic,
+    required this.gregorianDate,
+    required this.weekday,
+  });
+
+  final String ethiopianDate;
+  final String? ethiopianDateAmharic;
+  final String gregorianDate;
+  final String weekday;
+}
+
+class SignalChipView {
+  const SignalChipView({
+    required this.title,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String title;
+  final String value;
+  final String? subtitle;
+}
+
+class DailyReadingsView {
+  const DailyReadingsView({
+    required this.morning,
+    required this.liturgy,
+    required this.evening,
+    required this.isLoaded,
+    required this.ctaLabel,
+    required this.fallbackText,
+    this.downloadLabel,
+  });
+
+  final List<String> morning;
+  final List<String> liturgy;
+  final List<String> evening;
+  final bool isLoaded;
+  final String ctaLabel;
+  final String fallbackText;
+  final String? downloadLabel;
+}
+
+class SaintPreviewView {
+  const SaintPreviewView({
+    required this.name,
+    required this.summary,
+    required this.isAvailable,
+    required this.ctaLabel,
+  });
+
+  final String name;
+  final String summary;
+  final bool isAvailable;
+  final String ctaLabel;
+}
+
+class UpcomingDayView {
+  const UpcomingDayView({
+    required this.id,
+    required this.date,
+    required this.ethDate,
+    required this.saint,
+    required this.label,
+    this.subtitle,
+    required this.badges,
+  });
+
+  final String id;
   final String date;
+  final String ethDate;
   final String saint;
   final String label;
+  final String? subtitle;
+  final List<String> badges;
 }
 
 class CalendarAdapter {
@@ -463,13 +671,9 @@ class CalendarAdapter {
 
   String get topBarTitle => _safeText(state.topBar.title, 'CALENDAR');
 
-  String get topBarSubtitle =>
-      _safeText(state.topBar.subtitle, '-');
+  String get topBarSubtitle => _safeText(state.topBar.subtitle, '-');
 
-  List<IconData> get topBarIcons => const [
-        Icons.calendar_today,
-        Icons.person,
-      ];
+  List<IconData> get topBarIcons => const [Icons.calendar_today, Icons.person];
 
   List<MonthChipView> get months {
     final items = state.months;
@@ -482,17 +686,51 @@ class CalendarAdapter {
     );
   }
 
-  String get ethiopianDate =>
-      _safeText(state.todayStatus.ethiopianDate, '-');
+  CalendarStatusView get status => CalendarStatusView(
+    ethiopianDate: _safeText(state.todayStatus.ethiopianDate, '-'),
+    ethiopianDateAmharic: _safeOptional(state.todayStatus.ethiopianDateAmharic),
+    gregorianDate: _safeText(state.todayStatus.gregorianDate, '-'),
+    weekday: _safeText(state.todayStatus.weekday, '-'),
+  );
 
-  String get gregorianDate =>
-      _safeText(state.todayStatus.gregorianDate, '-');
-
-  List<String> get signalChips => state.signals
-      .map((item) => _joinLabelValue(item.label, item.value))
+  List<SignalChipView> get signalChips => state.signals
+      .map(
+        (item) => SignalChipView(
+          title: _safeText(item.label, '-'),
+          value: _safeText(item.value, '-'),
+          subtitle: _safeOptional(item.subtitle),
+        ),
+      )
       .toList();
 
-  String get todayObservanceTitle => 'Today Observance';
+  bool get fastingToday => state.fastStatus.isFasting;
+
+  String get fastingType {
+    final bySeason = _safeOptional(state.fastStatus.fastName);
+    if (bySeason != null) {
+      return bySeason;
+    }
+    final top = _safeOptional(state.fastStatus.topFastReason);
+    if (top != null) {
+      return top;
+    }
+    return state.fastStatus.isFasting ? 'Wed/Fri' : 'Regular day';
+  }
+
+  List<String> get fastReasons =>
+      (state.fastStatus.fastReasons ?? const <String>[])
+          .map((item) => _safeText(item, '-'))
+          .toList();
+
+  String? get seasonProgressText {
+    final p = state.fastStatus.seasonProgress;
+    if (p == null) {
+      return null;
+    }
+    return 'Day ${p.dayIndex} of ${p.totalDays}';
+  }
+
+  String get todayObservanceTitle => 'Today in the Church';
 
   List<ObservanceView> get observances => state.observances
       .map(
@@ -512,18 +750,75 @@ class CalendarAdapter {
       )
       .toList();
 
+  FastingGuidanceView get fastingGuidance {
+    final status = state.fastStatus;
+    if (status.isFasting) {
+      final fastName = _safeOptional(status.fastName) ?? 'Fasting Day';
+      return FastingGuidanceView(
+        title: 'Today\'s Fast',
+        subtitle: fastName,
+        bullets: const [
+          'Food rule: no meat/dairy/eggs, keep it simple.',
+          'Heart rule: humility, guard mouth/eyes.',
+          'Action: prayer + mercy/almsgiving.',
+        ],
+        notes: _safeOptional(status.notes),
+      );
+    }
+    return FastingGuidanceView(
+      title: 'Not a fasting day',
+      bullets: const ['Eat with gratitude.', 'Avoid excess.'],
+      notes: _safeOptional(status.notes),
+    );
+  }
+
   SectionHeaderView get upcomingHeader =>
-      _sectionHeaderView(state.upcomingHeader, 'Upcoming Days');
+      _sectionHeaderView(state.upcomingHeader, 'Next 7 days');
 
   List<UpcomingDayView> get upcomingDays => state.upcomingDays
       .map(
         (item) => UpcomingDayView(
+          id: _safeId(item.id, '${item.date}-${item.saint}'),
           date: _safeText(item.date, '-'),
+          ethDate: _safeText(item.ethDate, '-'),
           saint: _safeText(item.saint, '-'),
           label: _safeText(item.label, '-'),
+          subtitle: _safeOptional(item.subtitle),
+          badges: (item.badges ?? const <String>[])
+              .map((value) => _safeText(value, '-'))
+              .toList(),
         ),
       )
       .toList();
+
+  List<String> get quickRules =>
+      state.quickRules.map((item) => _safeText(item, '-')).toList();
+
+  DailyReadingsView get dailyReadings => DailyReadingsView(
+    morning: state.dailyReadings.morning
+        .map((item) => _safeText(item, '-'))
+        .toList(),
+    liturgy: state.dailyReadings.liturgy
+        .map((item) => _safeText(item, '-'))
+        .toList(),
+    evening: state.dailyReadings.evening
+        .map((item) => _safeText(item, '-'))
+        .toList(),
+    isLoaded: state.dailyReadings.isLoaded,
+    ctaLabel: _safeText(state.dailyReadings.ctaLabel, 'Open readings'),
+    fallbackText: _safeText(
+      state.dailyReadings.fallbackText,
+      'Readings not loaded',
+    ),
+    downloadLabel: _safeOptional(state.dailyReadings.downloadLabel),
+  );
+
+  SaintPreviewView get saintPreview => SaintPreviewView(
+    name: _safeText(state.saintPreview.name, 'Not available yet'),
+    summary: _safeText(state.saintPreview.summary, 'Tap to read'),
+    isAvailable: state.saintPreview.isAvailable,
+    ctaLabel: _safeText(state.saintPreview.ctaLabel, 'Read Synaxarium'),
+  );
 }
 
 class ExploreCardView {
@@ -539,10 +834,7 @@ class ExploreCardView {
 }
 
 class SmallTileView {
-  const SmallTileView({
-    required this.title,
-    required this.routeId,
-  });
+  const SmallTileView({required this.title, required this.routeId});
 
   final String title;
   final String routeId;
@@ -581,13 +873,9 @@ class ExploreAdapter {
 
   String get topBarTitle => _safeText(state.topBar.title, 'EXPLORE');
 
-  String get topBarSubtitle =>
-      _safeText(state.topBar.subtitle, '-');
+  String get topBarSubtitle => _safeText(state.topBar.subtitle, '-');
 
-  List<IconData> get topBarIcons => const [
-        Icons.calendar_today,
-        Icons.person,
-      ];
+  List<IconData> get topBarIcons => const [Icons.calendar_today, Icons.person];
 
   SectionHeaderView get studyHeader =>
       _sectionHeaderView(state.studyHeader, 'Study');
@@ -710,12 +998,6 @@ String _slugFromTitle(String title) {
     return 'item';
   }
   return trimmed.toLowerCase().replaceAll(' ', '-');
-}
-
-String _joinLabelValue(String label, String value) {
-  final safeLabel = _safeText(label, '-');
-  final safeValue = _safeText(value, '-');
-  return '$safeLabel: $safeValue';
 }
 
 String _titleCase(String value) {

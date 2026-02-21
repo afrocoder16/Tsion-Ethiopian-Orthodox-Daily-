@@ -33,10 +33,7 @@ class VerseCard {
 }
 
 class VerseActionStat {
-  const VerseActionStat({
-    required this.iconKey,
-    required this.label,
-  });
+  const VerseActionStat({required this.iconKey, required this.label});
 
   final String iconKey;
   final String label;
@@ -63,11 +60,7 @@ class MemoryCue {
 }
 
 class SectionHeader {
-  const SectionHeader({
-    required this.title,
-    this.subtitle,
-    this.showSeeAll,
-  });
+  const SectionHeader({required this.title, this.subtitle, this.showSeeAll});
 
   final String title;
   final String? subtitle;
@@ -87,10 +80,7 @@ class TodayCarouselItem {
 }
 
 class ReadingStreakBadge {
-  const ReadingStreakBadge({
-    required this.label,
-    this.compact,
-  });
+  const ReadingStreakBadge({required this.label, this.compact});
 
   final String label;
   final bool? compact;
@@ -103,10 +93,7 @@ class SearchBar {
 }
 
 class BooksFilterOption {
-  const BooksFilterOption({
-    required this.text,
-    required this.value,
-  });
+  const BooksFilterOption({required this.text, required this.value});
 
   final String text;
   final String value;
@@ -119,11 +106,7 @@ class FilterSelection {
 }
 
 class BookItem {
-  const BookItem({
-    required this.id,
-    required this.title,
-    this.subtitle,
-  });
+  const BookItem({required this.id, required this.title, this.subtitle});
 
   final String id;
   final String title;
@@ -142,11 +125,40 @@ class PatronSaintCard {
   final String name;
 }
 
-class ContinueReadingAction {
-  const ContinueReadingAction({
-    required this.label,
-    this.progressText,
+class PatronSaintProfile {
+  const PatronSaintProfile({
+    required this.title,
+    required this.feastDayLabel,
+    required this.summary,
+    required this.tags,
+    required this.changeTitle,
+    required this.changeSubtitle,
+    required this.reminderTitle,
+    required this.lifeTitle,
+    required this.lifeReadTime,
+    required this.lifeBody,
+    required this.hymnTitle,
+    required this.hymnReadTime,
+    required this.hymnBody,
   });
+
+  final String title;
+  final String feastDayLabel;
+  final String summary;
+  final List<String> tags;
+  final String changeTitle;
+  final String changeSubtitle;
+  final String reminderTitle;
+  final String lifeTitle;
+  final String lifeReadTime;
+  final String lifeBody;
+  final String hymnTitle;
+  final String hymnReadTime;
+  final String hymnBody;
+}
+
+class ContinueReadingAction {
+  const ContinueReadingAction({required this.label, this.progressText});
 
   final String label;
   final String? progressText;
@@ -206,11 +218,52 @@ class RecentLine {
   final String text;
 }
 
-class CalendarTopBar {
-  const CalendarTopBar({
+class ReflectionJournal {
+  const ReflectionJournal({
     required this.title,
-    required this.subtitle,
+    required this.gratitudeQuestion,
+    required this.honestCheckQuestion,
+    required this.smallStepQuestion,
+    required this.closingLine,
   });
+
+  final String title;
+  final String gratitudeQuestion;
+  final String honestCheckQuestion;
+  final String smallStepQuestion;
+  final String closingLine;
+}
+
+class LightCandleContent {
+  const LightCandleContent({
+    required this.title,
+    required this.cancelLabel,
+    required this.description,
+    required this.livingTitle,
+    required this.livingSubtitle,
+    required this.departedTitle,
+    required this.departedSubtitle,
+    required this.namesLabel,
+    required this.namesHint,
+    required this.flashLabel,
+    required this.submitLabel,
+  });
+
+  final String title;
+  final String cancelLabel;
+  final String description;
+  final String livingTitle;
+  final String livingSubtitle;
+  final String departedTitle;
+  final String departedSubtitle;
+  final String namesLabel;
+  final String namesHint;
+  final String flashLabel;
+  final String submitLabel;
+}
+
+class CalendarTopBar {
+  const CalendarTopBar({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -225,55 +278,131 @@ class MonthSelectorItem {
 class TodayStatusCard {
   const TodayStatusCard({
     required this.ethiopianDate,
+    this.ethiopianDateAmharic,
     required this.gregorianDate,
+    required this.weekday,
   });
 
   final String ethiopianDate;
+  final String? ethiopianDateAmharic;
   final String gregorianDate;
+  final String weekday;
 }
 
 class SignalItem {
   const SignalItem({
     required this.label,
     required this.value,
+    this.subtitle,
   });
 
   final String label;
   final String value;
+  final String? subtitle;
 }
 
 class ObservanceItem {
-  const ObservanceItem({
-    required this.type,
-    required this.label,
-  });
+  const ObservanceItem({required this.type, required this.label});
 
   final String type;
   final String label;
 }
 
 class ActionItem {
-  const ActionItem({
-    required this.label,
-    required this.iconKey,
-  });
+  const ActionItem({required this.label, required this.iconKey});
 
   final String label;
   final String iconKey;
+}
+
+class FastStatus {
+  const FastStatus({
+    required this.isFasting,
+    this.fastName,
+    this.notes,
+    this.fastReasons,
+    this.topFastReason,
+    this.extraReasonCount,
+    this.seasonProgress,
+    this.weekdayKey,
+    this.evangelistKey,
+  });
+
+  final bool isFasting;
+  final String? fastName;
+  final String? notes;
+  final List<String>? fastReasons;
+  final String? topFastReason;
+  final int? extraReasonCount;
+  final SeasonProgress? seasonProgress;
+  final String? weekdayKey;
+  final String? evangelistKey;
+}
+
+class SeasonProgress {
+  const SeasonProgress({
+    required this.dayIndex,
+    required this.totalDays,
+    required this.daysRemaining,
+  });
+
+  final int dayIndex;
+  final int totalDays;
+  final int daysRemaining;
+}
+
+class DailyReadingsPreview {
+  const DailyReadingsPreview({
+    required this.morning,
+    required this.liturgy,
+    required this.evening,
+    required this.isLoaded,
+    required this.ctaLabel,
+    required this.fallbackText,
+    this.downloadLabel,
+  });
+
+  final List<String> morning;
+  final List<String> liturgy;
+  final List<String> evening;
+  final bool isLoaded;
+  final String ctaLabel;
+  final String fallbackText;
+  final String? downloadLabel;
+}
+
+class SaintPreview {
+  const SaintPreview({
+    required this.name,
+    required this.summary,
+    required this.isAvailable,
+    required this.ctaLabel,
+  });
+
+  final String name;
+  final String summary;
+  final bool isAvailable;
+  final String ctaLabel;
 }
 
 class UpcomingDay {
   const UpcomingDay({
     required this.id,
     required this.date,
+    required this.ethDate,
     required this.saint,
     required this.label,
+    this.subtitle,
+    this.badges,
   });
 
   final String id;
   final String date;
+  final String ethDate;
   final String saint;
   final String label;
+  final String? subtitle;
+  final List<String>? badges;
 }
 
 class DayDetail {
@@ -299,10 +428,7 @@ class LinkTile {
 }
 
 class ExploreTopBar {
-  const ExploreTopBar({
-    required this.title,
-    required this.subtitle,
-  });
+  const ExploreTopBar({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -345,10 +471,7 @@ class ExploreContentItem {
 }
 
 class SavedItem {
-  const SavedItem({
-    required this.id,
-    required this.title,
-  });
+  const SavedItem({required this.id, required this.title});
 
   final String id;
   final String title;

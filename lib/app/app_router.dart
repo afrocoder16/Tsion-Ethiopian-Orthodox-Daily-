@@ -13,14 +13,18 @@ import '../features/prayers/presentation/prayers_screen.dart';
 import '../features/prayers/presentation/prayer_detail_screen.dart';
 import '../features/prayers/presentation/mezmur_screen.dart';
 import '../features/prayers/presentation/daily_prayer_screen.dart';
+import '../features/prayers/presentation/reflection_screen.dart';
+import '../features/prayers/presentation/light_candle_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/calendar/calendar_day_detail_screen.dart';
+import '../features/calendar/presentation/fasting_guidance_screen.dart';
 import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
 import '../features/explore/presentation/explore_screen.dart';
 import '../features/explore/presentation/explore_detail_screen.dart';
 import '../features/explore/presentation/guided_path_detail_screen.dart';
 import '../features/explore/presentation/community_entry_screen.dart';
 import '../features/streak/presentation/streak_screen.dart';
+import '../features/bible/presentation/patron_saint_screen.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
@@ -54,12 +58,24 @@ GoRouter buildRouter() {
                   return PrayerDetailScreen(prayerId: id);
                 },
               ),
+              GoRoute(
+                path: 'reflection',
+                builder: (context, state) => const ReflectionScreen(),
+              ),
+              GoRoute(
+                path: 'light-candle',
+                builder: (context, state) => const LightCandleScreen(),
+              ),
             ],
           ),
           GoRoute(
             path: RoutePaths.calendar,
             builder: (context, state) => const CalendarScreen(),
             routes: [
+              GoRoute(
+                path: 'fasting',
+                builder: (context, state) => const FastingGuidanceScreen(),
+              ),
               GoRoute(
                 path: 'day/:date',
                 builder: (context, state) {
@@ -115,6 +131,13 @@ GoRouter buildRouter() {
         path: RoutePaths.streak,
         builder: (context, state) => const StreakScreen(),
       ),
+      GoRoute(
+        path: RoutePaths.patronSaint,
+        builder: (context, state) {
+          final rawName = state.pathParameters['name'] ?? 'Patron Saint';
+          return PatronSaintScreen(name: Uri.decodeComponent(rawName));
+        },
+      ),
     ],
   );
 }
@@ -156,10 +179,7 @@ List<GoRoute> _booksRoutes() {
                     final book = state.pathParameters['book'] ?? 'Book';
                     final chapterValue = state.pathParameters['chapter'] ?? '1';
                     final chapter = int.tryParse(chapterValue) ?? 1;
-                    return PassageScreen(
-                      bookId: book,
-                      chapter: chapter,
-                    );
+                    return PassageScreen(bookId: book, chapter: chapter);
                   },
                 ),
               ],
@@ -209,10 +229,7 @@ List<GoRoute> _legacyBibleRoutes() {
                     final book = state.pathParameters['book'] ?? 'Book';
                     final chapterValue = state.pathParameters['chapter'] ?? '1';
                     final chapter = int.tryParse(chapterValue) ?? 1;
-                    return PassageScreen(
-                      bookId: book,
-                      chapter: chapter,
-                    );
+                    return PassageScreen(bookId: book, chapter: chapter);
                   },
                 ),
               ],

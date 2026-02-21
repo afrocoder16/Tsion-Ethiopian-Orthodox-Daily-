@@ -21,74 +21,79 @@ class TodayScreen extends ConsumerWidget {
         onRetry: () => ref.refresh(todayScreenStateProvider),
       ),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: body,
-      ),
-    );
+    return Scaffold(body: SafeArea(child: body));
   }
 }
 
-class _TodayContent extends StatelessWidget {
+class _TodayContent extends ConsumerWidget {
   const _TodayContent({required this.adapter});
 
   final TodayAdapter adapter;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final header = adapter.header;
+    final calendarState = ref.watch(calendarScreenStateProvider);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  header.title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    header.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  header.greeting,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                  const SizedBox(height: 6),
+                  Text(
+                    header.greeting,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  header.dateText,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
+                  const SizedBox(height: 4),
+                  Text(
+                    header.dateText,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  header.calendarLabel,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Colors.black45,
+                  const SizedBox(height: 2),
+                  Text(
+                    header.calendarLabel,
+                    style: const TextStyle(fontSize: 11, color: Colors.black45),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Spacer(),
-            ...header.actions.map(
-              (action) => _IconRowButton(
-                icon: action.icon,
-                onPressed: action.iconKey == iconKeyStreak
-                    ? () => context.push(RoutePaths.streak)
-                    : action.iconKey == iconKeyAudio
-                        ? () => context.go(RoutePaths.mezmurPath())
-                    : null,
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 170,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: header.actions
+                      .map(
+                        (action) => _IconRowButton(
+                          icon: action.icon,
+                          onPressed: action.iconKey == iconKeyStreak
+                              ? () => context.push(RoutePaths.streak)
+                              : action.iconKey == iconKeyAudio
+                              ? () => context.go(RoutePaths.mezmurPath())
+                              : action.iconKey == iconKeyInfo
+                              ? () => context.go(RoutePaths.reflectionPath())
+                              : null,
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ],
@@ -99,6 +104,15 @@ class _TodayContent extends StatelessWidget {
         _AudioCard(view: adapter.audioCard),
         const SizedBox(height: 12),
         _MemoryCue(text: adapter.memoryCueText),
+        const SizedBox(height: 12),
+        calendarState.when(
+          data: (state) => _FastingGuidanceSection(
+            view: CalendarAdapter(state).fastingGuidance,
+            onTap: () => context.go(RoutePaths.calendarFastingPath()),
+          ),
+          loading: () => const SizedBox.shrink(),
+          error: (error, stackTrace) => const SizedBox.shrink(),
+        ),
         const SizedBox(height: 24),
         _SectionHeader(view: adapter.orthodoxDailyHeader),
         const SizedBox(height: 12),
@@ -123,9 +137,17 @@ void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
     context.go(RoutePaths.mezmurPath());
     return;
   }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('${item.title} is not wired yet')),
-  );
+  if (item.id == 'today-carousel-light-candle') {
+    context.go(RoutePaths.lightCandlePath());
+    return;
+  }
+  if (item.id == 'today-carousel-feasts-fasts') {
+    context.go(RoutePaths.calendarFastingPath());
+    return;
+  }
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text('${item.title} is not wired yet')));
 }
 
 class _TodayLoading extends StatelessWidget {
@@ -185,15 +207,9 @@ class _InlineErrorCard extends StatelessWidget {
               const Icon(Icons.error_outline, color: Color(0xFFB00020)),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                child: Text(message, style: const TextStyle(fontSize: 12)),
               ),
-              TextButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
             ],
           ),
         ),
@@ -203,10 +219,7 @@ class _InlineErrorCard extends StatelessWidget {
 }
 
 class _IconRowButton extends StatelessWidget {
-  const _IconRowButton({
-    required this.icon,
-    this.onPressed,
-  });
+  const _IconRowButton({required this.icon, this.onPressed});
 
   final IconData icon;
   final VoidCallback? onPressed;
@@ -265,25 +278,12 @@ class _VerseCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             view.reference,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
           const SizedBox(height: 10),
-          Container(
-            width: 28,
-            height: 2,
-            color: Colors.black12,
-          ),
+          Container(width: 28, height: 2, color: Colors.black12),
           const SizedBox(height: 10),
-          Text(
-            view.body,
-            style: const TextStyle(
-              fontSize: 15,
-              height: 1.4,
-            ),
-          ),
+          Text(view.body, style: const TextStyle(fontSize: 15, height: 1.4)),
           const SizedBox(height: 16),
           Row(
             children: view.stats
@@ -317,10 +317,7 @@ class _ActionStat extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: Colors.black54,
-          ),
+          style: const TextStyle(fontSize: 13, color: Colors.black54),
         ),
       ],
     );
@@ -356,18 +353,12 @@ class _AudioCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   view.subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   view.durationText,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
               ],
             ),
@@ -411,10 +402,7 @@ class _MemoryCue extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -476,6 +464,72 @@ class _Carousel extends StatelessWidget {
   }
 }
 
+class _FastingGuidanceSection extends StatelessWidget {
+  const _FastingGuidanceSection({required this.view, required this.onTap});
+
+  final FastingGuidanceView view;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF6F3EE),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE3DBCF)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.fastfood, size: 18, color: Colors.black54),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    view.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: Colors.black38),
+              ],
+            ),
+            if (view.subtitle != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                view.subtitle!,
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+            ],
+            const SizedBox(height: 8),
+            ...view.bullets
+                .take(2)
+                .map(
+                  (bullet) => Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      '• $bullet',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _CarouselCard extends StatelessWidget {
   const _CarouselCard({required this.item, required this.onTap});
 
@@ -508,18 +562,12 @@ class _CarouselCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               item.title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
             Text(
               item.subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
           ],
         ),

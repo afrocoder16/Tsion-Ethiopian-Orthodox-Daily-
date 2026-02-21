@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,11 +21,7 @@ class CalendarScreen extends ConsumerWidget {
         onRetry: () => ref.refresh(calendarScreenStateProvider),
       ),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: body,
-      ),
-    );
+    return Scaffold(body: SafeArea(child: body));
   }
 }
 
@@ -46,102 +43,40 @@ class _CalendarContent extends StatelessWidget {
         const SizedBox(height: 16),
         _MonthSelector(items: adapter.months),
         const SizedBox(height: 16),
-        _TodayStatusCard(
-          ethiopianDate: adapter.ethiopianDate,
-          gregorianDate: adapter.gregorianDate,
-        ),
+        _TodayStatusCard(view: adapter.status),
         const SizedBox(height: 12),
         _SignalsRow(items: adapter.signalChips),
         const SizedBox(height: 16),
         _TodayObservanceCard(
           title: adapter.todayObservanceTitle,
-          observances: adapter.observances,
-          onTap: () => context.go(
-            '${RoutePaths.calendar}/day/${adapter.ethiopianDate}',
-          ),
+          fastingToday: adapter.fastingToday,
+          fastingType: adapter.fastingType,
+          reasons: adapter.fastReasons,
+          quickRules: adapter.quickRules,
+          onTap: () => context.go('${RoutePaths.calendar}/day/${_todayYmd()}'),
         ),
         const SizedBox(height: 12),
-        _TodayActionsRow(items: adapter.todayActions),
+        _DailyReadingsCard(view: adapter.dailyReadings),
+        const SizedBox(height: 12),
+        _SaintPreviewCard(view: adapter.saintPreview),
         const SizedBox(height: 20),
         _SectionTitle(title: adapter.upcomingHeader.title),
         const SizedBox(height: 12),
         _UpcomingList(
           items: adapter.upcomingDays,
-          onTap: (item) => context.go(
-            '${RoutePaths.calendar}/day/${item.date}',
-          ),
+          onTap: (item) => context.go('${RoutePaths.calendar}/day/${item.id}'),
         ),
       ],
     );
   }
 }
 
-class _CalendarLoading extends StatelessWidget {
-  const _CalendarLoading();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: const [
-        _SkeletonLine(width: 140, height: 16),
-        SizedBox(height: 16),
-        _SkeletonBox(height: 36),
-        SizedBox(height: 16),
-        _SkeletonBox(height: 90),
-        SizedBox(height: 12),
-        _SkeletonBox(height: 36),
-        SizedBox(height: 16),
-        _SkeletonBox(height: 90),
-        SizedBox(height: 12),
-        _SkeletonBox(height: 70),
-        SizedBox(height: 20),
-        _SkeletonLine(width: 120, height: 12),
-        SizedBox(height: 12),
-        _SkeletonBox(height: 200),
-      ],
-    );
-  }
-}
-
-class _InlineErrorCard extends StatelessWidget {
-  const _InlineErrorCard({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFDECEC),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF2B8B5)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
-              TextButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+String _todayYmd() {
+  final now = DateTime.now();
+  final y = now.year.toString().padLeft(4, '0');
+  final m = now.month.toString().padLeft(2, '0');
+  final d = now.day.toString().padLeft(2, '0');
+  return '$y-$m-$d';
 }
 
 class _TopBar extends StatelessWidget {
@@ -174,10 +109,7 @@ class _TopBar extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
           ],
         ),
@@ -212,45 +144,63 @@ class _IconButton extends StatelessWidget {
 }
 
 class _TodayStatusCard extends StatelessWidget {
-  const _TodayStatusCard({
-    required this.ethiopianDate,
-    required this.gregorianDate,
-  });
+  const _TodayStatusCard({required this.view});
 
-  final String ethiopianDate;
-  final String gregorianDate;
+  final CalendarStatusView view;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFF6F3EE),
         borderRadius: BorderRadius.circular(18),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ethiopianDate,
+          Text(
+            view.weekday,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  view.ethiopianDate,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  gregorianDate,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 16),
+                onPressed: () async {
+                  await Clipboard.setData(
+                    ClipboardData(text: view.ethiopianDate),
+                  );
+                },
+                splashRadius: 16,
+                constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+              ),
+            ],
+          ),
+          if (view.ethiopianDateAmharic != null) ...[
+            Text(
+              view.ethiopianDateAmharic!,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
+            const SizedBox(height: 4),
+          ],
+          Text(
+            view.gregorianDate,
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
         ],
       ),
@@ -261,12 +211,12 @@ class _TodayStatusCard extends StatelessWidget {
 class _SignalsRow extends StatelessWidget {
   const _SignalsRow({required this.items});
 
-  final List<String> items;
+  final List<SignalChipView> items;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36,
+      height: 54,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
@@ -274,20 +224,30 @@ class _SignalsRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
               color: const Color(0xFFF7F7F7),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
-            child: Text(
-              item,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${item.title}: ${item.value}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54,
+                  ),
+                ),
+                if (item.subtitle != null)
+                  Text(
+                    item.subtitle!,
+                    style: const TextStyle(fontSize: 10, color: Colors.black45),
+                  ),
+              ],
             ),
           );
         },
@@ -299,12 +259,18 @@ class _SignalsRow extends StatelessWidget {
 class _TodayObservanceCard extends StatelessWidget {
   const _TodayObservanceCard({
     required this.title,
-    required this.observances,
+    required this.fastingToday,
+    required this.fastingType,
+    required this.reasons,
+    required this.quickRules,
     this.onTap,
   });
 
   final String title;
-  final List<ObservanceView> observances;
+  final bool fastingToday;
+  final String fastingType;
+  final List<String> reasons;
+  final List<String> quickRules;
   final VoidCallback? onTap;
 
   @override
@@ -320,97 +286,179 @@ class _TodayObservanceCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
-          ...observances.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: _ObservanceRow(item: item),
+          _StatusLine(
+            label: 'Fasting today',
+            value: fastingToday ? 'Yes' : 'No',
+          ),
+          _StatusLine(label: 'Type', value: fastingType),
+          const SizedBox(height: 8),
+          ...reasons.map(
+            (reason) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text('- $reason', style: const TextStyle(fontSize: 12)),
             ),
           ),
+          if (quickRules.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            ...quickRules.map(
+              (rule) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  rule,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
     if (onTap == null) {
       return card;
     }
-    return InkWell(onTap: onTap, child: card);
-  }
-}
-
-class _ObservanceRow extends StatelessWidget {
-  const _ObservanceRow({required this.item});
-
-  final ObservanceView item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          item.labelText,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.black54,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          item.valueText,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: card,
     );
   }
 }
 
-class _TodayActionsRow extends StatelessWidget {
-  const _TodayActionsRow({required this.items});
+class _StatusLine extends StatelessWidget {
+  const _StatusLine({required this.label, required this.value});
 
-  final List<CalendarActionView> items;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[];
-    for (var i = 0; i < items.length; i++) {
-      final item = items[i];
-      children.add(
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Column(
-              children: [
-                Icon(item.icon, size: 18, color: Colors.black54),
-                const SizedBox(height: 6),
-                Text(
-                  item.label,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Text(
+            '$label:',
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
-        ),
-      );
-      if (i < items.length - 1) {
-        children.add(const SizedBox(width: 8));
-      }
-    }
-    return Row(children: children);
+          const SizedBox(width: 6),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyReadingsCard extends StatelessWidget {
+  const _DailyReadingsCard({required this.view});
+
+  final DailyReadingsView view;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Daily Readings',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 10),
+          if (view.isLoaded) ...[
+            _ReadingLine(label: 'Morning', refs: view.morning),
+            _ReadingLine(label: 'Liturgy', refs: view.liturgy),
+            _ReadingLine(label: 'Evening', refs: view.evening),
+          ] else
+            Text(
+              view.fallbackText,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              FilledButton(onPressed: () {}, child: Text(view.ctaLabel)),
+              if (view.downloadLabel != null)
+                OutlinedButton(
+                  onPressed: () {},
+                  child: Text(view.downloadLabel!),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReadingLine extends StatelessWidget {
+  const _ReadingLine({required this.label, required this.refs});
+
+  final String label;
+  final List<String> refs;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = refs.isEmpty ? '-' : refs.join(', ');
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text('$label: $text', style: const TextStyle(fontSize: 12)),
+    );
+  }
+}
+
+class _SaintPreviewCard extends StatelessWidget {
+  const _SaintPreviewCard({required this.view});
+
+  final SaintPreviewView view;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Saint of the Day',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            view.name,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            view.summary,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+          const SizedBox(height: 10),
+          FilledButton(
+            onPressed: view.isAvailable ? () {} : null,
+            child: Text(view.ctaLabel),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -423,10 +471,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w700,
-      ),
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
     );
   }
 }
@@ -455,29 +500,42 @@ class _UpcomingList extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      width: 36,
-                      height: 36,
-                      alignment: Alignment.center,
+                      width: 78,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEDEDED),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        item.date,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.date,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            item.ethDate,
+                            style: const TextStyle(
+                              fontSize: 9,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.saint,
+                            item.label,
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -485,7 +543,7 @@ class _UpcomingList extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            item.label,
+                            item.subtitle ?? item.saint,
                             style: const TextStyle(
                               fontSize: 11,
                               color: Colors.black54,
@@ -494,6 +552,32 @@ class _UpcomingList extends StatelessWidget {
                         ],
                       ),
                     ),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: item.badges
+                          .map(
+                            (badge) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEDE7DD),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                badge,
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(width: 4),
                     const Icon(Icons.chevron_right, color: Colors.black38),
                   ],
                 ),
@@ -524,8 +608,7 @@ class _MonthSelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color:
-                  label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
+              color: label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: const Color(0xFFE0E0E0)),
             ),
@@ -540,6 +623,66 @@ class _MonthSelector extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _CalendarLoading extends StatelessWidget {
+  const _CalendarLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: const [
+        _SkeletonLine(width: 140, height: 16),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 36),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 100),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 52),
+        SizedBox(height: 16),
+        _SkeletonBox(height: 120),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 110),
+        SizedBox(height: 12),
+        _SkeletonBox(height: 110),
+      ],
+    );
+  }
+}
+
+class _InlineErrorCard extends StatelessWidget {
+  const _InlineErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDECEC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFF2B8B5)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Color(0xFFB00020)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(message, style: const TextStyle(fontSize: 12)),
+              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -13,8 +13,13 @@ class DbTodayRepository implements TodayRepository {
   @override
   Future<TodayScreenState> fetchTodayScreen() async {
     final todayYmd = _formatYmd(DateTime.now());
-    final status =
-        await StreakEventsDao(db).getStreakStatusForDate(todayYmd);
+    var status = const <StreakEventStatus>[];
+    try {
+      status = await StreakEventsDao(db).getStreakStatusForDate(todayYmd);
+    } catch (_) {
+      // Older local DBs may not have streak tables yet. Keep screen usable.
+      status = const <StreakEventStatus>[];
+    }
     final totalTasks = status.length;
     final completedTasks = status.where((item) => item.completed).length;
     final streakText = totalTasks == 0
@@ -34,7 +39,6 @@ class DbTodayRepository implements TodayRepository {
         ui.HeaderAction(iconKey: 'streak'),
         ui.HeaderAction(iconKey: 'info'),
         ui.HeaderAction(iconKey: 'calendar'),
-        ui.HeaderAction(iconKey: 'check'),
       ],
       verseCard: const ui.VerseCard(
         id: 'verse-of-the-day',

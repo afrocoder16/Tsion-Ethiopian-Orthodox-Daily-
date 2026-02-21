@@ -37,6 +37,7 @@ class BooksScreenState {
     required this.continueReadingAction,
     required this.saintsHeader,
     required this.patronSaint,
+    required this.patronSaintProfile,
     required this.saintsShelf,
     required this.libraryHeader,
     required this.bibleShelf,
@@ -53,6 +54,7 @@ class BooksScreenState {
   final ContinueReadingAction continueReadingAction;
   final SectionHeader saintsHeader;
   final PatronSaintCard patronSaint;
+  final PatronSaintProfile patronSaintProfile;
   final List<BookItem> saintsShelf;
   final SectionHeader libraryHeader;
   final List<BookItem> bibleShelf;
@@ -73,6 +75,8 @@ class PrayersScreenState {
     required this.myPrayers,
     required this.recentHeader,
     required this.recentLine,
+    required this.reflectionJournal,
+    required this.lightCandleContent,
   });
 
   final PrayersTopBar topBar;
@@ -86,6 +90,8 @@ class PrayersScreenState {
   final List<PrayerTile> myPrayers;
   final SectionHeader recentHeader;
   final RecentLine recentLine;
+  final ReflectionJournal reflectionJournal;
+  final LightCandleContent lightCandleContent;
 }
 
 class CalendarScreenState {
@@ -93,6 +99,10 @@ class CalendarScreenState {
     required this.topBar,
     required this.months,
     required this.todayStatus,
+    required this.fastStatus,
+    required this.quickRules,
+    required this.dailyReadings,
+    required this.saintPreview,
     required this.signals,
     required this.observances,
     required this.todayActions,
@@ -103,6 +113,10 @@ class CalendarScreenState {
   final CalendarTopBar topBar;
   final List<MonthSelectorItem> months;
   final TodayStatusCard todayStatus;
+  final FastStatus fastStatus;
+  final List<String> quickRules;
+  final DailyReadingsPreview dailyReadings;
+  final SaintPreview saintPreview;
   final List<SignalItem> signals;
   final List<ObservanceItem> observances;
   final List<ActionItem> todayActions;

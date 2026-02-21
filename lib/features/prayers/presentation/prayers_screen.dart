@@ -21,11 +21,7 @@ class PrayersScreen extends ConsumerWidget {
         onRetry: () => ref.refresh(prayersScreenStateProvider),
       ),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: body,
-      ),
-    );
+    return Scaffold(body: SafeArea(child: body));
   }
 }
 
@@ -71,7 +67,22 @@ class _PrayersContent extends ConsumerWidget {
         const SizedBox(height: 18),
         _SectionTitle(title: adapter.devotionalHeader.title),
         const SizedBox(height: 12),
-        _DevotionalGrid(items: adapter.devotionalItems),
+        _DevotionalGrid(
+          items: adapter.devotionalItems,
+          onTap: (item) {
+            if (item.id == 'devotional-daily-reflection') {
+              context.go(RoutePaths.reflectionPath());
+              return;
+            }
+            if (item.id == 'devotional-light-candle') {
+              context.go(RoutePaths.lightCandlePath());
+              return;
+            }
+            if (item.id == 'devotional-fasting') {
+              context.go(RoutePaths.calendarFastingPath());
+            }
+          },
+        ),
         const SizedBox(height: 18),
         _SectionTitle(title: adapter.myPrayersHeader.title),
         const SizedBox(height: 12),
@@ -87,7 +98,8 @@ class _PrayersContent extends ConsumerWidget {
         _RecentLine(
           text: adapter.recentText,
           onTap: () {
-            final recentId = ref.read(recentPrayerIdProvider).valueOrNull ??
+            final recentId =
+                ref.read(recentPrayerIdProvider).valueOrNull ??
                 adapter.primaryPrayerId;
             context.go(RoutePaths.prayerDetailPath(recentId));
           },
@@ -154,15 +166,9 @@ class _InlineErrorCard extends StatelessWidget {
               const Icon(Icons.error_outline, color: Color(0xFFB00020)),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                child: Text(message, style: const TextStyle(fontSize: 12)),
               ),
-              TextButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
             ],
           ),
         ),
@@ -294,33 +300,26 @@ class _PrimaryPrayerCard extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 13, color: Colors.black54),
             ),
             const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 6),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
             const SizedBox(height: 14),
             GestureDetector(
               onTap: onActionTap,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -346,10 +345,7 @@ class _QuietDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 1,
-      color: const Color(0xFFE6E6E6),
-    );
+    return Container(height: 1, color: const Color(0xFFE6E6E6));
   }
 }
 
@@ -515,10 +511,7 @@ class _RecentLine extends StatelessWidget {
       onTap: onTap,
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.black54,
-        ),
+        style: const TextStyle(fontSize: 12, color: Colors.black54),
       ),
     );
   }
