@@ -5,6 +5,7 @@ import '../db/database_executor.dart';
 import '../calendar/calendar_engine.dart';
 import '../repos/db/db_books_repository.dart';
 import '../repos/db/db_calendar_repository.dart';
+import '../repos/db/db_saints_repository.dart';
 import '../repos/db/db_explore_repository.dart';
 import '../repos/db/db_prayers_repository.dart';
 import '../repos/db/db_today_repository.dart';
@@ -54,6 +55,7 @@ final calendarRepositoryProvider = Provider<CalendarRepository>((ref) {
   return DbCalendarRepository(
     db: ref.watch(dbProvider),
     engine: ref.watch(calendarEngineProvider),
+    saintsRepository: DbSaintsRepository(),
   );
 });
 

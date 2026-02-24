@@ -63,6 +63,13 @@ class FakeCalendarDayDetailRepository implements CalendarDayDetailRepository {
             snippet: 'Protector and intercessor.',
           ),
         ],
+        lents: const [
+          LentSummary(
+            id: 'abiy_tsom_hudadi',
+            name: 'Great Lent (Hudadi or Abiye Tsom)',
+            status: 'Active today',
+          ),
+        ],
       ),
     );
   }

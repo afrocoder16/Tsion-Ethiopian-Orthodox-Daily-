@@ -10,6 +10,7 @@ class RoutePaths {
   static const prayersLightCandle = '/prayers/light-candle';
   static const calendar = '/calendar';
   static const calendarFasting = '/calendar/fasting';
+  static const calendarSynaxarium = '/calendar/synaxarium/:date';
   static const explore = '/explore';
   static const streak = '/streak';
   static const patronSaint = '/patron-saint/:name';
@@ -65,6 +66,9 @@ class RoutePaths {
   static String streakPath() => '/streak';
 
   static String calendarFastingPath() => calendarFasting;
+
+  static String calendarSynaxariumPath(String dateKey) =>
+      '/calendar/synaxarium/$dateKey';
 
   static String patronSaintPath(String name) =>
       '/patron-saint/${Uri.encodeComponent(name)}';

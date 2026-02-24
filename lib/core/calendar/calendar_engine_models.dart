@@ -379,3 +379,23 @@ class SaintSummary {
     snippet: json['snippet'] as String,
   );
 }
+
+class LentSummary {
+  const LentSummary({
+    required this.id,
+    required this.name,
+    required this.status,
+  });
+
+  final String id;
+  final String name;
+  final String status;
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'status': status};
+
+  static LentSummary fromJson(Map<String, dynamic> json) => LentSummary(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    status: json['status'] as String,
+  );
+}

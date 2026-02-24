@@ -287,57 +287,17 @@ class CalendarEngine {
 
   List<FeastInfo> _feastsForDate(EthDate ethDate, CalendarYearAnchors anchors) {
     final feasts = <FeastInfo>[];
-    if (_isSameEthDate(
-      ethDate,
-      EthDate(year: ethDate.year, month: 1, day: 17),
-    )) {
-      feasts.add(
-        const FeastInfo(
-          id: 'MESKEL',
-          nameKey: 'Meskel',
-          kind: 'FIXED',
-          priority: 90,
-        ),
-      );
-    }
-    if (_isSameEthDate(
-      ethDate,
-      EthDate(year: ethDate.year, month: 4, day: 29),
-    )) {
-      feasts.add(
-        const FeastInfo(
-          id: 'GENNA',
-          nameKey: 'Genna',
-          kind: 'FIXED',
-          priority: 100,
-        ),
-      );
-    }
-    if (_isSameEthDate(
-      ethDate,
-      EthDate(year: ethDate.year, month: 5, day: 11),
-    )) {
-      feasts.add(
-        const FeastInfo(
-          id: 'TIMKET',
-          nameKey: 'Timket',
-          kind: 'FIXED',
-          priority: 100,
-        ),
-      );
-    }
-    if (_isSameEthDate(
-      ethDate,
-      EthDate(year: ethDate.year, month: 12, day: 16),
-    )) {
-      feasts.add(
-        const FeastInfo(
-          id: 'DORMITION_FEAST',
-          nameKey: 'Dormition Feast',
-          kind: 'FIXED',
-          priority: 80,
-        ),
-      );
+    for (final fixed in _coreFixedFeasts(ethDate.year)) {
+      if (_isSameEthDate(ethDate, fixed.date)) {
+        feasts.add(
+          FeastInfo(
+            id: fixed.id,
+            nameKey: fixed.name,
+            kind: 'FIXED',
+            priority: fixed.priority,
+          ),
+        );
+      }
     }
 
     if (_isSameEthDate(ethDate, anchors.hosanna)) {
@@ -392,6 +352,107 @@ class CalendarEngine {
     }
 
     return feasts;
+  }
+
+  List<_FixedFeast> _coreFixedFeasts(int year) {
+    return <_FixedFeast>[
+      _FixedFeast(
+        id: 'MESKEL',
+        name: 'Meskel',
+        priority: 100,
+        date: EthDate(year: year, month: 1, day: 17),
+      ),
+      _FixedFeast(
+        id: 'GENNA',
+        name: 'Gena (Christmas)',
+        priority: 120,
+        date: EthDate(year: year, month: 4, day: 29),
+      ),
+      _FixedFeast(
+        id: 'TIMKET',
+        name: 'Timket (Epiphany)',
+        priority: 120,
+        date: EthDate(year: year, month: 5, day: 11),
+      ),
+      _FixedFeast(
+        id: 'GAHAD_GENNA',
+        name: 'Gahad of Christmas',
+        priority: 85,
+        date: EthDate(year: year, month: 4, day: 28),
+      ),
+      _FixedFeast(
+        id: 'GAHAD_TIMKET',
+        name: 'Gahad of Timket',
+        priority: 85,
+        date: EthDate(year: year, month: 5, day: 10),
+      ),
+      _FixedFeast(
+        id: 'FILSETA_FEAST',
+        name: 'Filseta (Assumption of St Mary)',
+        priority: 100,
+        date: EthDate(year: year, month: 12, day: 16),
+      ),
+      _FixedFeast(
+        id: 'LIDETA_MARYAM_ANNUAL',
+        name: 'Lideta Maryam (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 9, day: 1),
+      ),
+      _FixedFeast(
+        id: 'KIDANE_MIHRET_ANNUAL',
+        name: 'Kidane Mihret (annual feast)',
+        priority: 90,
+        date: EthDate(year: year, month: 6, day: 16),
+      ),
+      _FixedFeast(
+        id: 'BAETA_MARYAM_ANNUAL',
+        name: 'Ba\'eta Maryam (annual feast)',
+        priority: 90,
+        date: EthDate(year: year, month: 4, day: 3),
+      ),
+      _FixedFeast(
+        id: 'DEBRE_KUSKUAM_ANNUAL',
+        name: 'Debre Kuskuam (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 3, day: 6),
+      ),
+      _FixedFeast(
+        id: 'MICHAEL_HIDAR_ANNUAL',
+        name: 'St Michael (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 3, day: 12),
+      ),
+      _FixedFeast(
+        id: 'MICHAEL_SENE_ANNUAL',
+        name: 'St Michael (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 10, day: 12),
+      ),
+      _FixedFeast(
+        id: 'GABRIEL_TAHSAS_ANNUAL',
+        name: 'Kulibi Gabriel (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 4, day: 19),
+      ),
+      _FixedFeast(
+        id: 'GABRIEL_HAMLE_ANNUAL',
+        name: 'Kulibi Gabriel (annual)',
+        priority: 90,
+        date: EthDate(year: year, month: 11, day: 19),
+      ),
+      _FixedFeast(
+        id: 'ASTEROYE_MARYAM_ANNUAL',
+        name: 'Asteroye Maryam',
+        priority: 90,
+        date: EthDate(year: year, month: 5, day: 21),
+      ),
+      _FixedFeast(
+        id: 'HIDAR_TSION_ANNUAL',
+        name: 'Hidar Tsion / St Mary',
+        priority: 90,
+        date: EthDate(year: year, month: 3, day: 21),
+      ),
+    ];
   }
 
   EthDate _ethDateFromBahireMap(int year, Map<String, dynamic> raw) {
@@ -589,4 +650,18 @@ class CalendarEngine {
     final d = date.day.toString().padLeft(2, '0');
     return '$y-$m-$d';
   }
+}
+
+class _FixedFeast {
+  const _FixedFeast({
+    required this.id,
+    required this.name,
+    required this.priority,
+    required this.date,
+  });
+
+  final String id;
+  final String name;
+  final int priority;
+  final EthDate date;
 }

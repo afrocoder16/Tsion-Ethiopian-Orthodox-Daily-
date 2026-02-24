@@ -3,21 +3,28 @@ import '../../calendar/calendar_engine_models.dart';
 import '../../calendar/calendar_observance_store.dart';
 import '../../db/app_database.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
+import '../saints_repository.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
 import '../screen_states.dart';
 
 class DbCalendarRepository implements CalendarRepository {
-  DbCalendarRepository({required this.db, required this.engine});
+  DbCalendarRepository({
+    required this.db,
+    required this.engine,
+    required this.saintsRepository,
+  });
 
   final AppDatabase db;
   final CalendarEngine engine;
+  final SaintsRepository saintsRepository;
 
   @override
   Future<CalendarScreenState> fetchCalendarScreen() async {
     final store = CalendarObservanceStore(db: db, engine: engine);
     final today = DateTime.now();
     final todayObservance = await store.getByGregorianDate(today);
+    final todaysSaints = await _todaysSaints(todayObservance);
     final todayEth = todayObservance.ethDate;
     final upcoming = await store.getRange(
       today.add(const Duration(days: 1)),
@@ -84,7 +91,7 @@ class DbCalendarRepository implements CalendarRepository {
             : 'Download monthly readings',
       ),
       prayerOfDay: _prayerOfDay(todayObservance),
-      saintPreview: todayObservance.saintsPreview.isEmpty
+      saintPreview: todaysSaints.isEmpty
           ? const ui.SaintPreview(
               name: 'Not available yet',
               summary: 'Tap to read',
@@ -92,8 +99,8 @@ class DbCalendarRepository implements CalendarRepository {
               ctaLabel: 'Read Synaxarium',
             )
           : ui.SaintPreview(
-              name: todayObservance.saintsPreview.first.nameKey,
-              summary: todayObservance.saintsPreview.first.shortSnippet,
+              name: todaysSaints.first.name,
+              summary: todaysSaints.first.snippet,
               isAvailable: true,
               ctaLabel: 'Read Synaxarium',
             ),
@@ -139,6 +146,10 @@ class DbCalendarRepository implements CalendarRepository {
     }());
 
     return state;
+  }
+
+  Future<List<SaintSummary>> _todaysSaints(DayObservance day) {
+    return saintsRepository.fetchSaintsForDate(day.ethDate);
   }
 }
 
@@ -215,6 +226,7 @@ ui.CalendarMonthGrid _buildMonthGrid(
     gregorianYear: monthStart.year,
     gregorianMonth: monthStart.month,
     ethiopianMonthLabel: _ethMonthAmharic(monthEth.month),
+    ethiopianYear: monthEth.year,
     gregorianRangeLabel: range,
     weekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
     weeks: weeks,

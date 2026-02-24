@@ -67,28 +67,10 @@ class _CalendarDayContent extends StatelessWidget {
             style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Bahire Hasab',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
+          const Text('Evangelist', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: adapter.bahireStats
-                .map((item) => _StatChip(label: item.label, value: item.value))
-                .toList(growable: false),
-          ),
+          _StatChip(label: 'Evangelist', value: adapter.evangelist),
           const SizedBox(height: 20),
-          const Text(
-            'Today in the Church',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 10),
-          ...adapter.observances.map(
-            (item) => _ObservanceRow(label: item.label, value: item.value),
-          ),
-          const SizedBox(height: 18),
           const Text(
             'Celebrations',
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
@@ -100,20 +82,6 @@ class _CalendarDayContent extends StatelessWidget {
             ...adapter.celebrations.map(
               (item) => _InfoCard(title: item.title, subtitle: item.subtitle),
             ),
-          const SizedBox(height: 18),
-          const Text(
-            'Saints of the Day',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 10),
-          if (adapter.saints.isEmpty)
-            const _EmptyLine(text: 'No saint data yet')
-          else
-            ...adapter.saints.map(
-              (item) => _SaintCard(title: item.name, subtitle: item.snippet),
-            ),
-          const SizedBox(height: 12),
-          const _DailyTodoCard(),
         ],
       ),
     );
@@ -143,7 +111,7 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: (MediaQuery.of(context).size.width - 56) / 3,
+      width: 180,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFFF7F7F7),
@@ -161,41 +129,6 @@ class _StatChip extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ObservanceRow extends StatelessWidget {
-  const _ObservanceRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-            ),
           ),
         ],
       ),
@@ -237,50 +170,6 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-class _SaintCard extends StatelessWidget {
-  const _SaintCard({required this.title, required this.subtitle});
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-              ],
-            ),
-          ),
-          FilledButton(onPressed: () {}, child: const Text('Read Saint')),
-        ],
-      ),
-    );
-  }
-}
-
 class _EmptyLine extends StatelessWidget {
   const _EmptyLine({required this.text});
 
@@ -293,61 +182,6 @@ class _EmptyLine extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(fontSize: 12, color: Colors.black54),
-      ),
-    );
-  }
-}
-
-class _DailyTodoCard extends StatefulWidget {
-  const _DailyTodoCard();
-
-  @override
-  State<_DailyTodoCard> createState() => _DailyTodoCardState();
-}
-
-class _DailyTodoCardState extends State<_DailyTodoCard> {
-  bool _prayerDone = false;
-  bool _readingDone = false;
-  bool _mercyDone = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Daily To-do',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          CheckboxListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Prayer done', style: TextStyle(fontSize: 13)),
-            value: _prayerDone,
-            onChanged: (value) => setState(() => _prayerDone = value ?? false),
-          ),
-          CheckboxListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Read Scripture', style: TextStyle(fontSize: 13)),
-            value: _readingDone,
-            onChanged: (value) => setState(() => _readingDone = value ?? false),
-          ),
-          CheckboxListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Act of mercy', style: TextStyle(fontSize: 13)),
-            value: _mercyDone,
-            onChanged: (value) => setState(() => _mercyDone = value ?? false),
-          ),
-        ],
       ),
     );
   }

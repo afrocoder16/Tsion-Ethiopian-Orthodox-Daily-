@@ -50,23 +50,16 @@ class _CalendarContent extends StatelessWidget {
         _SaintPreviewCard(
           view: adapter.saintPreview,
           onReadSaint: () =>
-              context.go('${RoutePaths.calendar}/day/${_todayYmd()}'),
+              context.go(RoutePaths.calendarSynaxariumPath(_todayYmd())),
         ),
-        const SizedBox(height: 12),
-        _DayPlannerCard(view: adapter.dayPlanner),
         const SizedBox(height: 12),
         _SpiritualTrackerCard(view: adapter.spiritualTracker),
-        const SizedBox(height: 20),
-        _SectionTitle(title: adapter.upcomingHeader.title),
-        const SizedBox(height: 12),
-        _UpcomingList(
-          items: adapter.upcomingDays,
-          onTap: (item) => context.go('${RoutePaths.calendar}/day/${item.id}'),
-        ),
       ],
     );
   }
 }
+
+enum _CalendarViewMode { ethiopian, gregorian }
 
 class _CalendarMonthGrid extends StatelessWidget {
   const _CalendarMonthGrid({
@@ -74,6 +67,8 @@ class _CalendarMonthGrid extends StatelessWidget {
     required this.years,
     required this.onPickYear,
     required this.onGoToToday,
+    required this.mode,
+    required this.onModeChanged,
     required this.onDayTap,
   });
 
@@ -81,10 +76,19 @@ class _CalendarMonthGrid extends StatelessWidget {
   final List<int> years;
   final ValueChanged<int> onPickYear;
   final VoidCallback onGoToToday;
+  final _CalendarViewMode mode;
+  final ValueChanged<_CalendarViewMode> onModeChanged;
   final ValueChanged<String> onDayTap;
 
   @override
   Widget build(BuildContext context) {
+    final isEthiopian = mode == _CalendarViewMode.ethiopian;
+    final monthTitle = isEthiopian
+        ? '${view.ethiopianMonthLabel} ${view.ethiopianYear}'
+        : '${_gregorianMonthLabel(view.gregorianMonth)} ${view.gregorianYear}';
+    final monthSubtitle = isEthiopian
+        ? '${_gregorianMonthLabel(view.gregorianMonth)} ${view.gregorianYear}'
+        : '${view.ethiopianMonthLabel} ${view.ethiopianYear}';
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF7F7F7),
@@ -99,12 +103,31 @@ class _CalendarMonthGrid extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  view.ethiopianMonthLabel,
+                  monthTitle,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+              ),
+              ToggleButtons(
+                isSelected: [
+                  mode == _CalendarViewMode.ethiopian,
+                  mode == _CalendarViewMode.gregorian,
+                ],
+                onPressed: (index) {
+                  onModeChanged(
+                    index == 0
+                        ? _CalendarViewMode.ethiopian
+                        : _CalendarViewMode.gregorian,
+                  );
+                },
+                borderRadius: BorderRadius.circular(8),
+                constraints: const BoxConstraints(minHeight: 28, minWidth: 42),
+                children: const [
+                  Text('ETH', style: TextStyle(fontSize: 10)),
+                  Text('GR', style: TextStyle(fontSize: 10)),
+                ],
               ),
               const SizedBox(width: 8),
             ],
@@ -114,7 +137,7 @@ class _CalendarMonthGrid extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                view.gregorianRangeLabel,
+                monthSubtitle,
                 style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
               const SizedBox(width: 8),
@@ -176,7 +199,7 @@ class _CalendarMonthGrid extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           onTap: () => onDayTap(cell.dateKey),
                           child: Container(
-                            height: 68,
+                            height: view.weeks.length > 5 ? 60 : 68,
                             margin: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -198,7 +221,7 @@ class _CalendarMonthGrid extends StatelessWidget {
                                         : null,
                                   ),
                                   child: Text(
-                                    '${cell.gregorianDay}',
+                                    '${isEthiopian ? cell.ethiopianDay : cell.gregorianDay}',
                                     style: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
@@ -210,7 +233,7 @@ class _CalendarMonthGrid extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${cell.ethiopianDay}',
+                                  '${isEthiopian ? cell.gregorianDay : cell.ethiopianDay}',
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: cell.isCurrentMonth
@@ -262,6 +285,7 @@ class _MonthCalendarScroller extends StatefulWidget {
 class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
   late final PageController _pageController;
   late final int _todayIndex;
+  _CalendarViewMode _mode = _CalendarViewMode.ethiopian;
 
   @override
   void initState() {
@@ -319,6 +343,8 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
             years: widget.years,
             onPickYear: _jumpToYear,
             onGoToToday: _jumpToToday,
+            mode: _mode,
+            onModeChanged: (mode) => setState(() => _mode = mode),
             onDayTap: widget.onDayTap,
           );
         },
@@ -357,6 +383,24 @@ Future<void> _showYearPicker({
   if (selected != null) {
     onPickYear(selected);
   }
+}
+
+String _gregorianMonthLabel(int month) {
+  const labels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return labels[(month - 1).clamp(0, 11)];
 }
 
 String _todayYmd() {
@@ -474,70 +518,6 @@ class _SaintPreviewCard extends StatelessWidget {
   }
 }
 
-class _DayPlannerCard extends StatefulWidget {
-  const _DayPlannerCard({required this.view});
-
-  final PersonalDayPlannerView view;
-
-  @override
-  State<_DayPlannerCard> createState() => _DayPlannerCardState();
-}
-
-class _DayPlannerCardState extends State<_DayPlannerCard> {
-  late final Map<String, bool> _checked = {
-    for (final item in widget.view.tasks) item.id: item.isDone,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Personal Day Planner',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 8),
-          ...widget.view.tasks.map(
-            (task) => CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              value: _checked[task.id] ?? false,
-              dense: true,
-              title: Text(task.label, style: const TextStyle(fontSize: 13)),
-              onChanged: (value) {
-                setState(() {
-                  _checked[task.id] = value ?? false;
-                });
-              },
-            ),
-          ),
-          if (widget.view.event != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              'Event: ${widget.view.event!}',
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-          if (widget.view.notes != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              'Notes: ${widget.view.notes!}',
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
 class _SpiritualTrackerCard extends StatefulWidget {
   const _SpiritualTrackerCard({required this.view});
 
@@ -551,9 +531,59 @@ class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
   late final Map<String, bool> _checked = {
     for (final item in widget.view.habits) item.id: item.isDone,
   };
+  final List<_TrackerHabitItem> _customHabits = [];
+
+  Future<void> _addHabit() async {
+    final controller = TextEditingController();
+    final value = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add tracker item'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: 'Type a habit'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+    if (value == null || value.isEmpty) {
+      return;
+    }
+    final id = 'custom-${DateTime.now().microsecondsSinceEpoch}';
+    setState(() {
+      _customHabits.add(
+        _TrackerHabitItem(
+          id: id,
+          label: value,
+          isOptional: false,
+        ),
+      );
+      _checked[id] = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final habits = <_TrackerHabitItem>[
+      ...widget.view.habits.map(
+        (item) => _TrackerHabitItem(
+          id: item.id,
+          label: item.label,
+          isOptional: item.isOptional,
+        ),
+      ),
+      ..._customHabits,
+    ];
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -564,12 +594,23 @@ class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Spiritual Tracker',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Spiritual Tracker',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                ),
+              ),
+              IconButton(
+                onPressed: _addHabit,
+                icon: const Icon(Icons.add_circle_outline),
+                tooltip: 'Add tracker item',
+              ),
+            ],
           ),
           const SizedBox(height: 8),
-          ...widget.view.habits.map(
+          ...habits.map(
             (habit) => CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               value: _checked[habit.id] ?? false,
@@ -591,131 +632,16 @@ class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+class _TrackerHabitItem {
+  const _TrackerHabitItem({
+    required this.id,
+    required this.label,
+    required this.isOptional,
+  });
 
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-    );
-  }
-}
-
-class _UpcomingList extends StatelessWidget {
-  const _UpcomingList({required this.items, required this.onTap});
-
-  final List<UpcomingDayView> items;
-  final void Function(UpcomingDayView item) onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: items
-          .map(
-            (item) => GestureDetector(
-              onTap: () => onTap(item),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF7F7F7),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE5E5E5)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 78,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEDEDED),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.date,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            item.ethDate,
-                            style: const TextStyle(
-                              fontSize: 9,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.label,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            item.subtitle ?? item.saint,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: item.badges
-                          .map(
-                            (badge) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEDE7DD),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                badge,
-                                style: const TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.chevron_right, color: Colors.black38),
-                  ],
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
+  final String id;
+  final String label;
+  final bool isOptional;
 }
 
 class _CalendarLoading extends StatelessWidget {

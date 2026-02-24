@@ -9,45 +9,42 @@ class CalendarDayDetailAdapter {
   String get ethiopianDate => _safeText(state.ethiopianDate, state.dateKey);
   String get gregorianDate => _safeText(state.gregorianDate, '-');
   String get weekday => _safeText(state.weekday, '-');
-  String get bahireTitle => _safeText(state.bahireTitle, 'Bahire Hasab');
-  String get bahireDescription =>
-      _safeText(state.bahireDescription, 'Daily signals for this day.');
-  List<BahireStatChipView> get bahireStats => [
-    BahireStatChipView(
-      label: 'Evangelist',
-      value: state.bahireHasabStats.evangelist,
-    ),
-    BahireStatChipView(
-      label: 'Amete Alem',
-      value: state.bahireHasabStats.ameteAlem.toString(),
-    ),
-    BahireStatChipView(
-      label: 'Abekte',
-      value: state.bahireHasabStats.abekte.toString(),
-    ),
-    BahireStatChipView(
-      label: 'Metkih',
-      value: state.bahireHasabStats.metkih.toString(),
-    ),
-    BahireStatChipView(
-      label: 'Wenber',
-      value: state.bahireHasabStats.wenber.toString(),
-    ),
-    BahireStatChipView(
-      label: 'Meskerem 1',
-      value: state.bahireHasabStats.meskeremOneWeekday,
-    ),
-  ];
+  String get evangelist =>
+      _safeText(state.bahireHasabStats.evangelist, state.dayObservance.evangelistKey);
   List<CalendarObservance> get observances => state.observances;
-  List<Celebration> get celebrations => state.celebrations;
+  List<CelebrationViewItem> get celebrations {
+    final items = <CelebrationViewItem>[
+      ...state.celebrations.map(
+        (item) => CelebrationViewItem(title: item.title, subtitle: item.subtitle),
+      ),
+      ...state.lents.map(
+        (item) => CelebrationViewItem(title: item.name, subtitle: 'Lent'),
+      ),
+    ];
+    final deduped = <String, CelebrationViewItem>{};
+    for (final item in items) {
+      final key = item.title.trim().toLowerCase();
+      final existing = deduped[key];
+      if (existing == null) {
+        deduped[key] = item;
+        continue;
+      }
+      if (item.subtitle.toLowerCase() == 'annual feast' &&
+          existing.subtitle.toLowerCase() != 'annual feast') {
+        deduped[key] = item;
+      }
+    }
+    return deduped.values.toList()
+      ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+  }
   List<SaintSummary> get saints => state.saints;
 }
 
-class BahireStatChipView {
-  const BahireStatChipView({required this.label, required this.value});
+class CelebrationViewItem {
+  const CelebrationViewItem({required this.title, required this.subtitle});
 
-  final String label;
-  final String value;
+  final String title;
+  final String subtitle;
 }
 
 String _safeText(String value, String fallback) {

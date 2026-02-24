@@ -10,6 +10,7 @@ class FakeCalendarRepository implements CalendarRepository {
       gregorianYear: 2026,
       gregorianMonth: 2,
       ethiopianMonthLabel: 'የካቲት',
+      ethiopianYear: 2018,
       gregorianRangeLabel: 'Feb - Mar 2026',
       weekdayLabels: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
       weeks: [

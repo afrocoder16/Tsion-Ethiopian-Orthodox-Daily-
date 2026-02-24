@@ -13,6 +13,7 @@ class CalendarDayDetailState {
     required this.observances,
     required this.celebrations,
     required this.saints,
+    required this.lents,
   });
 
   final String dateKey;
@@ -26,6 +27,7 @@ class CalendarDayDetailState {
   final List<CalendarObservance> observances;
   final List<Celebration> celebrations;
   final List<SaintSummary> saints;
+  final List<LentSummary> lents;
 }
 
 class CalendarObservance {

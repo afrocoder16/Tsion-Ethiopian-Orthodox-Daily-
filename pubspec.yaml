@@ -68,6 +68,8 @@ flutter:
 
   assets:
     - assets/data/saints_index.json
+    - assets/data/calendar_dataset.json
+    - assets/data/synaxarium_word_readings.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

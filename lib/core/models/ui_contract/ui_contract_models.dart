@@ -318,6 +318,7 @@ class CalendarMonthGrid {
     required this.gregorianYear,
     required this.gregorianMonth,
     required this.ethiopianMonthLabel,
+    required this.ethiopianYear,
     required this.gregorianRangeLabel,
     required this.weekdayLabels,
     required this.weeks,
@@ -326,6 +327,7 @@ class CalendarMonthGrid {
   final int gregorianYear;
   final int gregorianMonth;
   final String ethiopianMonthLabel;
+  final int ethiopianYear;
   final String gregorianRangeLabel;
   final List<String> weekdayLabels;
   final List<CalendarMonthWeek> weeks;

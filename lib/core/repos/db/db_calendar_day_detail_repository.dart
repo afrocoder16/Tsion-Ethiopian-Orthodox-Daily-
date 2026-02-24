@@ -38,6 +38,9 @@ class DbCalendarDayDetailRepository implements CalendarDayDetailRepository {
       dayObservance: day,
     );
     final saints = await saintsRepository.fetchSaintsForDate(day.ethDate);
+    final lents = await celebrationsRepository.fetchLentsForDay(
+      dayObservance: day,
+    );
 
     final observances = <CalendarObservance>[];
     if (day.fastStatus.isFastingDay) {
@@ -70,6 +73,7 @@ class DbCalendarDayDetailRepository implements CalendarDayDetailRepository {
       observances: observances,
       celebrations: celebrations,
       saints: saints,
+      lents: lents,
     );
     await _writeCache(cacheKey, state);
     return state;
@@ -126,6 +130,7 @@ class DbCalendarDayDetailRepository implements CalendarDayDetailRepository {
           .toList(),
       'celebrations': state.celebrations.map((item) => item.toJson()).toList(),
       'saints': state.saints.map((item) => item.toJson()).toList(),
+      'lents': state.lents.map((item) => item.toJson()).toList(),
     };
   }
 
@@ -160,6 +165,10 @@ class DbCalendarDayDetailRepository implements CalendarDayDetailRepository {
       saints: (json['saints'] as List<dynamic>? ?? const [])
           .whereType<Map<String, dynamic>>()
           .map((item) => SaintSummary.fromJson(item))
+          .toList(),
+      lents: (json['lents'] as List<dynamic>? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map((item) => LentSummary.fromJson(item))
           .toList(),
     );
   }

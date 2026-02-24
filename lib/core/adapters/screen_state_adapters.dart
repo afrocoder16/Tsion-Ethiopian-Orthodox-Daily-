@@ -621,6 +621,7 @@ class CalendarMonthGridView {
     required this.gregorianYear,
     required this.gregorianMonth,
     required this.ethiopianMonthLabel,
+    required this.ethiopianYear,
     required this.gregorianRangeLabel,
     required this.weekdayLabels,
     required this.weeks,
@@ -629,6 +630,7 @@ class CalendarMonthGridView {
   final int gregorianYear;
   final int gregorianMonth;
   final String ethiopianMonthLabel;
+  final int ethiopianYear;
   final String gregorianRangeLabel;
   final List<String> weekdayLabels;
   final List<List<CalendarMonthCellView>> weeks;
@@ -784,10 +786,26 @@ class CalendarAdapter {
   );
 
   CalendarMonthGridView get monthGrid => CalendarMonthGridView(
-    gregorianYear: state.monthGrid.gregorianYear,
-    gregorianMonth: state.monthGrid.gregorianMonth,
-    ethiopianMonthLabel: _safeText(state.monthGrid.ethiopianMonthLabel, '-'),
-    gregorianRangeLabel: _safeText(state.monthGrid.gregorianRangeLabel, '-'),
+    gregorianYear: _safeInt(
+      _tryRead(() => (state.monthGrid as dynamic).gregorianYear),
+      DateTime.now().year,
+    ),
+    gregorianMonth: _safeInt(
+      _tryRead(() => (state.monthGrid as dynamic).gregorianMonth),
+      DateTime.now().month,
+    ),
+    ethiopianMonthLabel: _safeText(
+      _tryRead(() => (state.monthGrid as dynamic).ethiopianMonthLabel) ?? '',
+      '-',
+    ),
+    ethiopianYear: _safeInt(
+      _tryRead(() => (state.monthGrid as dynamic).ethiopianYear),
+      DateTime.now().year - 8,
+    ),
+    gregorianRangeLabel: _safeText(
+      _tryRead(() => (state.monthGrid as dynamic).gregorianRangeLabel) ?? '',
+      '-',
+    ),
     weekdayLabels: state.monthGrid.weekdayLabels
         .map((d) => _safeText(d, '-'))
         .toList(),
@@ -821,10 +839,26 @@ class CalendarAdapter {
     return gridsSource
         .map(
           (grid) => CalendarMonthGridView(
-            gregorianYear: grid.gregorianYear,
-            gregorianMonth: grid.gregorianMonth,
-            ethiopianMonthLabel: _safeText(grid.ethiopianMonthLabel, '-'),
-            gregorianRangeLabel: _safeText(grid.gregorianRangeLabel, '-'),
+            gregorianYear: _safeInt(
+              _tryRead(() => (grid as dynamic).gregorianYear),
+              DateTime.now().year,
+            ),
+            gregorianMonth: _safeInt(
+              _tryRead(() => (grid as dynamic).gregorianMonth),
+              DateTime.now().month,
+            ),
+            ethiopianMonthLabel: _safeText(
+              _tryRead(() => (grid as dynamic).ethiopianMonthLabel) ?? '',
+              '-',
+            ),
+            ethiopianYear: _safeInt(
+              _tryRead(() => (grid as dynamic).ethiopianYear),
+              DateTime.now().year - 8,
+            ),
+            gregorianRangeLabel: _safeText(
+              _tryRead(() => (grid as dynamic).gregorianRangeLabel) ?? '',
+              '-',
+            ),
             weekdayLabels: grid.weekdayLabels
                 .map((value) => _safeText(value, '-'))
                 .toList(),
@@ -1213,4 +1247,22 @@ String _titleCase(String value) {
     return '-';
   }
   return trimmed[0].toUpperCase() + trimmed.substring(1);
+}
+
+dynamic _tryRead(dynamic Function() reader) {
+  try {
+    return reader();
+  } catch (_) {
+    return null;
+  }
+}
+
+int _safeInt(dynamic value, int fallback) {
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  return int.tryParse('$value') ?? fallback;
 }

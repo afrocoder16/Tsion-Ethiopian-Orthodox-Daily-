@@ -19,6 +19,7 @@ import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/calendar/calendar_day_detail_screen.dart';
 import '../features/calendar/presentation/fasting_guidance_screen.dart';
 import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
+import '../features/calendar/presentation/synaxarium_screen.dart';
 import '../features/explore/presentation/explore_screen.dart';
 import '../features/explore/presentation/explore_detail_screen.dart';
 import '../features/explore/presentation/guided_path_detail_screen.dart';
@@ -95,6 +96,13 @@ GoRouter buildRouter() {
                     },
                   ),
                 ],
+              ),
+              GoRoute(
+                path: 'synaxarium/:date',
+                builder: (context, state) {
+                  final date = state.pathParameters['date'] ?? '';
+                  return SynaxariumScreen(dateKey: date);
+                },
               ),
             ],
           ),

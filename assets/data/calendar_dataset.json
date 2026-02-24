@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-02-23",
+  "description": "Starter dataset for Ethiopian Orthodox calendar. Includes: monthly recurring commemorations by Ethiopian day-of-month (1-30), selected annual feasts by Ethiopian month/day, and all major canonical fasting seasons (plus weekly Wed/Fri and optional Kweskwam). Offline-first: compute Ethiopian date via Abushakir, then lookup data here. Full Synaxarium text is not included.",
+  "sources": [
+    {
+      "id": "ethiopianorthodox_calendar",
+      "name": "Ethiopian Orthodox Tewahedo Church calendar and fasting overview",
+      "url": "https://www.ethiopianorthodox.org/english/calendar.html"
+    },
+    {
+      "id": "wiki_calendar_of_saints",
+      "name": "Calendar of saints (Orthodox Tewahedo)",
+      "url": "https://en.wikipedia.org/wiki/Calendar_of_saints_(Orthodox_Tewahedo)"
+    },
+    {
+      "id": "boundless_other_christian_celebrations",
+      "name": "Other Christian celebrations (Boundless Ethiopia)",
+      "url": "https://boundlessethiopia.com/about-ethiopia/festivals-and-celebrations/other-christian-celebrations/"
+    }
+  ],
+  "ethiopian_calendar": {
+    "months": [
+      { "num": 1, "name_en": "Meskerem", "name_am": "መስከረም" },
+      { "num": 2, "name_en": "Tikimt", "name_am": "ጥቅምት" },
+      { "num": 3, "name_en": "Hidar", "name_am": "ኅዳር" },
+      { "num": 4, "name_en": "Tahsas", "name_am": "ታኅሳስ" },
+      { "num": 5, "name_en": "Tir", "name_am": "ጥር" },
+      { "num": 6, "name_en": "Yekatit", "name_am": "የካቲት" },
+      { "num": 7, "name_en": "Megabit", "name_am": "መጋቢት" },
+      { "num": 8, "name_en": "Miyazia", "name_am": "ሚያዝያ" },
+      { "num": 9, "name_en": "Ginbot", "name_am": "ግንቦት" },
+      { "num": 10, "name_en": "Sene", "name_am": "ሰኔ" },
+      { "num": 11, "name_en": "Hamle", "name_am": "ሐምሌ" },
+      { "num": 12, "name_en": "Nehase", "name_am": "ነሐሴ" },
+      { "num": 13, "name_en": "Pagumen", "name_am": "ጳጉሜን" }
+    ]
+  },
+  "core_monthly_primary_days": [
+    { "eth_day": 1, "name_en": "Lideta Maryam" },
+    { "eth_day": 3, "name_en": "Ba'eta Maryam" },
+    { "eth_day": 5, "name_en": "Petros and Paulos" },
+    { "eth_day": 7, "name_en": "Holy Trinity" },
+    { "eth_day": 10, "name_en": "Kidus Meskel" },
+    { "eth_day": 12, "name_en": "Michael the Archangel" },
+    { "eth_day": 16, "name_en": "Kidane Mihret" },
+    { "eth_day": 19, "name_en": "Gabriel the Archangel" },
+    { "eth_day": 21, "name_en": "Holy Virgin Mary" },
+    { "eth_day": 23, "name_en": "St George (Georgis)" },
+    { "eth_day": 24, "name_en": "Abune Tekle Haymanot" },
+    { "eth_day": 27, "name_en": "Medhane Alem" },
+    { "eth_day": 29, "name_en": "Bale Wold" },
+    { "eth_day": 30, "name_en": "Markos" }
+  ],
+  "annual_override_primary": [
+    { "eth_month": "Ginbot", "eth_day": 1, "name_en": "Lideta Maryam (annual)" },
+    { "eth_month": "Yekatit", "eth_day": 16, "name_en": "Kidane Mihret (annual feast)" },
+    { "eth_month": "Tahsas", "eth_day": 3, "name_en": "Ba'eta Maryam (annual feast)" },
+    { "eth_month": "Hidar", "eth_day": 6, "name_en": "Debre Kuskuam (Kuskuam Maryam annual)" },
+    { "eth_month": "Hidar", "eth_day": 12, "name_en": "St Michael (annual)" },
+    { "eth_month": "Sene", "eth_day": 12, "name_en": "St Michael (annual)" },
+    { "eth_month": "Tahsas", "eth_day": 19, "name_en": "Kulibi Gabriel (annual)" },
+    { "eth_month": "Hamle", "eth_day": 19, "name_en": "Kulibi Gabriel (annual)" },
+    { "eth_month": "Tir", "eth_day": 21, "name_en": "Asteroye Maryam (Dormition/Death of St Mary)" },
+    { "eth_month": "Hidar", "eth_day": 21, "name_en": "Hidar Tsion / St Mary (Axum tradition)" },
+    { "eth_month": "Nehase", "eth_day": 16, "name_en": "Filseta (Assumption of St Mary)" },
+    { "eth_month": "Meskerem", "eth_day": 17, "name_en": "Meskel (Finding of the True Cross)" },
+    { "eth_month": "Tahsas", "eth_day": 29, "name_en": "Gena (Christmas)" },
+    { "eth_month": "Ter", "eth_day": 11, "name_en": "Timket (Epiphany)" }
+  ],
+  "monthly_recurring_commemorations": {
+    "type": "eth_day_of_month",
+    "source_ids": ["wiki_calendar_of_saints"],
+    "days": [
+      { "eth_day": 1, "items": [{ "id": "lideta_maryam", "name_en": "Lideta Maryam", "category": "Theotokos" }, { "id": "elias", "name_en": "Elias", "category": "Prophet" }]},
+      { "eth_day": 2, "items": [{ "id": "thaddius", "name_en": "Thaddius", "category": "Apostle" }]},
+      { "eth_day": 3, "items": [{ "id": "baeta_maryam", "name_en": "Ba'eta Maryam", "category": "Theotokos" }]},
+      { "eth_day": 4, "items": [{ "id": "yohannes_wolde_negedquad", "name_en": "Yohannes Wolde Negedquad", "category": "Saint" }]},
+      { "eth_day": 5, "items": [{ "id": "petros_and_paul", "name_en": "Petros and Paulos", "category": "Apostles" }, { "id": "gebre_menfes_kidus", "name_en": "Gebre Menfes Kidus", "category": "Saint" }]},
+      { "eth_day": 6, "items": [{ "id": "qusquam_maryam", "name_en": "Our Lady of Qusquam", "category": "Theotokos" }]},
+      { "eth_day": 7, "items": [{ "id": "holy_trinity", "name_en": "Holy Trinity", "category": "Feast" }]},
+      { "eth_day": 8, "items": [{ "id": "kiros", "name_en": "Kiros", "category": "Saint" }, { "id": "abba_banuda", "name_en": "Abba Banuda", "category": "Saint" }]},
+      { "eth_day": 9, "items": [{ "id": "thomas_not_apostle", "name_en": "Thomas (not the Apostle)", "category": "Saint" }]},
+      { "eth_day": 10, "items": [{ "id": "kidus_meskel", "name_en": "Kidus Meskel", "category": "Feast" }]},
+      { "eth_day": 11, "items": [{ "id": "hanna_we_iyaqem", "name_en": "Hanna we Iyaqem", "category": "Saints" }, { "id": "fasilides", "name_en": "Fasilides", "category": "Saint" }]},
+      { "eth_day": 12, "items": [{ "id": "archangel_michael", "name_en": "Michael the Archangel", "category": "Archangel" }, { "id": "samuel", "name_en": "Samuel", "category": "Prophet" }, { "id": "yared", "name_en": "Yared", "category": "Saint" }]},
+      { "eth_day": 13, "items": [{ "id": "igziabher_ab", "name_en": "Igziabher Ab", "category": "Feast" }, { "id": "archangel_raphael", "name_en": "Raphael the Archangel", "category": "Archangel" }]},
+      { "eth_day": 14, "items": [{ "id": "abuna_aregawi", "name_en": "Abuna Aregawi", "category": "Saint" }, { "id": "gebre_kristos", "name_en": "Gebre Kristos", "category": "Saint" }]},
+      { "eth_day": 15, "items": [{ "id": "kirkos_iyeluta", "name_en": "Kirkos and Iyeluta", "category": "Saints" }]},
+      { "eth_day": 16, "items": [{ "id": "kidane_mihret", "name_en": "Kidane Mihret", "category": "Theotokos" }]},
+      { "eth_day": 17, "items": [{ "id": "estifanos", "name_en": "Estifanos", "category": "Saint" }, { "id": "abba_gerima", "name_en": "Abba Gerima", "category": "Saint" }]},
+      { "eth_day": 18, "items": [{ "id": "ewostatewos", "name_en": "Ewostatewos", "category": "Saint" }]},
+      { "eth_day": 19, "items": [{ "id": "archangel_gabriel", "name_en": "Gabriel the Archangel", "category": "Archangel" }]},
+      { "eth_day": 20, "items": [{ "id": "hnstata", "name_en": "Hnstata", "category": "Commemoration" }]},
+      { "eth_day": 21, "items": [{ "id": "st_mary", "name_en": "Holy Virgin Mary", "category": "Theotokos" }]},
+      { "eth_day": 22, "items": [{ "id": "deqsius", "name_en": "Deqsius", "category": "Saint" }, { "id": "archangel_uriel", "name_en": "Uriel the Archangel", "category": "Archangel" }]},
+      { "eth_day": 23, "items": [{ "id": "st_george", "name_en": "Georgis", "category": "Saint" }]},
+      { "eth_day": 24, "items": [{ "id": "tekle_haymanot", "name_en": "Abune Tekle Haymanot", "category": "Saint" }]},
+      { "eth_day": 25, "items": [{ "id": "merkorios", "name_en": "Merkorios", "category": "Saint" }]},
+      { "eth_day": 26, "items": [{ "id": "thomas_apostle", "name_en": "Thomas the Apostle", "category": "Apostle" }]},
+      { "eth_day": 27, "items": [{ "id": "medhane_alem", "name_en": "Medhane Alem", "category": "Feast" }]},
+      { "eth_day": 28, "items": [{ "id": "immanuel", "name_en": "Immanuel", "category": "Feast" }]},
+      { "eth_day": 29, "items": [{ "id": "bale_wold", "name_en": "Bale Wold", "category": "Feast" }, { "id": "kidist_arsema", "name_en": "Kidist Arsema", "category": "Saint" }]},
+      { "eth_day": 30, "items": [{ "id": "markos", "name_en": "Markos", "category": "Evangelist" }]}
+    ]
+  },
+  "annual_feasts": {
+    "type": "fixed_eth_month_day",
+    "items": [
+      { "id": "genna", "name_en": "Christmas (Gena)", "eth_month": "Tahsas", "eth_day": 29, "category": "Lord", "gregorian_common": "Jan 7" },
+      { "id": "timket", "name_en": "Epiphany (Timket)", "eth_month": "Ter", "eth_day": 11, "category": "Lord", "gregorian_common": "Jan 19" },
+      { "id": "st_michael_ter12", "name_en": "St Michael (Ter 12)", "eth_month": "Ter", "eth_day": 12, "category": "Archangel", "gregorian_common": "Jan 20" },
+      { "id": "meskel", "name_en": "Meskel (Finding of the True Cross)", "eth_month": "Meskerem", "eth_day": 17, "category": "Feast", "gregorian_common": "Sep 27" },
+      { "id": "filseta_feast", "name_en": "Filseta (Assumption of St Mary)", "eth_month": "Nehase", "eth_day": 16, "category": "Theotokos", "gregorian_common": "Aug 22" },
+      { "id": "lideta_maryam_annual", "name_en": "Lideta Maryam (annual)", "eth_month": "Ginbot", "eth_day": 1, "category": "Theotokos", "gregorian_common": "May 9" },
+      { "id": "kidane_mihret_annual", "name_en": "Kidane Mihret (annual)", "eth_month": "Yekatit", "eth_day": 16, "category": "Theotokos", "gregorian_common": "Feb 23" },
+      { "id": "asteroye_maryam", "name_en": "Asteroye Maryam (Death of St Mary)", "eth_month": "Tir", "eth_day": 21, "category": "Theotokos", "gregorian_common": "Jan 29" },
+      { "id": "michael_sene12", "name_en": "St Michael (Sene 12 annual)", "eth_month": "Sene", "eth_day": 12, "category": "Archangel", "gregorian_common": "Jun 19" },
+      { "id": "michael_hidar12", "name_en": "St Michael (Hidar 12 annual)", "eth_month": "Hidar", "eth_day": 12, "category": "Archangel", "gregorian_common": "Nov 21" },
+      { "id": "gabriel_hamle19", "name_en": "Kulibi Gabriel (Hamle 19 annual)", "eth_month": "Hamle", "eth_day": 19, "category": "Archangel", "gregorian_common": "Jul 26" },
+      { "id": "gabriel_tahsas19", "name_en": "Kulibi Gabriel (Tahsas 19 annual)", "eth_month": "Tahsas", "eth_day": 19, "category": "Archangel", "gregorian_common": "Dec 28" },
+      { "id": "baeta_maryam_annual", "name_en": "Ba'eta Maryam (annual)", "eth_month": "Tahsas", "eth_day": 3, "category": "Theotokos", "gregorian_common": "Dec 12" },
+      { "id": "debre_kuskuam", "name_en": "Debre Kuskuam", "eth_month": "Hidar", "eth_day": 6, "category": "Theotokos", "gregorian_common": "Nov 15" },
+      { "id": "abune_gebre_menfes_kidus_annual", "name_en": "Abune Gebre Menfes Kidus (annual)", "eth_month": "Tikimt", "eth_day": 5, "category": "Saint", "gregorian_common": "Oct 15" },
+      { "id": "abuna_aregawi_annual", "name_en": "Abuna Aregawi (annual)", "eth_month": "Tikimt", "eth_day": 14, "category": "Saint", "gregorian_common": "Oct 24" },
+      { "id": "kristos_semera_covenant", "name_en": "Kristos Semera (covenant day)", "eth_month": "Ginbot", "eth_day": 12, "category": "Saint", "gregorian_common": "May 20" },
+      { "id": "kristos_semera_departure", "name_en": "Kristos Semera (departure day)", "eth_month": "Nehase", "eth_day": 24, "category": "Saint", "gregorian_common": "Aug 30" }
+    ]
+  },
+  "fasts_and_lents": {
+    "canonical_7_fasts": [
+      { "id": "abiy_tsom_hudadi", "name_en": "Great Lent (Hudadi or Abiye Tsom)" },
+      { "id": "apostles_fast", "name_en": "Fast of the Apostles (Tsome Hawariyat)" },
+      { "id": "assumption_fast", "name_en": "Fast of the Assumption (Filseta fast)" },
+      { "id": "gahad_christmas", "name_en": "Gahad of Christmas (Christmas eve fast)" },
+      { "id": "christmas_fast_advent", "name_en": "Fast preceding Christmas (Advent, Sibket or Tsome Nebiyat)" },
+      { "id": "fast_of_nineveh", "name_en": "Fast of Nineveh (Tsome Nenewe)" },
+      { "id": "gahad_timket", "name_en": "Gahad of Epiphany (Timket eve fast)" }
+    ],
+    "weekly_fast_rule": {
+      "id": "weekly_wed_fri",
+      "name_en": "Weekly Wednesday and Friday fast"
+    }
+  }
+}
