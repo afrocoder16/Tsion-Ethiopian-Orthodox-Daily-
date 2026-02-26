@@ -7,163 +7,79 @@ import '../saints_repository.dart';
 
 class DbSaintsRepository implements SaintsRepository {
   DbSaintsRepository({
-    this.assetPath = 'assets/data/calendar_dataset.json',
-    this.readingPath = 'assets/data/synaxarium_word_readings.json',
+    this.assetPath = 'assets/data/synaxarium_index.json',
   });
 
   final String assetPath;
-  final String readingPath;
-  Map<String, dynamic>? _dataset;
-  Map<String, dynamic>? _readings;
+  Map<String, dynamic>? _indexRoot;
 
   @override
   Future<List<SaintSummary>> fetchSaintsForDate(EthDate ethDate) async {
-    final data = await _loadDataset();
-    final override = _annualPrimaryOverride(data, ethDate);
-    if (override != null) {
-      return [override];
-    }
-    final primary = _coreMonthlyPrimary(data, ethDate);
-    if (primary != null) {
-      return [primary];
-    }
-    return _fallbackMonthlyItems(data, ethDate);
-  }
-
-  Future<Map<String, dynamic>> _loadDataset() async {
-    final cached = _dataset;
-    if (cached != null) {
-      return cached;
-    }
-    final raw = await rootBundle.loadString(assetPath);
-    final decoded = jsonDecode(raw) as Map<String, dynamic>;
-    final readingRaw = await rootBundle.loadString(readingPath);
-    _readings = jsonDecode(readingRaw) as Map<String, dynamic>;
-    _dataset = decoded;
-    return decoded;
-  }
-
-  SaintSummary? _annualPrimaryOverride(
-    Map<String, dynamic> data,
-    EthDate ethDate,
-  ) {
-    final overrides =
-        (data['annual_override_primary'] as List<dynamic>? ?? const [])
-            .whereType<Map<String, dynamic>>();
-    for (final item in overrides) {
-      final day = int.tryParse('${item['eth_day']}');
-      final month = '${item['eth_month'] ?? ''}'.trim();
-      if (day == null || day != ethDate.day) {
+    final index = await _indexMap();
+    for (final month in _monthCandidates(ethDate.month)) {
+      final key = '$month-${ethDate.day.toString().padLeft(2, '0')}';
+      final item = index[key];
+      if (item is! Map<String, dynamic>) {
         continue;
       }
-      if (!_sameEthMonth(month, ethDate.month)) {
-        continue;
-      }
-      final name = '${item['name_en'] ?? ''}'.trim();
-      if (name.isEmpty) {
-        continue;
-      }
-      return SaintSummary(
-        id: 'annual_${_slug(name)}',
-        name: name,
-        snippet: _synaxariumSnippet(ethDate.day, fallback: 'Annual override primary'),
-      );
-    }
-    return null;
-  }
-
-  SaintSummary? _coreMonthlyPrimary(Map<String, dynamic> data, EthDate ethDate) {
-    final primaryDays =
-        (data['core_monthly_primary_days'] as List<dynamic>? ?? const [])
-            .whereType<Map<String, dynamic>>();
-    for (final item in primaryDays) {
-      final day = int.tryParse('${item['eth_day']}');
-      if (day == null || day != ethDate.day) {
-        continue;
-      }
-      final name = '${item['name_en'] ?? ''}'.trim();
-      if (name.isEmpty) {
-        continue;
-      }
-      return SaintSummary(
-        id: 'monthly_primary_${_slug(name)}',
-        name: name,
-        snippet: _synaxariumSnippet(ethDate.day, fallback: 'Core monthly primary day'),
-      );
-    }
-    return null;
-  }
-
-  List<SaintSummary> _fallbackMonthlyItems(
-    Map<String, dynamic> data,
-    EthDate ethDate,
-  ) {
-    final blocks =
-        ((data['monthly_recurring_commemorations']
-                as Map<String, dynamic>?)?['days'])
-            as List<dynamic>? ??
-        const [];
-    for (final block in blocks) {
-      if (block is! Map<String, dynamic>) {
-        continue;
-      }
-      final day = int.tryParse('${block['eth_day']}');
-      if (day != ethDate.day) {
-        continue;
-      }
-      final items = block['items'] as List<dynamic>? ?? const [];
-      return items.whereType<Map<String, dynamic>>().map((item) {
-        final name = '${item['name_en'] ?? ''}'.trim();
-        return SaintSummary(
-          id: '${item['id'] ?? _slug(name)}'.trim(),
-          name: name,
-          snippet: _synaxariumSnippet(
-            ethDate.day,
-            fallback: '${item['category'] ?? 'Commemoration'}',
-          ),
-        );
-      }).where((item) => item.id.isNotEmpty && item.name.isNotEmpty).toList();
+      final saints = (item['saints'] as List<dynamic>? ?? const [])
+          .map((value) => '$value'.trim())
+          .where((value) => value.isNotEmpty)
+          .toList();
+      final primary = _trimOrNull('${item['primary_saint'] ?? ''}');
+      final names = saints.isEmpty
+          ? (primary == null ? <String>[] : <String>[primary])
+          : saints;
+      return names
+          .asMap()
+          .entries
+          .map(
+            (entry) => SaintSummary(
+              id: '${key}_${entry.key}',
+              name: entry.value,
+              snippet: 'Tap to read Synaxarium',
+            ),
+          )
+          .toList();
     }
     return const [];
   }
 
-  String _synaxariumSnippet(int ethDay, {required String fallback}) {
-    final dayKey = ethDay.toString().padLeft(2, '0');
-    final reading = (_readings?[dayKey] as String?)?.trim();
-    if (reading == null || reading.isEmpty) {
-      return fallback;
+  Future<Map<String, dynamic>> _indexMap() async {
+    final cached = _indexRoot;
+    if (cached != null) {
+      return (cached['index'] as Map<String, dynamic>? ?? const {});
     }
-    return reading;
+    final raw = await rootBundle.loadString(assetPath);
+    final decoded = jsonDecode(raw) as Map<String, dynamic>;
+    _indexRoot = decoded;
+    return (decoded['index'] as Map<String, dynamic>? ?? const {});
   }
 
-  bool _sameEthMonth(String jsonName, int month) {
-    final normalized = jsonName.trim().toLowerCase();
-    final monthNames = <int, List<String>>{
-      1: ['meskerem', 'meskeram'],
-      2: ['tikimt', 'teqemt', 'teqemt', 'teqemt'],
-      3: ['hidar', 'hedar'],
-      4: ['tahsas', 'tahisas'],
-      5: ['tir', 'ter', 'tirr'],
-      6: ['yekatit'],
-      7: ['megabit'],
-      8: ['miyazia', 'miazia'],
-      9: ['ginbot'],
-      10: ['sene', 'senie', 'seni'],
-      11: ['hamle', 'hamele', 'hamlie'],
-      12: ['nehase', 'nehasie', 'nehassie'],
-      13: ['pagumen', 'pagume'],
+  List<String> _monthCandidates(int month) {
+    const candidates = <int, List<String>>{
+      1: ['Meskerem'],
+      2: ['Tekemt', 'Tikimt'],
+      3: ['Hedar', 'Hidar'],
+      4: ['Tahisas', 'Tahsas'],
+      5: ['Tir', 'Ter'],
+      6: ['Yekatit'],
+      7: ['Megabit'],
+      8: ['Miyazia', 'Miyazya'],
+      9: ['Ginbot'],
+      10: ['Senne', 'Sene'],
+      11: ['Hamle'],
+      12: ['Nehasse', 'Nehase'],
+      13: ['Pagumen', 'Pagume'],
     };
-    return monthNames[month]?.contains(normalized) ?? false;
+    return candidates[month] ?? const [];
   }
+}
 
-  String _slug(String value) {
-    final lower = value.trim().toLowerCase();
-    if (lower.isEmpty) {
-      return 'item';
-    }
-    return lower
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
-        .replaceAll(RegExp(r'_+'), '_')
-        .replaceAll(RegExp(r'^_|_$'), '');
+String? _trimOrNull(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty || trimmed.toLowerCase() == 'null') {
+    return null;
   }
+  return trimmed;
 }

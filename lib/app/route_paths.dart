@@ -11,6 +11,8 @@ class RoutePaths {
   static const calendar = '/calendar';
   static const calendarFasting = '/calendar/fasting';
   static const calendarSynaxarium = '/calendar/synaxarium/:date';
+  static const calendarSynaxariumBookmarks = '/calendar/synaxarium/bookmarks';
+  static const calendarSynaxariumEntry = '/calendar/synaxarium/entry/:ethKey';
   static const explore = '/explore';
   static const streak = '/streak';
   static const patronSaint = '/patron-saint/:name';
@@ -69,6 +71,12 @@ class RoutePaths {
 
   static String calendarSynaxariumPath(String dateKey) =>
       '/calendar/synaxarium/$dateKey';
+
+  static String calendarSynaxariumBookmarksPath() =>
+      calendarSynaxariumBookmarks;
+
+  static String calendarSynaxariumEntryPath(String ethKey) =>
+      '/calendar/synaxarium/entry/$ethKey';
 
   static String patronSaintPath(String name) =>
       '/patron-saint/${Uri.encodeComponent(name)}';

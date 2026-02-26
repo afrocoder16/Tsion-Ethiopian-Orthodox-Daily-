@@ -100,7 +100,9 @@ class DbCalendarRepository implements CalendarRepository {
             )
           : ui.SaintPreview(
               name: todaysSaints.first.name,
-              summary: todaysSaints.first.snippet,
+              summary: todaysSaints.length > 1
+                  ? '+${todaysSaints.length - 1} more'
+                  : 'Tap to read',
               isAvailable: true,
               ctaLabel: 'Read Synaxarium',
             ),

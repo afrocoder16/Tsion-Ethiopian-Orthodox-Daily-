@@ -20,6 +20,8 @@ import '../features/calendar/calendar_day_detail_screen.dart';
 import '../features/calendar/presentation/fasting_guidance_screen.dart';
 import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
 import '../features/calendar/presentation/synaxarium_screen.dart';
+import '../features/calendar/presentation/synaxarium_bookmarks_screen.dart';
+import '../features/calendar/presentation/synaxarium_entry_screen.dart';
 import '../features/explore/presentation/explore_screen.dart';
 import '../features/explore/presentation/explore_detail_screen.dart';
 import '../features/explore/presentation/guided_path_detail_screen.dart';
@@ -96,6 +98,17 @@ GoRouter buildRouter() {
                     },
                   ),
                 ],
+              ),
+              GoRoute(
+                path: 'synaxarium/bookmarks',
+                builder: (context, state) => const SynaxariumBookmarksScreen(),
+              ),
+              GoRoute(
+                path: 'synaxarium/entry/:ethKey',
+                builder: (context, state) {
+                  final key = state.pathParameters['ethKey'] ?? '';
+                  return SynaxariumEntryScreen(ethKey: key);
+                },
               ),
               GoRoute(
                 path: 'synaxarium/:date',
