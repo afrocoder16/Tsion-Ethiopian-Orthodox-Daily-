@@ -249,10 +249,15 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedOnTap =
+        onTap ??
+        (icon == Icons.person
+            ? () => context.push(RoutePaths.profilePath())
+            : null);
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: resolvedOnTap,
         child: Container(
           width: 34,
           height: 34,

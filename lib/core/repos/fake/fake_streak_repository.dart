@@ -13,7 +13,8 @@ class FakeStreakRepository implements StreakRepository {
             id: task.id,
             title: task.title,
             iconKey: task.iconKey,
-            isDone: task.id == streakTaskPrayer,
+            isDone:
+                task.id == streakTaskPrayer || task.id == streakTaskDailyVerse,
             routePath: task.routePath,
           ),
         )
@@ -33,18 +34,18 @@ class FakeStreakRepository implements StreakRepository {
       StreakScreenState(
         dayLabel: dayLabel,
         dateLine: dateLine,
-        completedCount: 1,
+        completedCount: 2,
         totalCount: tasks.length,
         streakDays: 2,
-        subtext: 'Keep the rhythm today',
-        weekTitle: 'This Week Progress',
+        subtext: '1 more to complete today',
+        weekTitle: 'This Week Rhythm',
         weekCompletedCount: 1,
         weekDays: weekDays,
         socialCard: const StreakSocialCard(
           title: 'Daily Practice Circle',
-          subtitle: 'Create or join a Daily Practice Circle',
+          subtitle: 'Share your rhythm of prayer, verse, and readings',
         ),
-        practiceTitle: 'Daily Practice',
+        practiceTitle: 'Daily Rhythm',
         practiceItems: practiceItems,
       ),
     );

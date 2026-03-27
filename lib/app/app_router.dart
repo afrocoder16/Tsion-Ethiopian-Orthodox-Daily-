@@ -17,6 +17,7 @@ import '../features/prayers/presentation/reflection_screen.dart';
 import '../features/prayers/presentation/light_candle_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/calendar/calendar_day_detail_screen.dart';
+import '../features/calendar/presentation/daily_readings_screen.dart';
 import '../features/calendar/presentation/fasting_guidance_screen.dart';
 import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
 import '../features/calendar/presentation/synaxarium_screen.dart';
@@ -26,6 +27,14 @@ import '../features/explore/presentation/explore_screen.dart';
 import '../features/explore/presentation/explore_detail_screen.dart';
 import '../features/explore/presentation/guided_path_detail_screen.dart';
 import '../features/explore/presentation/community_entry_screen.dart';
+import '../features/profile/presentation/edit_profile_screen.dart';
+import '../features/profile/presentation/forgot_password_screen.dart';
+import '../features/profile/presentation/notification_center_screen.dart';
+import '../features/profile/presentation/profile_preferences_screen.dart';
+import '../features/profile/presentation/profile_screen.dart';
+import '../features/profile/presentation/prayer_reminders_screen.dart';
+import '../features/profile/presentation/sign_in_screen.dart';
+import '../features/profile/presentation/sign_up_screen.dart';
 import '../features/streak/presentation/streak_screen.dart';
 import '../features/bible/presentation/patron_saint_screen.dart';
 
@@ -75,6 +84,10 @@ GoRouter buildRouter() {
             path: RoutePaths.calendar,
             builder: (context, state) => const CalendarScreen(),
             routes: [
+              GoRoute(
+                path: 'readings',
+                builder: (context, state) => const DailyReadingsScreen(),
+              ),
               GoRoute(
                 path: 'fasting',
                 builder: (context, state) => const FastingGuidanceScreen(),
@@ -158,6 +171,40 @@ GoRouter buildRouter() {
           final rawName = state.pathParameters['name'] ?? 'Patron Saint';
           return PatronSaintScreen(name: Uri.decodeComponent(rawName));
         },
+      ),
+      GoRoute(
+        path: RoutePaths.profile,
+        builder: (context, state) => const ProfileScreen(),
+        routes: [
+          GoRoute(
+            path: 'sign-in',
+            builder: (context, state) => const SignInScreen(),
+          ),
+          GoRoute(
+            path: 'sign-up',
+            builder: (context, state) => const SignUpScreen(),
+          ),
+          GoRoute(
+            path: 'forgot-password',
+            builder: (context, state) => const ForgotPasswordScreen(),
+          ),
+          GoRoute(
+            path: 'edit',
+            builder: (context, state) => const EditProfileScreen(),
+          ),
+          GoRoute(
+            path: 'preferences',
+            builder: (context, state) => const ProfilePreferencesScreen(),
+          ),
+          GoRoute(
+            path: 'prayer-reminders',
+            builder: (context, state) => const PrayerRemindersScreen(),
+          ),
+          GoRoute(
+            path: 'notifications',
+            builder: (context, state) => const NotificationCenterScreen(),
+          ),
+        ],
       ),
     ],
   );

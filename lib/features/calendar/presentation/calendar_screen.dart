@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/calendar_preferences_provider.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
 class CalendarScreen extends ConsumerWidget {
@@ -24,13 +25,14 @@ class CalendarScreen extends ConsumerWidget {
   }
 }
 
-class _CalendarContent extends StatelessWidget {
+class _CalendarContent extends ConsumerWidget {
   const _CalendarContent({required this.adapter});
 
   final CalendarAdapter adapter;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(calendarDisplayModeProvider);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -43,6 +45,9 @@ class _CalendarContent extends StatelessWidget {
         _MonthCalendarScroller(
           months: adapter.monthGrids,
           years: adapter.availableYears,
+          mode: mode,
+          onModeChanged: (nextMode) =>
+              ref.read(calendarDisplayModeProvider.notifier).setMode(nextMode),
           onDayTap: (dateKey) =>
               context.go('${RoutePaths.calendar}/day/$dateKey'),
         ),
@@ -59,8 +64,6 @@ class _CalendarContent extends StatelessWidget {
   }
 }
 
-enum _CalendarViewMode { ethiopian, gregorian }
-
 class _CalendarMonthGrid extends StatelessWidget {
   const _CalendarMonthGrid({
     required this.view,
@@ -76,13 +79,13 @@ class _CalendarMonthGrid extends StatelessWidget {
   final List<int> years;
   final ValueChanged<int> onPickYear;
   final VoidCallback onGoToToday;
-  final _CalendarViewMode mode;
-  final ValueChanged<_CalendarViewMode> onModeChanged;
+  final CalendarDisplayMode mode;
+  final ValueChanged<CalendarDisplayMode> onModeChanged;
   final ValueChanged<String> onDayTap;
 
   @override
   Widget build(BuildContext context) {
-    final isEthiopian = mode == _CalendarViewMode.ethiopian;
+    final isEthiopian = mode == CalendarDisplayMode.ethiopian;
     final monthTitle = isEthiopian
         ? '${view.ethiopianMonthLabel} ${view.ethiopianYear}'
         : '${_gregorianMonthLabel(view.gregorianMonth)} ${view.gregorianYear}';
@@ -112,14 +115,14 @@ class _CalendarMonthGrid extends StatelessWidget {
               ),
               ToggleButtons(
                 isSelected: [
-                  mode == _CalendarViewMode.ethiopian,
-                  mode == _CalendarViewMode.gregorian,
+                  mode == CalendarDisplayMode.ethiopian,
+                  mode == CalendarDisplayMode.gregorian,
                 ],
                 onPressed: (index) {
                   onModeChanged(
                     index == 0
-                        ? _CalendarViewMode.ethiopian
-                        : _CalendarViewMode.gregorian,
+                        ? CalendarDisplayMode.ethiopian
+                        : CalendarDisplayMode.gregorian,
                   );
                 },
                 borderRadius: BorderRadius.circular(8),
@@ -271,11 +274,15 @@ class _MonthCalendarScroller extends StatefulWidget {
   const _MonthCalendarScroller({
     required this.months,
     required this.years,
+    required this.mode,
+    required this.onModeChanged,
     required this.onDayTap,
   });
 
   final List<CalendarMonthGridView> months;
   final List<int> years;
+  final CalendarDisplayMode mode;
+  final ValueChanged<CalendarDisplayMode> onModeChanged;
   final ValueChanged<String> onDayTap;
 
   @override
@@ -285,7 +292,6 @@ class _MonthCalendarScroller extends StatefulWidget {
 class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
   late final PageController _pageController;
   late final int _todayIndex;
-  _CalendarViewMode _mode = _CalendarViewMode.ethiopian;
 
   @override
   void initState() {
@@ -343,8 +349,8 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
             years: widget.years,
             onPickYear: _jumpToYear,
             onGoToToday: _jumpToToday,
-            mode: _mode,
-            onModeChanged: (mode) => setState(() => _mode = mode),
+            mode: widget.mode,
+            onModeChanged: widget.onModeChanged,
             onDayTap: widget.onDayTap,
           );
         },
@@ -460,16 +466,22 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onTap = icon == Icons.person
+        ? () => context.push(RoutePaths.profilePath())
+        : null;
     return Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F3F3),
-          borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F3F3),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 16, color: Colors.black54),
         ),
-        child: Icon(icon, size: 16, color: Colors.black54),
       ),
     );
   }
@@ -562,11 +574,7 @@ class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
     final id = 'custom-${DateTime.now().microsecondsSinceEpoch}';
     setState(() {
       _customHabits.add(
-        _TrackerHabitItem(
-          id: id,
-          label: value,
-          isOptional: false,
-        ),
+        _TrackerHabitItem(id: id, label: value, isOptional: false),
       );
       _checked[id] = false;
     });

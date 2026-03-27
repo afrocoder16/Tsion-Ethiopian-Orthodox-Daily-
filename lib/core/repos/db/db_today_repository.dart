@@ -1,6 +1,7 @@
 import '../../db/app_database.dart';
-import '../../db/daos/streak_events_dao.dart';
+import '../../db/daos/streak_dao.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
+import '../../streak/streak_tasks.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
 import '../screen_states.dart';
@@ -12,13 +13,22 @@ class DbTodayRepository implements TodayRepository {
 
   @override
   Future<TodayScreenState> fetchTodayScreen() async {
-    final todayYmd = _formatYmd(DateTime.now());
-    var status = const <StreakEventStatus>[];
+    final now = DateTime.now();
+    final todayYmd = _formatYmd(now);
+    var status = const <StreakTaskStatus>[];
+    final streakDao = StreakDao(db);
     try {
-      status = await StreakEventsDao(db).getStreakStatusForDate(todayYmd);
+      for (final task in buildStreakTasks()) {
+        await streakDao.upsertTask(
+          taskId: task.id,
+          title: task.title,
+          isRequired: true,
+        );
+      }
+      status = await streakDao.getStreakStatusForDate(todayYmd);
     } catch (_) {
       // Older local DBs may not have streak tables yet. Keep screen usable.
-      status = const <StreakEventStatus>[];
+      status = const <StreakTaskStatus>[];
     }
     final totalTasks = status.length;
     final completedTasks = status.where((item) => item.completed).length;
@@ -27,11 +37,11 @@ class DbTodayRepository implements TodayRepository {
         : 'Streak: $completedTasks/$totalTasks tasks completed';
 
     final state = TodayScreenState(
-      header: const ui.TodayHeader(
+      header: ui.TodayHeader(
         title: 'TODAY',
         greeting: 'Bless you',
-        dateText: 'Monday - January 12',
-        calendarLabel: 'Julian | Ethiopian',
+        dateText: '${_weekdayName(now)} - ${_monthName(now.month)} ${now.day}',
+        calendarLabel: 'Gregorian',
       ),
       headerActions: const [
         ui.HeaderAction(iconKey: 'audio'),
@@ -121,6 +131,37 @@ class DbTodayRepository implements TodayRepository {
     }());
     return state;
   }
+}
+
+String _weekdayName(DateTime dateTime) {
+  const days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  return days[(dateTime.weekday - 1).clamp(0, days.length - 1)];
+}
+
+String _monthName(int month) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return months[(month - 1).clamp(0, months.length - 1)];
 }
 
 String _formatYmd(DateTime dateTime) {

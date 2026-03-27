@@ -10,6 +10,21 @@ class DbStreakRepository implements StreakRepository {
 
   @override
   Future<StreakScreenState> fetchStreakScreen() async {
+    try {
+      return await _fetchStreakScreenInternal();
+    } catch (_) {
+      await _ensureStreakTablesExist();
+      try {
+        return await _fetchStreakScreenInternal();
+      } catch (_) {
+        final now = DateTime.now();
+        final tasks = buildStreakTasks();
+        return _buildFallbackState(now, tasks);
+      }
+    }
+  }
+
+  Future<StreakScreenState> _fetchStreakScreenInternal() async {
     final tasks = buildStreakTasks();
     final streakDao = StreakDao(db);
     for (final task in tasks) {
@@ -48,9 +63,8 @@ class DbStreakRepository implements StreakRepository {
       final date = weekStart.add(Duration(days: i));
       final dateKey = _formatYmd(date);
       final statuses = await streakDao.getStreakStatusForDate(dateKey);
-      final completedCount =
-          statuses.where((item) => item.completed).length;
-      final isComplete = completedCount >= 3;
+      final completedCount = statuses.where((item) => item.completed).length;
+      final isComplete = statuses.isNotEmpty && completedCount == tasks.length;
       if (isComplete) {
         weekCompletedCount++;
       }
@@ -76,30 +90,88 @@ class DbStreakRepository implements StreakRepository {
       totalCount: tasks.length,
       streakDays: streakDays,
       subtext: subtext,
-      weekTitle: 'This Week Progress',
+      weekTitle: 'This Week Rhythm',
       weekCompletedCount: weekCompletedCount,
       weekDays: weekDays,
       socialCard: const StreakSocialCard(
         title: 'Daily Practice Circle',
-        subtitle: 'Create or join a Daily Practice Circle',
+        subtitle: 'Build a steady rhythm with prayer, verse, and readings',
       ),
-      practiceTitle: 'Daily Practice',
+      practiceTitle: 'Daily Rhythm',
       practiceItems: practiceItems,
     );
   }
 
-  Future<int> _calculateStreakDays(
-    StreakDao streakDao,
-    int totalTasks,
-  ) async {
+  Future<void> _ensureStreakTablesExist() async {
+    await db.customStatement('''
+CREATE TABLE IF NOT EXISTS streak_tasks (
+  task_id TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  is_required INTEGER NOT NULL
+)
+''');
+    await db.customStatement('''
+CREATE TABLE IF NOT EXISTS streak_events (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  date_ymd TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  completed_at_iso TEXT NOT NULL,
+  UNIQUE(date_ymd, task_id)
+)
+''');
+  }
+
+  StreakScreenState _buildFallbackState(
+    DateTime today,
+    List<StreakTaskDefinition> tasks,
+  ) {
+    final weekStart = today.subtract(Duration(days: today.weekday - 1));
+    final weekDays = List<StreakWeekDay>.generate(7, (index) {
+      final date = weekStart.add(Duration(days: index));
+      return StreakWeekDay(
+        label: _weekdayLabel(date),
+        isComplete: false,
+        isToday: _isSameDay(date, today),
+      );
+    });
+    final practiceItems = tasks
+        .map(
+          (task) => StreakPracticeItem(
+            id: task.id,
+            title: task.title,
+            iconKey: task.iconKey,
+            isDone: false,
+            routePath: task.routePath,
+          ),
+        )
+        .toList();
+    return StreakScreenState(
+      dayLabel: _weekdayLong(today),
+      dateLine: _formatLongDate(today),
+      completedCount: 0,
+      totalCount: tasks.length,
+      streakDays: 0,
+      subtext: 'Begin your daily rhythm',
+      weekTitle: 'This Week Rhythm',
+      weekCompletedCount: 0,
+      weekDays: weekDays,
+      socialCard: const StreakSocialCard(
+        title: 'Daily Practice Circle',
+        subtitle: 'Build a steady rhythm with prayer, verse, and readings',
+      ),
+      practiceTitle: 'Daily Rhythm',
+      practiceItems: practiceItems,
+    );
+  }
+
+  Future<int> _calculateStreakDays(StreakDao streakDao, int totalTasks) async {
     var streakDays = 0;
     var cursor = DateTime.now();
     for (var i = 0; i < 30; i++) {
       final dateKey = _formatYmd(cursor);
       final statuses = await streakDao.getStreakStatusForDate(dateKey);
-      final completedCount =
-          statuses.where((item) => item.completed).length;
-      if (completedCount >= 3 && completedCount <= totalTasks) {
+      final completedCount = statuses.where((item) => item.completed).length;
+      if (statuses.isNotEmpty && completedCount == totalTasks) {
         streakDays++;
         cursor = cursor.subtract(const Duration(days: 1));
       } else {
@@ -161,10 +233,13 @@ bool _isSameDay(DateTime a, DateTime b) {
 String _buildSubtext({required int completed, required int total}) {
   final remaining = total - completed;
   if (remaining <= 0) {
-    return 'All practices complete';
+    return 'Daily rhythm complete';
   }
   if (remaining == 1) {
-    return '1 more to keep streak';
+    return '1 more to complete today';
   }
-  return 'Keep the rhythm today';
+  if (remaining == 2) {
+    return '2 more to complete today';
+  }
+  return 'Begin your daily rhythm';
 }

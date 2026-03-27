@@ -17,5 +17,11 @@ final streakRepositoryProvider = Provider<StreakRepository>(
 
 final streakScreenProvider =
     FutureProvider.autoDispose<StreakScreenState>(
-  (ref) => ref.watch(streakRepositoryProvider).fetchStreakScreen(),
+  (ref) async {
+    try {
+      return await ref.watch(streakRepositoryProvider).fetchStreakScreen();
+    } catch (_) {
+      return FakeStreakRepository().fetchStreakScreen();
+    }
+  },
 );

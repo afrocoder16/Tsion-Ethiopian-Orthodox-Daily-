@@ -3,15 +3,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/actions/user_actions.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/icons/icon_registry.dart';
+import '../../../core/providers/calendar_preferences_provider.dart';
+import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
+import '../../../core/providers/streak_providers.dart';
+import '../../../core/streak/streak_tasks.dart';
 
-class TodayScreen extends ConsumerWidget {
+class TodayScreen extends ConsumerStatefulWidget {
   const TodayScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TodayScreen> createState() => _TodayScreenState();
+}
+
+class _TodayScreenState extends ConsumerState<TodayScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final now = DateTime.now();
+      await completeStreakTask(
+        db: ref.read(dbProvider),
+        dateYmd: _formatYmd(now),
+        taskId: streakTaskDailyVerse,
+        completedAtIso: now.toIso8601String(),
+      );
+      ref.invalidate(streakScreenProvider);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenState = ref.watch(todayScreenStateProvider);
     final body = screenState.when(
       data: (state) => _TodayContent(adapter: TodayAdapter(state)),
@@ -33,7 +58,23 @@ class _TodayContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final header = adapter.header;
+    final calendarMode = ref.watch(calendarDisplayModeProvider);
     final calendarState = ref.watch(calendarScreenStateProvider);
+    final now = DateTime.now();
+    final weekday = _weekdayName(now.weekday);
+    final fallbackGregorianDate =
+        '${_monthShortName(now.month)} ${now.day}, ${now.year}';
+    final calendarStatus = calendarState.asData == null
+        ? null
+        : CalendarAdapter(calendarState.asData!.value).status;
+    final selectedDateRaw = calendarMode == CalendarDisplayMode.ethiopian
+        ? (calendarStatus?.ethiopianDate ?? fallbackGregorianDate)
+        : (calendarStatus?.gregorianDate ?? fallbackGregorianDate);
+    final selectedDate = calendarMode == CalendarDisplayMode.ethiopian
+        ? _normalizeEthiopianDate(selectedDateRaw)
+        : _normalizeGregorianDate(selectedDateRaw);
+    final greetingLine = '${header.greeting} $weekday - $selectedDate';
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -54,21 +95,11 @@ class _TodayContent extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    header.greeting,
+                    greetingLine,
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    header.dateText,
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    header.calendarLabel,
-                    style: const TextStyle(fontSize: 11, color: Colors.black45),
                   ),
                 ],
               ),
@@ -132,6 +163,47 @@ class _TodayContent extends ConsumerWidget {
   }
 }
 
+String _weekdayName(int weekday) {
+  const days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  return days[(weekday - 1).clamp(0, days.length - 1)];
+}
+
+String _monthShortName(int month) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return months[(month - 1).clamp(0, months.length - 1)];
+}
+
+String _normalizeEthiopianDate(String value) {
+  return value
+      .replaceAll(RegExp(r'\s*E\.C\.?', caseSensitive: false), '')
+      .trim();
+}
+
+String _normalizeGregorianDate(String value) {
+  return value.trim();
+}
+
 void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
   if (item.id == 'today-carousel-mezmur') {
     context.go(RoutePaths.mezmurPath());
@@ -143,6 +215,10 @@ void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
   }
   if (item.id == 'today-carousel-feasts-fasts') {
     context.go(RoutePaths.calendarFastingPath());
+    return;
+  }
+  if (item.id == 'today-carousel-daily-readings') {
+    context.go(RoutePaths.calendarReadingsPath());
     return;
   }
   ScaffoldMessenger.of(
@@ -610,4 +686,11 @@ class _SkeletonBox extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatYmd(DateTime dateTime) {
+  final year = dateTime.year.toString().padLeft(4, '0');
+  final month = dateTime.month.toString().padLeft(2, '0');
+  final day = dateTime.day.toString().padLeft(2, '0');
+  return '$year-$month-$day';
 }

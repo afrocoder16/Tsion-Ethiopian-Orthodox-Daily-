@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/adapters/streak_adapters.dart';
 import '../../../core/providers/repo_providers.dart';
+import '../../../core/providers/screen_state_providers.dart';
 import '../../../core/providers/streak_providers.dart';
 import '../../../core/actions/user_actions.dart';
 
@@ -15,15 +16,23 @@ class StreakScreen extends ConsumerWidget {
     final state = ref.watch(streakScreenProvider);
     return state.when(
       data: (screen) => _StreakContent(adapter: StreakAdapter(screen)),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, _) => Scaffold(
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('Unable to load streaks'),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  '$error',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () => ref.refresh(streakScreenProvider),
@@ -59,10 +68,7 @@ class _StreakContent extends ConsumerWidget {
           ],
         ),
         centerTitle: true,
-        actions: const [
-          Icon(Icons.info_outline),
-          SizedBox(width: 8),
-        ],
+        actions: const [Icon(Icons.info_outline), SizedBox(width: 8)],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -93,6 +99,7 @@ class _StreakContent extends ConsumerWidget {
                 completedAtIso: now.toIso8601String(),
               );
               ref.invalidate(streakScreenProvider);
+              ref.invalidate(todayScreenStateProvider);
             },
             onNavigate: (item) {
               final path = item.routePath;
@@ -162,10 +169,7 @@ class _SummaryCard extends StatelessWidget {
 }
 
 class _ProgressRing extends StatelessWidget {
-  const _ProgressRing({
-    required this.progress,
-    required this.label,
-  });
+  const _ProgressRing({required this.progress, required this.label});
 
   final double progress;
   final String label;
@@ -187,10 +191,7 @@ class _ProgressRing extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -290,8 +291,8 @@ class _WeekChip extends StatelessWidget {
     final bgColor = day.isToday
         ? const Color(0xFFE7E0D6)
         : day.isComplete
-            ? const Color(0xFFEFE8DD)
-            : Colors.white;
+        ? const Color(0xFFEFE8DD)
+        : Colors.white;
     final borderColor = day.isComplete
         ? const Color(0xFFD5C7A8)
         : const Color(0xFFE0E0E0);
@@ -320,9 +321,9 @@ class _SocialCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Coming soon')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Coming soon')));
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -357,8 +358,7 @@ class _SocialCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style:
-                        const TextStyle(fontSize: 11, color: Colors.black54),
+                    style: const TextStyle(fontSize: 11, color: Colors.black54),
                   ),
                 ],
               ),

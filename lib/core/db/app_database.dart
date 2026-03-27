@@ -37,5 +37,32 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async {
+      await m.createAll();
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await customStatement('''
+CREATE TABLE IF NOT EXISTS streak_tasks (
+  task_id TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  is_required INTEGER NOT NULL
+)
+''');
+        await customStatement('''
+CREATE TABLE IF NOT EXISTS streak_events (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  date_ymd TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  completed_at_iso TEXT NOT NULL,
+  UNIQUE(date_ymd, task_id)
+)
+''');
+      }
+    },
+  );
 }

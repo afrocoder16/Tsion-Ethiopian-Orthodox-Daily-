@@ -22,11 +22,7 @@ class ExploreScreen extends ConsumerWidget {
         onRetry: () => ref.refresh(exploreScreenStateProvider),
       ),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: body,
-      ),
-    );
+    return Scaffold(body: SafeArea(child: body));
   }
 }
 
@@ -50,27 +46,22 @@ class _ExploreContent extends StatelessWidget {
         const SizedBox(height: 12),
         _HorizontalCards(
           items: adapter.studyItems,
-          onTap: (item) => context.go(
-            RoutePaths.exploreItemPath(item.routeId),
-          ),
+          onTap: (item) => context.go(RoutePaths.exploreItemPath(item.routeId)),
         ),
         const SizedBox(height: 18),
         _SectionTitle(view: adapter.guidedHeader),
         const SizedBox(height: 10),
         _SmallTileRow(
           items: adapter.guidedPaths,
-          onTap: (item) => context.go(
-            RoutePaths.explorePathPath(item.routeId),
-          ),
+          onTap: (item) => context.go(RoutePaths.explorePathPath(item.routeId)),
         ),
         const SizedBox(height: 18),
         _SectionTitle(view: adapter.communityHeader),
         const SizedBox(height: 10),
         _SmallTileRow(
           items: adapter.communityItems,
-          onTap: (item) => context.go(
-            RoutePaths.exploreCommunityPath(item.routeId),
-          ),
+          onTap: (item) =>
+              context.go(RoutePaths.exploreCommunityPath(item.routeId)),
         ),
         const SizedBox(height: 18),
         _SectionTitle(view: adapter.categoriesHeader),
@@ -89,9 +80,8 @@ class _ExploreContent extends StatelessWidget {
               : _SavedList(
                   items: adapter.savedItems,
                   icon: adapter.savedIcon,
-                  onTap: (item) => context.go(
-                    RoutePaths.exploreItemPath(item.id),
-                  ),
+                  onTap: (item) =>
+                      context.go(RoutePaths.exploreItemPath(item.id)),
                 ),
         ),
       ],
@@ -160,15 +150,9 @@ class _InlineErrorCard extends StatelessWidget {
               const Icon(Icons.error_outline, color: Color(0xFFB00020)),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                child: Text(message, style: const TextStyle(fontSize: 12)),
               ),
-              TextButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
             ],
           ),
         ),
@@ -207,10 +191,7 @@ class _TopBar extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
           ],
         ),
@@ -229,16 +210,22 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onTap = icon == Icons.person
+        ? () => context.push(RoutePaths.profilePath())
+        : null;
     return Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F3F3),
-          borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F3F3),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 16, color: Colors.black54),
         ),
-        child: Icon(icon, size: 16, color: Colors.black54),
       ),
     );
   }
@@ -256,19 +243,13 @@ class _SectionTitle extends StatelessWidget {
       children: [
         Text(
           view.title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
         ),
         if (view.subtitle != null) ...[
           const SizedBox(height: 4),
           Text(
             view.subtitle!,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
         ],
       ],
@@ -330,18 +311,12 @@ class _ExploreCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             item.title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
             item.subtitle,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
           ),
         ],
       ),
@@ -459,9 +434,7 @@ class _ContentCard extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return GestureDetector(
-          onTap: () => context.go(
-            RoutePaths.exploreItemPath(item.routeId),
-          ),
+          onTap: () => context.go(RoutePaths.exploreItemPath(item.routeId)),
           child: Container(
             width: 200,
             padding: const EdgeInsets.all(12),
@@ -491,10 +464,7 @@ class _ContentCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   item.category,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 11, color: Colors.black54),
                 ),
                 const SizedBox(height: 8),
                 Align(
@@ -511,9 +481,9 @@ class _ContentCard extends StatelessWidget {
                       );
                       ref.invalidate(exploreScreenStateProvider);
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Saved')),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('Saved')));
                       }
                     },
                   ),

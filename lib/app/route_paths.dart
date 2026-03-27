@@ -10,12 +10,21 @@ class RoutePaths {
   static const prayersLightCandle = '/prayers/light-candle';
   static const calendar = '/calendar';
   static const calendarFasting = '/calendar/fasting';
+  static const calendarReadings = '/calendar/readings';
   static const calendarSynaxarium = '/calendar/synaxarium/:date';
   static const calendarSynaxariumBookmarks = '/calendar/synaxarium/bookmarks';
   static const calendarSynaxariumEntry = '/calendar/synaxarium/entry/:ethKey';
   static const explore = '/explore';
   static const streak = '/streak';
   static const patronSaint = '/patron-saint/:name';
+  static const profile = '/profile';
+  static const profileSignIn = '/profile/sign-in';
+  static const profileSignUp = '/profile/sign-up';
+  static const profileForgotPassword = '/profile/forgot-password';
+  static const profileEdit = '/profile/edit';
+  static const profilePreferences = '/profile/preferences';
+  static const profilePrayerReminders = '/profile/prayer-reminders';
+  static const profileNotifications = '/profile/notifications';
 
   // Books (preferred)
   static const booksRoot = '/books';
@@ -69,6 +78,8 @@ class RoutePaths {
 
   static String calendarFastingPath() => calendarFasting;
 
+  static String calendarReadingsPath() => calendarReadings;
+
   static String calendarSynaxariumPath(String dateKey) =>
       '/calendar/synaxarium/$dateKey';
 
@@ -80,4 +91,20 @@ class RoutePaths {
 
   static String patronSaintPath(String name) =>
       '/patron-saint/${Uri.encodeComponent(name)}';
+
+  static String profilePath() => profile;
+
+  static String profileSignInPath() => profileSignIn;
+
+  static String profileSignUpPath() => profileSignUp;
+
+  static String profileForgotPasswordPath() => profileForgotPassword;
+
+  static String profileEditPath() => profileEdit;
+
+  static String profilePreferencesPath() => profilePreferences;
+
+  static String profilePrayerRemindersPath() => profilePrayerReminders;
+
+  static String profileNotificationsPath() => profileNotifications;
 }

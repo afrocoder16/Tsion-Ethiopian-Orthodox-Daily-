@@ -18,9 +18,6 @@ class StreakTaskDefinition {
 const String streakTaskDailyVerse = 'daily-verse';
 const String streakTaskPrayer = 'daily-prayer';
 const String streakTaskReadings = 'daily-readings';
-const String streakTaskDailySaint = 'daily-saint';
-const String streakTaskFeasts = 'daily-feasts';
-const String streakTaskGuidance = 'daily-guidance';
 
 List<StreakTaskDefinition> buildStreakTasks() {
   return [
@@ -39,26 +36,8 @@ List<StreakTaskDefinition> buildStreakTasks() {
     StreakTaskDefinition(
       id: streakTaskReadings,
       title: 'Readings',
-      iconKey: iconKeyAudio,
-      routePath: RoutePaths.today,
-    ),
-    StreakTaskDefinition(
-      id: streakTaskDailySaint,
-      title: 'Daily Saint',
-      iconKey: iconKeyInfo,
-      routePath: RoutePaths.calendar,
-    ),
-    StreakTaskDefinition(
-      id: streakTaskFeasts,
-      title: 'Feasts',
       iconKey: iconKeyCalendar,
-      routePath: RoutePaths.calendar,
-    ),
-    StreakTaskDefinition(
-      id: streakTaskGuidance,
-      title: 'Guidance',
-      iconKey: iconKeyPlay,
-      routePath: RoutePaths.explorePathPath('daily-tip'),
+      routePath: RoutePaths.calendarReadingsPath(),
     ),
   ];
 }
