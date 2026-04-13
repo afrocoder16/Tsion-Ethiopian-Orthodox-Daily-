@@ -25,19 +25,19 @@ List<StreakTaskDefinition> buildStreakTasks() {
       id: streakTaskDailyVerse,
       title: 'Daily Verse',
       iconKey: iconKeyBookmark,
-      routePath: RoutePaths.today,
+      routePath: RoutePaths.streakDailyVersePath(),
     ),
     StreakTaskDefinition(
       id: streakTaskPrayer,
       title: 'Prayer',
       iconKey: iconKeyStreak,
-      routePath: RoutePaths.prayerDetailPath('prayer-midday'),
+      routePath: RoutePaths.streakPrayerPath('prayer-midday'),
     ),
     StreakTaskDefinition(
       id: streakTaskReadings,
       title: 'Readings',
       iconKey: iconKeyCalendar,
-      routePath: RoutePaths.calendarReadingsPath(),
+      routePath: RoutePaths.streakReadingsPath(),
     ),
   ];
 }

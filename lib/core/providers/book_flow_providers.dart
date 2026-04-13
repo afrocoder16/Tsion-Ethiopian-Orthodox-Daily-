@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../repos/bible/bible_asset_repository.dart';
 import '../repos/book_flow_repositories.dart';
 import '../repos/db/db_book_flow_repository.dart';
 import '../repos/fake/fake_book_flow_repository.dart';
@@ -26,23 +27,11 @@ final readerRepositoryProvider = Provider<ReaderRepository>(
 );
 
 final bibleLibraryRepositoryProvider = Provider<BibleLibraryRepository>(
-  (ref) {
-    final useDb = ref.watch(useDbReposProvider);
-    if (useDb) {
-      return DbBibleLibraryRepository(ref.watch(dbProvider));
-    }
-    return FakeBibleLibraryRepository();
-  },
+  (ref) => BibleAssetLibraryRepository(),
 );
 
 final passageRepositoryProvider = Provider<PassageRepository>(
-  (ref) {
-    final useDb = ref.watch(useDbReposProvider);
-    if (useDb) {
-      return DbPassageRepository(ref.watch(dbProvider));
-    }
-    return FakePassageRepository();
-  },
+  (ref) => BibleAssetPassageRepository(),
 );
 
 final bookDetailProvider =

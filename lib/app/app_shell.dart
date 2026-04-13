@@ -9,10 +9,13 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   int _indexFromLocation(String location) {
-    if (location.startsWith(RoutePaths.bible)) return 1;
-    if (location.startsWith(RoutePaths.prayers)) return 2;
-    if (location.startsWith(RoutePaths.calendar)) return 3;
-    if (location.startsWith(RoutePaths.explore)) return 4;
+    if (location.startsWith(RoutePaths.booksRoot) ||
+        location.startsWith(RoutePaths.legacyBibleRoot)) {
+      return 1;
+    }
+    if (location.startsWith(RoutePaths.prayers)) { return 2; }
+    if (location.startsWith(RoutePaths.calendar)) { return 3; }
+    if (location.startsWith(RoutePaths.explore)) { return 4; }
     return 0;
   }
 
@@ -22,7 +25,7 @@ class AppShell extends StatelessWidget {
         context.go(RoutePaths.today);
         break;
       case 1:
-        context.go(RoutePaths.bible);
+        context.go(RoutePaths.booksRoot);
         break;
       case 2:
         context.go(RoutePaths.prayers);

@@ -252,8 +252,17 @@ class $SavedItemsTable extends SavedItems
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
   @override
-  List<GeneratedColumn> get $columns => [id, title, kind, createdAtIso];
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, title, kind, createdAtIso, body];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -298,6 +307,12 @@ class $SavedItemsTable extends SavedItems
     } else if (isInserting) {
       context.missing(_createdAtIsoMeta);
     }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    }
     return context;
   }
 
@@ -323,6 +338,10 @@ class $SavedItemsTable extends SavedItems
         DriftSqlType.string,
         data['${effectivePrefix}created_at_iso'],
       )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      ),
     );
   }
 
@@ -337,11 +356,13 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
   final String title;
   final String kind;
   final String createdAtIso;
+  final String? body;
   const SavedItem({
     required this.id,
     required this.title,
     required this.kind,
     required this.createdAtIso,
+    this.body,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -350,6 +371,9 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
     map['title'] = Variable<String>(title);
     map['kind'] = Variable<String>(kind);
     map['created_at_iso'] = Variable<String>(createdAtIso);
+    if (!nullToAbsent || body != null) {
+      map['body'] = Variable<String>(body);
+    }
     return map;
   }
 
@@ -359,6 +383,7 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
       title: Value(title),
       kind: Value(kind),
       createdAtIso: Value(createdAtIso),
+      body: body == null && nullToAbsent ? const Value.absent() : Value(body),
     );
   }
 
@@ -372,6 +397,7 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
       title: serializer.fromJson<String>(json['title']),
       kind: serializer.fromJson<String>(json['kind']),
       createdAtIso: serializer.fromJson<String>(json['createdAtIso']),
+      body: serializer.fromJson<String?>(json['body']),
     );
   }
   @override
@@ -382,6 +408,7 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
       'title': serializer.toJson<String>(title),
       'kind': serializer.toJson<String>(kind),
       'createdAtIso': serializer.toJson<String>(createdAtIso),
+      'body': serializer.toJson<String?>(body),
     };
   }
 
@@ -390,11 +417,13 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
     String? title,
     String? kind,
     String? createdAtIso,
+    Value<String?> body = const Value.absent(),
   }) => SavedItem(
     id: id ?? this.id,
     title: title ?? this.title,
     kind: kind ?? this.kind,
     createdAtIso: createdAtIso ?? this.createdAtIso,
+    body: body.present ? body.value : this.body,
   );
   SavedItem copyWithCompanion(SavedItemsCompanion data) {
     return SavedItem(
@@ -404,6 +433,7 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
       createdAtIso: data.createdAtIso.present
           ? data.createdAtIso.value
           : this.createdAtIso,
+      body: data.body.present ? data.body.value : this.body,
     );
   }
 
@@ -413,13 +443,14 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('kind: $kind, ')
-          ..write('createdAtIso: $createdAtIso')
+          ..write('createdAtIso: $createdAtIso, ')
+          ..write('body: $body')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, kind, createdAtIso);
+  int get hashCode => Object.hash(id, title, kind, createdAtIso, body);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -427,7 +458,8 @@ class SavedItem extends DataClass implements Insertable<SavedItem> {
           other.id == this.id &&
           other.title == this.title &&
           other.kind == this.kind &&
-          other.createdAtIso == this.createdAtIso);
+          other.createdAtIso == this.createdAtIso &&
+          other.body == this.body);
 }
 
 class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
@@ -435,12 +467,14 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
   final Value<String> title;
   final Value<String> kind;
   final Value<String> createdAtIso;
+  final Value<String?> body;
   final Value<int> rowid;
   const SavedItemsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.kind = const Value.absent(),
     this.createdAtIso = const Value.absent(),
+    this.body = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SavedItemsCompanion.insert({
@@ -448,6 +482,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
     required String title,
     required String kind,
     required String createdAtIso,
+    this.body = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title),
@@ -458,6 +493,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
     Expression<String>? title,
     Expression<String>? kind,
     Expression<String>? createdAtIso,
+    Expression<String>? body,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -465,6 +501,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
       if (title != null) 'title': title,
       if (kind != null) 'kind': kind,
       if (createdAtIso != null) 'created_at_iso': createdAtIso,
+      if (body != null) 'body': body,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -474,6 +511,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
     Value<String>? title,
     Value<String>? kind,
     Value<String>? createdAtIso,
+    Value<String?>? body,
     Value<int>? rowid,
   }) {
     return SavedItemsCompanion(
@@ -481,6 +519,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
       title: title ?? this.title,
       kind: kind ?? this.kind,
       createdAtIso: createdAtIso ?? this.createdAtIso,
+      body: body ?? this.body,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -500,6 +539,9 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
     if (createdAtIso.present) {
       map['created_at_iso'] = Variable<String>(createdAtIso.value);
     }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -513,6 +555,7 @@ class SavedItemsCompanion extends UpdateCompanion<SavedItem> {
           ..write('title: $title, ')
           ..write('kind: $kind, ')
           ..write('createdAtIso: $createdAtIso, ')
+          ..write('body: $body, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2201,6 +2244,7 @@ typedef $$SavedItemsTableCreateCompanionBuilder =
       required String title,
       required String kind,
       required String createdAtIso,
+      Value<String?> body,
       Value<int> rowid,
     });
 typedef $$SavedItemsTableUpdateCompanionBuilder =
@@ -2209,6 +2253,7 @@ typedef $$SavedItemsTableUpdateCompanionBuilder =
       Value<String> title,
       Value<String> kind,
       Value<String> createdAtIso,
+      Value<String?> body,
       Value<int> rowid,
     });
 
@@ -2238,6 +2283,11 @@ class $$SavedItemsTableFilterComposer
 
   ColumnFilters<String> get createdAtIso => $composableBuilder(
     column: $table.createdAtIso,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2270,6 +2320,11 @@ class $$SavedItemsTableOrderingComposer
     column: $table.createdAtIso,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SavedItemsTableAnnotationComposer
@@ -2294,6 +2349,9 @@ class $$SavedItemsTableAnnotationComposer
     column: $table.createdAtIso,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
 }
 
 class $$SavedItemsTableTableManager
@@ -2331,12 +2389,14 @@ class $$SavedItemsTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<String> kind = const Value.absent(),
                 Value<String> createdAtIso = const Value.absent(),
+                Value<String?> body = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SavedItemsCompanion(
                 id: id,
                 title: title,
                 kind: kind,
                 createdAtIso: createdAtIso,
+                body: body,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2345,12 +2405,14 @@ class $$SavedItemsTableTableManager
                 required String title,
                 required String kind,
                 required String createdAtIso,
+                Value<String?> body = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SavedItemsCompanion.insert(
                 id: id,
                 title: title,
                 kind: kind,
                 createdAtIso: createdAtIso,
+                body: body,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

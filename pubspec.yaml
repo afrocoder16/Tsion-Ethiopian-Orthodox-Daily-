@@ -72,11 +72,14 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/data/daily_verse_entries.json
+    - assets/data/readings/
     - assets/data/saints_index.json
     - assets/data/calendar_dataset.json
     - assets/data/synaxarium_word_readings.json
     - assets/data/synaxarium_entries.json
     - assets/data/synaxarium_index.json
+    - assets/80-weahadu-main/data/am/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

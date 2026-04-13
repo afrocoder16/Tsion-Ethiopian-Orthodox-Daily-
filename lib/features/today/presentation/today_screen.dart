@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/actions/user_actions.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/adapters/streak_adapters.dart';
 import '../../../core/icons/icon_registry.dart';
 import '../../../core/providers/calendar_preferences_provider.dart';
 import '../../../core/providers/repo_providers.dart';
@@ -58,6 +59,7 @@ class _TodayContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final header = adapter.header;
+    final streakState = ref.watch(streakScreenProvider);
     final calendarMode = ref.watch(calendarDisplayModeProvider);
     final calendarState = ref.watch(calendarScreenStateProvider);
     final now = DateTime.now();
@@ -134,15 +136,15 @@ class _TodayContent extends ConsumerWidget {
         const SizedBox(height: 16),
         _AudioCard(view: adapter.audioCard),
         const SizedBox(height: 12),
-        _MemoryCue(text: adapter.memoryCueText),
-        const SizedBox(height: 12),
-        calendarState.when(
-          data: (state) => _FastingGuidanceSection(
-            view: CalendarAdapter(state).fastingGuidance,
-            onTap: () => context.go(RoutePaths.calendarFastingPath()),
+        streakState.when(
+          data: (state) => _DailyDevotionCard(
+            adapter: StreakAdapter(state),
+            onTap: () => context.push(RoutePaths.streak),
           ),
-          loading: () => const SizedBox.shrink(),
-          error: (error, stackTrace) => const SizedBox.shrink(),
+          loading: () => const _DailyDevotionLoadingCard(),
+          error: (error, stackTrace) => _DailyDevotionFallbackCard(
+            onTap: () => context.push(RoutePaths.streak),
+          ),
         ),
         const SizedBox(height: 24),
         _SectionHeader(view: adapter.orthodoxDailyHeader),
@@ -459,26 +461,331 @@ class _AudioCard extends StatelessWidget {
   }
 }
 
-class _MemoryCue extends StatelessWidget {
-  const _MemoryCue({required this.text});
+class _DailyDevotionCard extends StatelessWidget {
+  const _DailyDevotionCard({required this.adapter, required this.onTap});
 
-  final String text;
+  final StreakAdapter adapter;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final previewItems = adapter.practiceItems.take(2).toList();
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF6F3EE),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE4DBCF)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEFE8DD),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.local_fire_department,
+                    size: 18,
+                    color: Color(0xFF8E6B2F),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Daily Devotion',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        adapter.subtext,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                        fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right, size: 20, color: Colors.black38),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _DevotionStatChip(
+                  label: adapter.streakPillText,
+                  background: const Color(0xFFEFE8DD),
+                ),
+                const SizedBox(width: 8),
+                _DevotionStatChip(
+                  label: adapter.progressText.toLowerCase(),
+                  background: Colors.white,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.78),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'This Week',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        adapter.weekProgressText,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: adapter.weekProgressValue,
+                      minHeight: 6,
+                      backgroundColor: const Color(0xFFE8E3DA),
+                      color: const Color(0xFFB79C5E),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: adapter.weekDays
+                        .take(7)
+                        .map((day) => Expanded(child: _MiniWeekChip(day: day)))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            if (previewItems.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: previewItems
+                    .map((item) => _TaskPreviewPill(item: item))
+                    .toList(),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyDevotionLoadingCard extends StatelessWidget {
+  const _DailyDevotionLoadingCard();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
-        borderRadius: BorderRadius.circular(14),
+        color: const Color(0xFFF6F3EE),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SkeletonLine(width: 160, height: 16),
+          SizedBox(height: 8),
+          _SkeletonLine(width: 180, height: 11),
+          SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _SkeletonBox(height: 28)),
+              SizedBox(width: 8),
+              Expanded(child: _SkeletonBox(height: 28)),
+            ],
+          ),
+          SizedBox(height: 12),
+          _SkeletonBox(height: 72),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyDevotionFallbackCard extends StatelessWidget {
+  const _DailyDevotionFallbackCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF6F3EE),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE4DBCF)),
+        ),
+        child: const Row(
+          children: [
+            Icon(
+              Icons.local_fire_department,
+              size: 22,
+              color: Color(0xFF8E6B2F),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Daily Devotion',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Open your devotion progress and continue your streak.',
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: Colors.black38),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DevotionStatChip extends StatelessWidget {
+  const _DevotionStatChip({required this.label, required this.background});
+
+  final String label;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _MiniWeekChip extends StatelessWidget {
+  const _MiniWeekChip({required this.day});
+
+  final StreakWeekDayView day;
+
+  @override
+  Widget build(BuildContext context) {
+    final background = day.isToday
+        ? const Color(0xFFE7E0D6)
+        : day.isComplete
+        ? const Color(0xFFF4EEE3)
+        : Colors.transparent;
+    final foreground = day.isToday || day.isComplete
+        ? const Color(0xFF7E5E2A)
+        : Colors.black45;
+    return Container(
+      height: 28,
+      margin: const EdgeInsets.only(right: 4),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: day.isToday || day.isComplete
+              ? const Color(0xFFDCCBA6)
+              : const Color(0xFFE8E0D4),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          day.label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: foreground,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TaskPreviewPill extends StatelessWidget {
+  const _TaskPreviewPill({required this.item});
+
+  final StreakPracticeView item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: const Color(0xFFE6DED3)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.bookmark, size: 18, color: Colors.black54),
-          const SizedBox(width: 8),
+          Icon(
+            item.icon,
+            size: 15,
+            color: item.isDone ? const Color(0xFF7E5E2A) : Colors.black45,
+          ),
+          const SizedBox(width: 6),
           Text(
-            text,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            item.title,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(width: 6),
+          Icon(
+            item.isDone ? Icons.check_circle : Icons.radio_button_unchecked,
+            size: 14,
+            color: item.isDone ? const Color(0xFF7E5E2A) : Colors.black38,
           ),
         ],
       ),
@@ -540,6 +847,7 @@ class _Carousel extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _FastingGuidanceSection extends StatelessWidget {
   const _FastingGuidanceSection({required this.view, required this.onTap});
 

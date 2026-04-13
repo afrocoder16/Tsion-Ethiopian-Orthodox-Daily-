@@ -3,6 +3,7 @@ import '../../calendar/calendar_engine_models.dart';
 import '../../calendar/calendar_observance_store.dart';
 import '../../db/app_database.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
+import '../../readings/daily_content_repository.dart';
 import '../saints_repository.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
@@ -13,17 +14,22 @@ class DbCalendarRepository implements CalendarRepository {
     required this.db,
     required this.engine,
     required this.saintsRepository,
+    required this.dailyReadingsRepository,
   });
 
   final AppDatabase db;
   final CalendarEngine engine;
   final SaintsRepository saintsRepository;
+  final DailyReadingsRepository dailyReadingsRepository;
 
   @override
   Future<CalendarScreenState> fetchCalendarScreen() async {
     final store = CalendarObservanceStore(db: db, engine: engine);
     final today = DateTime.now();
     final todayObservance = await store.getByGregorianDate(today);
+    final resolvedReadings = await dailyReadingsRepository.loadForEthDate(
+      todayObservance.ethDate,
+    );
     final todaysSaints = await _todaysSaints(todayObservance);
     final todayEth = todayObservance.ethDate;
     final upcoming = await store.getRange(
@@ -80,15 +86,32 @@ class DbCalendarRepository implements CalendarRepository {
       ),
       quickRules: _quickRules(todayObservance.fastStatus.isFastingDay),
       dailyReadings: ui.DailyReadingsPreview(
-        morning: todayObservance.dailyReadings.morning,
-        liturgy: todayObservance.dailyReadings.liturgy,
-        evening: todayObservance.dailyReadings.evening,
-        isLoaded: todayObservance.dailyReadings.isLoaded,
+        morning: _sectionReferences(resolvedReadings, 'morning'),
+        liturgy: _sectionReferences(resolvedReadings, 'qidase'),
+        evening: _sectionReferences(resolvedReadings, 'evening'),
+        isLoaded: resolvedReadings.isLoaded,
         ctaLabel: 'Open readings',
-        fallbackText: 'Readings not loaded',
-        downloadLabel: todayObservance.dailyReadings.isLoaded
+        fallbackText: 'Readings not loaded for this Ethiopian date yet.',
+        downloadLabel: resolvedReadings.isLoaded
             ? null
-            : 'Download monthly readings',
+            : 'Add monthly readings source',
+        sections: resolvedReadings.sections
+            .map(
+              (section) => ui.DailyReadingsSectionPreview(
+                id: section.id,
+                title: section.title,
+                items: section.passages
+                    .map(
+                      (passage) => ui.DailyReadingsItemPreview(
+                        reference: passage.reference.source,
+                        body: passage.resolvedText?.combinedText ?? '',
+                        note: passage.note,
+                      ),
+                    )
+                    .toList(growable: false),
+              ),
+            )
+            .toList(growable: false),
       ),
       prayerOfDay: _prayerOfDay(todayObservance),
       saintPreview: todaysSaints.isEmpty
@@ -313,6 +336,17 @@ ui.SpiritualTracker _spiritualTracker() {
       ),
     ],
   );
+}
+
+List<String> _sectionReferences(dynamic resolvedReadings, String sectionId) {
+  for (final section in resolvedReadings.sections as List<dynamic>) {
+    if (section.id == sectionId) {
+      return section.passages
+          .map((passage) => '${passage.reference.source}'.trim())
+          .toList(growable: false);
+    }
+  }
+  return const <String>[];
 }
 
 List<String> _quickRules(bool isFastingDay) {

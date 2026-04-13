@@ -35,6 +35,7 @@ import '../features/profile/presentation/profile_screen.dart';
 import '../features/profile/presentation/prayer_reminders_screen.dart';
 import '../features/profile/presentation/sign_in_screen.dart';
 import '../features/profile/presentation/sign_up_screen.dart';
+import '../features/streak/presentation/daily_verse_screen.dart';
 import '../features/streak/presentation/streak_screen.dart';
 import '../features/bible/presentation/patron_saint_screen.dart';
 
@@ -164,6 +165,30 @@ GoRouter buildRouter() {
       GoRoute(
         path: RoutePaths.streak,
         builder: (context, state) => const StreakScreen(),
+        routes: [
+          GoRoute(
+            path: 'daily-verse',
+            builder: (context, state) => const DailyVerseScreen(),
+          ),
+          GoRoute(
+            path: 'prayer/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? 'prayer';
+              return PrayerDetailScreen(prayerId: id);
+            },
+          ),
+          GoRoute(
+            path: 'readings',
+            builder: (context, state) => const DailyReadingsScreen(),
+          ),
+          GoRoute(
+            path: 'synaxarium/:date',
+            builder: (context, state) {
+              final date = state.pathParameters['date'] ?? '';
+              return SynaxariumScreen(dateKey: date);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: RoutePaths.patronSaint,

@@ -1,19 +1,22 @@
 import '../../db/app_database.dart';
 import '../../db/daos/streak_dao.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
+import '../../readings/daily_content_repository.dart';
 import '../../streak/streak_tasks.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
 import '../screen_states.dart';
 
 class DbTodayRepository implements TodayRepository {
-  DbTodayRepository(this.db);
+  DbTodayRepository(this.db, {required this.dailyVerseRepository});
 
   final AppDatabase db;
+  final DailyVerseRepository dailyVerseRepository;
 
   @override
   Future<TodayScreenState> fetchTodayScreen() async {
     final now = DateTime.now();
+    final dailyVerse = await dailyVerseRepository.loadForDate(now);
     final todayYmd = _formatYmd(now);
     var status = const <StreakTaskStatus>[];
     final streakDao = StreakDao(db);
@@ -50,13 +53,11 @@ class DbTodayRepository implements TodayRepository {
         ui.HeaderAction(iconKey: 'info'),
         ui.HeaderAction(iconKey: 'calendar'),
       ],
-      verseCard: const ui.VerseCard(
-        id: 'verse-of-the-day',
-        title: 'Verse of the Day',
-        reference: 'John 11:25',
-        body:
-            'Jesus said to her, "I am the resurrection and the life. Whoever '
-            'believes in me, though he die, yet shall he live."',
+      verseCard: ui.VerseCard(
+        id: dailyVerse.id,
+        title: dailyVerse.title,
+        reference: dailyVerse.reference,
+        body: dailyVerse.body,
       ),
       verseStats: const [
         ui.VerseActionStat(iconKey: 'info', label: '124'),

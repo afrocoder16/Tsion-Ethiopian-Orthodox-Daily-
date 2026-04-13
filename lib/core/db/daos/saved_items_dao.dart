@@ -15,6 +15,7 @@ class SavedItemsDao extends DatabaseAccessor<AppDatabase>
     required String title,
     required String kind,
     required String createdAtIso,
+    String? body,
   }) {
     return into(savedItems).insertOnConflictUpdate(
       SavedItemsCompanion(
@@ -22,6 +23,7 @@ class SavedItemsDao extends DatabaseAccessor<AppDatabase>
         title: Value(title),
         kind: Value(kind),
         createdAtIso: Value(createdAtIso),
+        body: Value(body),
       ),
     );
   }
@@ -32,5 +34,20 @@ class SavedItemsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<SavedItem>> listSavedItems() {
     return select(savedItems).get();
+  }
+
+  Stream<List<SavedItem>> watchSavedItems() {
+    return select(savedItems).watch();
+  }
+
+  Stream<List<SavedItem>> watchByKind(String kind) {
+    return (select(savedItems)..where((tbl) => tbl.kind.equals(kind))).watch();
+  }
+
+  Future<bool> isItemSaved(String id) async {
+    final item = await (select(savedItems)
+          ..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+    return item != null;
   }
 }

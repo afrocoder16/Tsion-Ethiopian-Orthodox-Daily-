@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -62,6 +62,11 @@ CREATE TABLE IF NOT EXISTS streak_events (
   UNIQUE(date_ymd, task_id)
 )
 ''');
+      }
+      if (from < 3) {
+        await customStatement(
+          'ALTER TABLE saved_items ADD COLUMN body TEXT;',
+        );
       }
     },
   );

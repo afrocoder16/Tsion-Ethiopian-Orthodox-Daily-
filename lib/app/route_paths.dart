@@ -16,6 +16,10 @@ class RoutePaths {
   static const calendarSynaxariumEntry = '/calendar/synaxarium/entry/:ethKey';
   static const explore = '/explore';
   static const streak = '/streak';
+  static const streakDailyVerse = '/streak/daily-verse';
+  static const streakPrayer = '/streak/prayer/:id';
+  static const streakReadings = '/streak/readings';
+  static const streakSynaxarium = '/streak/synaxarium/:date';
   static const patronSaint = '/patron-saint/:name';
   static const profile = '/profile';
   static const profileSignIn = '/profile/sign-in';
@@ -75,6 +79,15 @@ class RoutePaths {
   static String exploreCommunityPath(String id) => '/explore/community/$id';
 
   static String streakPath() => '/streak';
+
+  static String streakDailyVersePath() => streakDailyVerse;
+
+  static String streakPrayerPath(String id) => '/streak/prayer/$id';
+
+  static String streakReadingsPath() => streakReadings;
+
+  static String streakSynaxariumPath(String dateKey) =>
+      '/streak/synaxarium/$dateKey';
 
   static String calendarFastingPath() => calendarFasting;
 

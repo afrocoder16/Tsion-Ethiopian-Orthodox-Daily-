@@ -36,10 +36,6 @@ class _DailyReadingsContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final epistle = _pickEpistle(view);
-    final gospel = _pickGospel(view);
-    final otherReadings = _remainingReadings(view, epistle, gospel);
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -103,32 +99,17 @@ class _DailyReadingsContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _ReadingCard(
-          title: 'Epistle',
-          reference: epistle ?? 'Reading will appear here once loaded.',
-          icon: Icons.menu_book_rounded,
-        ),
-        const SizedBox(height: 12),
-        _ReadingCard(
-          title: 'Today\'s Gospel',
-          reference: gospel ?? 'Gospel reading will appear here once loaded.',
-          icon: Icons.auto_stories_rounded,
-        ),
-        if (otherReadings.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          const Text(
-            'More Readings',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
-            ),
+        if (view.sections.isEmpty) ...[
+          _ReadingCard(
+            title: 'Readings',
+            reference: 'Reading details will appear here once loaded.',
+            icon: Icons.menu_book_rounded,
           ),
-          const SizedBox(height: 10),
-          ...otherReadings.map(
-            (reading) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _ReadingListTile(reference: reading),
+        ] else ...[
+          ...view.sections.map(
+            (section) => Padding(
+              padding: const EdgeInsets.only(bottom: 18),
+              child: _ReadingSection(section: section),
             ),
           ),
         ],
@@ -151,6 +132,36 @@ class _DailyReadingsContent extends ConsumerWidget {
           },
           icon: const Icon(Icons.check_circle_outline),
           label: const Text('Mark Readings Complete'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReadingSection extends StatelessWidget {
+  const _ReadingSection({required this.section});
+
+  final DailyReadingsSectionView section;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          section.title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+          ),
+        ),
+        const SizedBox(height: 10),
+        ...section.items.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _ReadingDetailTile(item: item),
+          ),
         ),
       ],
     );
@@ -219,10 +230,10 @@ class _ReadingCard extends StatelessWidget {
   }
 }
 
-class _ReadingListTile extends StatelessWidget {
-  const _ReadingListTile({required this.reference});
+class _ReadingDetailTile extends StatelessWidget {
+  const _ReadingDetailTile({required this.item});
 
-  final String reference;
+  final DailyReadingsItemView item;
 
   @override
   Widget build(BuildContext context) {
@@ -232,60 +243,39 @@ class _ReadingListTile extends StatelessWidget {
         color: const Color(0xFFF8F5F0),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Text(
-        reference,
-        style: const TextStyle(fontSize: 14, color: Colors.black87),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            item.reference,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
+          ),
+          if (item.body.trim().isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              item.body,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.45,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+          if (item.note != null && item.note!.trim().isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              item.note!,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+        ],
       ),
     );
   }
-}
-
-String? _pickEpistle(DailyReadingsView view) {
-  if (view.liturgy.isNotEmpty) {
-    return view.liturgy.first;
-  }
-  if (view.morning.isNotEmpty) {
-    return view.morning.first;
-  }
-  return null;
-}
-
-String? _pickGospel(DailyReadingsView view) {
-  if (view.liturgy.length > 1) {
-    return view.liturgy[1];
-  }
-  if (view.evening.isNotEmpty) {
-    return view.evening.first;
-  }
-  if (view.liturgy.isNotEmpty) {
-    return view.liturgy.first;
-  }
-  return null;
-}
-
-List<String> _remainingReadings(
-  DailyReadingsView view,
-  String? epistle,
-  String? gospel,
-) {
-  final values = <String>[...view.morning, ...view.liturgy, ...view.evening];
-  final remaining = <String>[];
-  var epistleSkipped = false;
-  var gospelSkipped = false;
-  for (final value in values) {
-    if (!epistleSkipped && epistle != null && value == epistle) {
-      epistleSkipped = true;
-      continue;
-    }
-    if (!gospelSkipped && gospel != null && value == gospel) {
-      gospelSkipped = true;
-      continue;
-    }
-    if (!remaining.contains(value)) {
-      remaining.add(value);
-    }
-  }
-  return remaining;
 }
 
 String _formatYmd(DateTime dateTime) {

@@ -2,12 +2,17 @@ import 'package:drift/drift.dart';
 
 import '../db/app_database.dart';
 
+const kKindVerseBookmark = 'verse-bookmark';
+const kKindVerseLike = 'verse-like';
+const kKindChapterBookmark = 'chapter-bookmark';
+
 Future<void> toggleSave({
   required AppDatabase db,
   required String id,
   required String title,
   required String kind,
   required String createdAtIso,
+  String? body,
 }) async {
   final existing = await (db.select(db.savedItems)
         ..where((tbl) => tbl.id.equals(id)))
@@ -18,6 +23,7 @@ Future<void> toggleSave({
       title: title,
       kind: kind,
       createdAtIso: createdAtIso,
+      body: body,
     );
   } else {
     await db.savedItemsDao.removeSavedItem(id);

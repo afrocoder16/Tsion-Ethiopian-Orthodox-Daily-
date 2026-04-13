@@ -400,6 +400,7 @@ class DailyReadingsPreview {
     required this.ctaLabel,
     required this.fallbackText,
     this.downloadLabel,
+    this.sections = const <DailyReadingsSectionPreview>[],
   });
 
   final List<String> morning;
@@ -409,6 +410,31 @@ class DailyReadingsPreview {
   final String ctaLabel;
   final String fallbackText;
   final String? downloadLabel;
+  final List<DailyReadingsSectionPreview> sections;
+}
+
+class DailyReadingsSectionPreview {
+  const DailyReadingsSectionPreview({
+    required this.id,
+    required this.title,
+    required this.items,
+  });
+
+  final String id;
+  final String title;
+  final List<DailyReadingsItemPreview> items;
+}
+
+class DailyReadingsItemPreview {
+  const DailyReadingsItemPreview({
+    required this.reference,
+    required this.body,
+    this.note,
+  });
+
+  final String reference;
+  final String body;
+  final String? note;
 }
 
 class PrayerOfDayPreview {

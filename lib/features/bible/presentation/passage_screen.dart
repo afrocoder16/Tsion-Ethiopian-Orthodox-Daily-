@@ -102,15 +102,50 @@ class _PassageContent extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: passage.verses
             .map(
-              (verse) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  '${verse.number}. ${verse.text}',
-                  style: const TextStyle(fontSize: 14, height: 1.5),
-                ),
+              (verse) => _VerseTile(
+                verse: verse,
+                bookTitle: passage.bookTitle,
+                chapter: passage.chapter,
               ),
             )
             .toList(growable: false),
+      ),
+    );
+  }
+}
+
+class _VerseTile extends StatelessWidget {
+  const _VerseTile({
+    required this.verse,
+    required this.bookTitle,
+    required this.chapter,
+  });
+
+  final PassageVerse verse;
+  final String bookTitle;
+  final int chapter;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: () async {
+        final text = '${verse.number}. ${verse.text} ($bookTitle $chapter:${verse.number})';
+        await Clipboard.setData(ClipboardData(text: text));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Verse ${verse.number} copied'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Text(
+          '${verse.number}. ${verse.text}',
+          style: const TextStyle(fontSize: 14, height: 1.5),
+        ),
       ),
     );
   }

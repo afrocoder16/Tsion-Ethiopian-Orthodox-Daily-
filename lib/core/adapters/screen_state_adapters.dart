@@ -653,6 +653,7 @@ class DailyReadingsView {
     required this.morning,
     required this.liturgy,
     required this.evening,
+    required this.sections,
     required this.isLoaded,
     required this.ctaLabel,
     required this.fallbackText,
@@ -662,10 +663,35 @@ class DailyReadingsView {
   final List<String> morning;
   final List<String> liturgy;
   final List<String> evening;
+  final List<DailyReadingsSectionView> sections;
   final bool isLoaded;
   final String ctaLabel;
   final String fallbackText;
   final String? downloadLabel;
+}
+
+class DailyReadingsSectionView {
+  const DailyReadingsSectionView({
+    required this.id,
+    required this.title,
+    required this.items,
+  });
+
+  final String id;
+  final String title;
+  final List<DailyReadingsItemView> items;
+}
+
+class DailyReadingsItemView {
+  const DailyReadingsItemView({
+    required this.reference,
+    required this.body,
+    this.note,
+  });
+
+  final String reference;
+  final String body;
+  final String? note;
 }
 
 class PrayerOfDayView {
@@ -996,6 +1022,23 @@ class CalendarAdapter {
         .toList(),
     evening: state.dailyReadings.evening
         .map((item) => _safeText(item, '-'))
+        .toList(),
+    sections: state.dailyReadings.sections
+        .map(
+          (section) => DailyReadingsSectionView(
+            id: _safeId(section.id, section.title),
+            title: _safeText(section.title, '-'),
+            items: section.items
+                .map(
+                  (item) => DailyReadingsItemView(
+                    reference: _safeText(item.reference, '-'),
+                    body: _safeText(item.body, ''),
+                    note: _safeOptional(item.note),
+                  ),
+                )
+                .toList(),
+          ),
+        )
         .toList(),
     isLoaded: state.dailyReadings.isLoaded,
     ctaLabel: _safeText(state.dailyReadings.ctaLabel, 'Open readings'),
