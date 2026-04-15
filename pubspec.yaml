@@ -36,8 +36,11 @@ dependencies:
   go_router: ^14.6.2
   collection: ^1.18.0
   sqlite3: ^2.9.4
+  sqlite3_flutter_libs: ^0.5.39
   abushakir: ^1.0.0
   shared_preferences: ^2.5.3
+  path_provider: ^2.1.5
+  audioplayers: ^6.6.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -73,6 +76,7 @@ flutter:
 
   assets:
     - assets/data/daily_verse_entries.json
+    - assets/data/mezmur_library.json
     - assets/data/readings/
     - assets/data/saints_index.json
     - assets/data/calendar_dataset.json
