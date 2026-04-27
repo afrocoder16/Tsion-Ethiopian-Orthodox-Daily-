@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../calendar/calendar_engine.dart';
 import '../calendar/calendar_engine_models.dart';
 import '../repos/bible/bible_asset_manifest.dart';
 import 'reading_models.dart';
@@ -9,7 +10,20 @@ import 'reading_reference_parser.dart';
 
 class DailyReadingsRepository {
   DailyReadingsRepository({
-    this.assetPaths = const ['assets/data/readings/april.json'],
+    this.assetPaths = const [
+      'assets/data/readings/january.json',
+      'assets/data/readings/february.json',
+      'assets/data/readings/march.json',
+      'assets/data/readings/april.json',
+      'assets/data/readings/may.json',
+      'assets/data/readings/june.json',
+      'assets/data/readings/july.json',
+      'assets/data/readings/august.json',
+      'assets/data/readings/september.json',
+      'assets/data/readings/october.json',
+      'assets/data/readings/november.json',
+      'assets/data/readings/december.json',
+    ],
     ReadingReferenceParser? parser,
   }) : _parser = parser ?? ReadingReferenceParser();
 
@@ -20,20 +34,7 @@ class DailyReadingsRepository {
   final Map<String, Map<String, dynamic>> _bookCache = {};
 
   Future<DailyReadingsResult> loadForEthDate(EthDate ethDate) async {
-    final months = await _loadMonths();
-    ReadingPlanDay? match;
-    for (final month in months) {
-      for (final row in month.rows) {
-        if (row.ethMonth == ethDate.month && row.ethDay == ethDate.day) {
-          match = row;
-          break;
-        }
-      }
-      if (match != null) {
-        break;
-      }
-    }
-
+    final match = await loadPlanDay(ethDate);
     if (match == null) {
       return const DailyReadingsResult(
         day: null,
@@ -67,6 +68,50 @@ class DailyReadingsRepository {
     ];
 
     return DailyReadingsResult(day: match, sections: sections, isLoaded: true);
+  }
+
+  Future<ReadingPlanDay?> loadPlanDay(EthDate ethDate) async {
+    final months = await _loadMonths();
+    for (final month in months) {
+      for (final row in month.rows) {
+        if (row.ethMonth == ethDate.month && row.ethDay == ethDate.day) {
+          return row;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<ReadingPassage> resolveSource(
+    String source, {
+    String? label,
+    String? note,
+  }) async {
+    final reference = _parser.parse(source);
+    final resolvedText = await _resolve(reference);
+    final effectiveReference = label == null
+        ? reference
+        : ReadingPassageReference(
+            source: '$label: ${reference.source}',
+            book: reference.book,
+            bookId: reference.bookId,
+            kind: reference.kind,
+            chapter: reference.chapter,
+            fromChapter: reference.fromChapter,
+            toChapter: reference.toChapter,
+            fromVerse: reference.fromVerse,
+            toVerse: reference.toVerse,
+            verses: reference.verses,
+            toChapterEnd: reference.toChapterEnd,
+            parseStatus: reference.parseStatus,
+            sourcePsalmNumber: reference.sourcePsalmNumber,
+            biblePsalmNumber: reference.biblePsalmNumber,
+          );
+    return ReadingPassage(
+      reference: effectiveReference,
+      resolvedText: resolvedText,
+      note: resolvedText == null ? note ?? _noteFor(reference) : note,
+    );
   }
 
   Future<List<ReadingPlanMonth>> _loadMonths() async {
@@ -108,34 +153,11 @@ class DailyReadingsRepository {
     }
     for (var index = 0; index < sources.length; index++) {
       final source = sources[index];
-      final reference = _parser.parse(source);
-      final resolvedText = await _resolve(reference);
       final effectiveLabel = labels != null && index < labels.length
           ? labels[index]
           : null;
       passages.add(
-        ReadingPassage(
-          reference: effectiveLabel == null
-              ? reference
-              : ReadingPassageReference(
-                  source: '$effectiveLabel: ${reference.source}',
-                  book: reference.book,
-                  bookId: reference.bookId,
-                  kind: reference.kind,
-                  chapter: reference.chapter,
-                  fromChapter: reference.fromChapter,
-                  toChapter: reference.toChapter,
-                  fromVerse: reference.fromVerse,
-                  toVerse: reference.toVerse,
-                  verses: reference.verses,
-                  toChapterEnd: reference.toChapterEnd,
-                  parseStatus: reference.parseStatus,
-                  sourcePsalmNumber: reference.sourcePsalmNumber,
-                  biblePsalmNumber: reference.biblePsalmNumber,
-                ),
-          resolvedText: resolvedText,
-          note: resolvedText == null ? note ?? _noteFor(reference) : note,
-        ),
+        await resolveSource(source, label: effectiveLabel, note: note),
       );
     }
     return ReadingSection(id: id, title: title, passages: passages);
@@ -223,7 +245,7 @@ class DailyReadingsRepository {
       return null;
     }
     final raw = await rootBundle.loadString(
-      '$bibleAssetBasePath${manifest.file}',
+      '${bibleAssetPath('am')}${manifest.file}',
     );
     final data = json.decode(raw) as Map<String, dynamic>;
     _bookCache[bookId] = data;
@@ -267,13 +289,131 @@ class DailyReadingsRepository {
 
 class DailyVerseRepository {
   DailyVerseRepository({
+    required CalendarEngine calendarEngine,
+    required DailyReadingsRepository dailyReadingsRepository,
     this.assetPath = 'assets/data/daily_verse_entries.json',
-  });
+  }) : _calendarEngine = calendarEngine,
+       _dailyReadingsRepository = dailyReadingsRepository;
 
   final String assetPath;
+  final CalendarEngine _calendarEngine;
+  final DailyReadingsRepository _dailyReadingsRepository;
   List<DailyVerseEntry>? _cache;
 
+  // June/August/November data has been audited and fixed — no longer held.
+  // june 10/21 still missing gospel+psalm (source PDF needed — falls back gracefully).
+  // august 12/8 and 12/10 missing psalm only (gospel present — will serve correctly).
+  static const Set<String> _heldReviewDocuments = <String>{};
+
   Future<DailyVerseEntry> loadForDate(DateTime date) async {
+    final liturgicalEntry = await _loadFromReadingPlan(date);
+    if (liturgicalEntry != null) {
+      return liturgicalEntry;
+    }
+    return _loadFallbackEntry(date);
+  }
+
+  Future<List<DailyVerseSupportingEntry>> loadSupportingForDate(
+    DateTime date,
+  ) async {
+    final day = await _loadTrustedReadingPlanDay(date);
+    if (day == null) {
+      return const <DailyVerseSupportingEntry>[];
+    }
+
+    final supportingSources = <(String, String?)>[
+      ('Pauline', day.qidase.pauline),
+      ('Catholic', day.qidase.catholic),
+      ('Acts', day.qidase.acts),
+      ('Psalm', day.qidase.psalm),
+    ];
+
+    final result = <DailyVerseSupportingEntry>[];
+    for (final (label, source) in supportingSources) {
+      final trimmed = source?.trim() ?? '';
+      if (trimmed.isEmpty) {
+        continue;
+      }
+      final resolved = await _dailyReadingsRepository.resolveSource(trimmed);
+      final text = resolved.resolvedText;
+      final reference = resolved.reference;
+      final chapter = reference.chapter ?? reference.fromChapter;
+      if (text == null ||
+          text.verses.isEmpty ||
+          reference.bookId == null ||
+          chapter == null) {
+        continue;
+      }
+      final firstVerse = text.verses.first.verse;
+      final lastVerse = text.verses.last.verse;
+      final preview = _buildPreview(text.combinedText);
+      result.add(
+        DailyVerseSupportingEntry(
+          label: label,
+          reference: _formatLiturgicalReference(reference, firstVerse, lastVerse),
+          previewBody: preview.text,
+          bookId: reference.bookId!,
+          chapter: chapter,
+          verse: firstVerse,
+          verseEnd: lastVerse == firstVerse ? null : lastVerse,
+          isPreviewTruncated: preview.isTruncated,
+        ),
+      );
+    }
+    return result;
+  }
+
+  Future<DailyVerseEntry?> _loadFromReadingPlan(DateTime date) async {
+    final day = await _loadTrustedReadingPlanDay(date);
+    final gospelSource = day?.qidase.gospel?.trim();
+    final ethDate = _calendarEngine.ethDateFromGregorian(date);
+    if (day == null || gospelSource == null || gospelSource.isEmpty) {
+      return null;
+    }
+    final resolved = await _dailyReadingsRepository.resolveSource(
+      gospelSource,
+      label: 'Gospel',
+    );
+    final text = resolved.resolvedText;
+    final reference = resolved.reference;
+    final chapter = reference.chapter ?? reference.fromChapter;
+    if (text == null ||
+        text.verses.isEmpty ||
+        reference.bookId == null ||
+        chapter == null) {
+      return null;
+    }
+
+    final firstVerse = text.verses.first.verse;
+    final lastVerse = text.verses.last.verse;
+    final fullBody = text.combinedText;
+    final preview = _buildPreview(fullBody);
+    return DailyVerseEntry(
+      id: 'liturgical-${ethDate.month}-${ethDate.day}',
+      title: 'Verse of the Day',
+      reference: _formatLiturgicalReference(reference, firstVerse, lastVerse),
+      body: preview.text,
+      fullBody: fullBody,
+      isPreviewTruncated: preview.isTruncated,
+      bookId: reference.bookId,
+      chapter: chapter,
+      verse: firstVerse,
+      verseEnd: lastVerse == firstVerse ? null : lastVerse,
+    );
+  }
+
+  Future<ReadingPlanDay?> _loadTrustedReadingPlanDay(DateTime date) async {
+    final ethDate = _calendarEngine.ethDateFromGregorian(date);
+    final day = await _dailyReadingsRepository.loadPlanDay(ethDate);
+    if (day == null ||
+        _heldReviewDocuments.contains(day.sourceMeta.document) ||
+        !day.sourceMeta.isTrusted) {
+      return null;
+    }
+    return day;
+  }
+
+  Future<DailyVerseEntry> _loadFallbackEntry(DateTime date) async {
     final entries = await _loadEntries();
     final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays + 1;
     final selected = entries[(dayOfYear - 1) % entries.length];
@@ -303,7 +443,7 @@ class DailyVerseRepository {
       return entry;
     }
     final raw = await rootBundle.loadString(
-      '$bibleAssetBasePath${manifest.file}',
+      '${bibleAssetPath('am')}${manifest.file}',
     );
     final data = json.decode(raw) as Map<String, dynamic>;
     final verses = _collectChapterVerses(data, entry.chapter!);
@@ -320,12 +460,15 @@ class DailyVerseRepository {
     final reference = entry.verseEnd != null && entry.verseEnd != entry.verse
         ? '${manifest.am} ${entry.chapter}:${entry.verse}-${entry.verseEnd}'
         : '${manifest.am} ${entry.chapter}:${entry.verse}';
-    final body = selectedVerses.map((item) => item.text).join(' ');
+    final fullBody = selectedVerses.map((item) => item.text).join(' ');
+    final preview = _buildPreview(fullBody);
     return DailyVerseEntry(
       id: entry.id,
       title: entry.title,
       reference: reference,
-      body: body,
+      body: preview.text,
+      fullBody: fullBody,
+      isPreviewTruncated: preview.isTruncated,
       bookId: entry.bookId,
       chapter: entry.chapter,
       verse: entry.verse,
@@ -366,8 +509,57 @@ class DailyVerseRepository {
     }
     return verses;
   }
+
+  String _formatLiturgicalReference(
+    ReadingPassageReference reference,
+    int firstVerse,
+    int lastVerse,
+  ) {
+    final manifest = bibleAssetManifest
+        .where((item) => item.id == reference.bookId)
+        .firstOrNull;
+    final bookTitle = manifest?.am ?? reference.book ?? reference.source;
+    final chapter = reference.chapter ?? reference.fromChapter;
+    final endChapter = reference.toChapter ?? chapter;
+    if (chapter == null) {
+      return reference.source;
+    }
+    if (reference.kind == ReadingReferenceKind.wholeChapter) {
+      return '$bookTitle $chapter';
+    }
+    if (endChapter != null && chapter != endChapter) {
+      return '$bookTitle $chapter:$firstVerse-$endChapter:$lastVerse';
+    }
+    if (firstVerse == lastVerse) {
+      return '$bookTitle $chapter:$firstVerse';
+    }
+    return '$bookTitle $chapter:$firstVerse-$lastVerse';
+  }
+
+  _VersePreview _buildPreview(String fullBody) {
+    const maxCharacters = 220;
+    final normalized = fullBody.trim().replaceAll(RegExp(r'\s+'), ' ');
+    if (normalized.length <= maxCharacters) {
+      return _VersePreview(text: normalized, isTruncated: false);
+    }
+    var cutoff = normalized.lastIndexOf(' ', maxCharacters);
+    if (cutoff < 0 || cutoff < maxCharacters ~/ 2) {
+      cutoff = maxCharacters;
+    }
+    return _VersePreview(
+      text: '${normalized.substring(0, cutoff).trimRight()}...',
+      isTruncated: true,
+    );
+  }
 }
 
 extension<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
+}
+
+class _VersePreview {
+  const _VersePreview({required this.text, required this.isTruncated});
+
+  final String text;
+  final bool isTruncated;
 }

@@ -12,6 +12,7 @@ void assertValidTodayScreen(TodayScreenState state) {
   _require(state.verseCard.title, 'today.verseCard.title');
   _require(state.verseCard.reference, 'today.verseCard.reference');
   _require(state.verseCard.body, 'today.verseCard.body');
+  _require(state.verseCard.fullBody, 'today.verseCard.fullBody');
   for (final stat in state.verseStats) {
     _require(stat.iconKey, 'today.verseStats.iconKey');
     _require(stat.label, 'today.verseStats.label');

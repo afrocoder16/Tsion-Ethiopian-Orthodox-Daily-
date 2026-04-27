@@ -92,5 +92,5 @@ abstract class BibleLibraryRepository {
 }
 
 abstract class PassageRepository {
-  Future<PassageState> fetchPassage(String bookId, int chapter);
+  Future<PassageState> fetchPassage(String bookId, int chapter, {String lang = 'am'});
 }

@@ -58,6 +58,11 @@ class DbTodayRepository implements TodayRepository {
         title: dailyVerse.title,
         reference: dailyVerse.reference,
         body: dailyVerse.body,
+        fullBody: dailyVerse.fullBody,
+        bookId: dailyVerse.bookId,
+        chapter: dailyVerse.chapter,
+        isPreviewTruncated: dailyVerse.isPreviewTruncated,
+        ctaLabel: dailyVerse.isPreviewTruncated ? 'Read full passage' : null,
       ),
       verseStats: const [
         ui.VerseActionStat(iconKey: 'info', label: '124'),

@@ -6,22 +6,29 @@ import '../../../core/actions/user_actions.dart';
 import '../../../core/repos/book_flow_repositories.dart';
 import '../../../core/providers/book_flow_providers.dart';
 import '../../../core/providers/repo_providers.dart';
+import '../../../core/providers/screen_state_providers.dart';
 
 class PassageScreen extends ConsumerWidget {
   const PassageScreen({
     super.key,
     required this.bookId,
     required this.chapter,
+    this.trackForContinueReading = false,
   });
 
   final String bookId;
   final int chapter;
+  final bool trackForContinueReading;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(passageProvider((bookId, chapter)));
+    final lang = ref.watch(bibleLangProvider);
+    final state = ref.watch(passageProvider((bookId, chapter, lang)));
     return state.when(
-      data: (passage) => _PassageContent(passage: passage),
+      data: (passage) => _PassageContent(
+        passage: passage,
+        trackForContinueReading: trackForContinueReading,
+      ),
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
@@ -34,7 +41,7 @@ class PassageScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () =>
-                    ref.refresh(passageProvider((bookId, chapter))),
+                    ref.refresh(passageProvider((bookId, chapter, lang))),
                 child: const Text('Retry'),
               ),
             ],
@@ -45,13 +52,54 @@ class PassageScreen extends ConsumerWidget {
   }
 }
 
-class _PassageContent extends ConsumerWidget {
-  const _PassageContent({required this.passage});
+class _PassageContent extends ConsumerStatefulWidget {
+  const _PassageContent({
+    required this.passage,
+    required this.trackForContinueReading,
+  });
 
   final PassageState passage;
+  final bool trackForContinueReading;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PassageContent> createState() => _PassageContentState();
+}
+
+class _PassageContentState extends ConsumerState<_PassageContent> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.trackForContinueReading) {
+      _saveReadingProgress();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _PassageContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.trackForContinueReading &&
+        (oldWidget.passage.bookId != widget.passage.bookId ||
+            oldWidget.passage.chapter != widget.passage.chapter ||
+            oldWidget.trackForContinueReading !=
+                widget.trackForContinueReading)) {
+      _saveReadingProgress();
+    }
+  }
+
+  Future<void> _saveReadingProgress() async {
+    await setReadingProgress(
+      db: ref.read(dbProvider),
+      bookId: widget.passage.bookId,
+      lastLocation: 'Chapter ${widget.passage.chapter}',
+      progressText: 'Chapter ${widget.passage.chapter}',
+      updatedAtIso: DateTime.now().toIso8601String(),
+    );
+    ref.invalidate(booksScreenStateProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final passage = widget.passage;
     return Scaffold(
       appBar: AppBar(
         title: Text('${passage.bookTitle} ${passage.chapter}'),

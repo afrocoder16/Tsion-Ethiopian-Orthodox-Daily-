@@ -1,10 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../repos/bible/bible_asset_repository.dart';
 import '../repos/book_flow_repositories.dart';
 import '../repos/db/db_book_flow_repository.dart';
 import '../repos/fake/fake_book_flow_repository.dart';
 import 'repo_providers.dart';
+
+/// Persisted language preference for Bible text. 'am' = Amharic, 'en' = English.
+final bibleLangProvider = StateNotifierProvider<BibleLangNotifier, String>(
+  (ref) => BibleLangNotifier(),
+);
+
+class BibleLangNotifier extends StateNotifier<String> {
+  BibleLangNotifier() : super('am') {
+    _load();
+  }
+
+  static const _key = 'bible_language';
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getString(_key) ?? 'am';
+  }
+
+  Future<void> setLang(String lang) async {
+    state = lang;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, lang);
+  }
+}
 
 final bookDetailRepositoryProvider = Provider<BookDetailRepository>(
   (ref) {
@@ -55,9 +80,9 @@ final bibleChaptersProvider =
 });
 
 final passageProvider =
-    FutureProvider.family.autoDispose<PassageState, (String, int)>(
+    FutureProvider.family.autoDispose<PassageState, (String, int, String)>(
   (ref, input) {
-    final (bookId, chapter) = input;
-    return ref.watch(passageRepositoryProvider).fetchPassage(bookId, chapter);
+    final (bookId, chapter, lang) = input;
+    return ref.watch(passageRepositoryProvider).fetchPassage(bookId, chapter, lang: lang);
   },
 );

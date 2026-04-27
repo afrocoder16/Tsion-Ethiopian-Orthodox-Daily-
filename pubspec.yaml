@@ -84,6 +84,7 @@ flutter:
     - assets/data/synaxarium_entries.json
     - assets/data/synaxarium_index.json
     - assets/80-weahadu-main/data/am/
+    - assets/80-weahadu-main/data/en/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

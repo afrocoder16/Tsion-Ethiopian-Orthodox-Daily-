@@ -28,7 +28,11 @@ class BibleChapterScreen extends ConsumerWidget {
                   (chapter) => _ChapterTile(
                     label: 'Chapter $chapter',
                     onTap: () => context.go(
-                      RoutePaths.biblePassagePath(bookId, chapter),
+                      RoutePaths.biblePassagePath(
+                        bookId,
+                        chapter,
+                        trackForContinueReading: true,
+                      ),
                     ),
                   ),
                 )

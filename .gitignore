@@ -44,5 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local investigation notes
+readings_data_issues.txt
+/doc/
+
 # Local asset libraries and generated media stay out of Git by default.
 /assets/

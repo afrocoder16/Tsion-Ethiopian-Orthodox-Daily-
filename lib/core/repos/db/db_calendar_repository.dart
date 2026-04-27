@@ -4,6 +4,7 @@ import '../../calendar/calendar_observance_store.dart';
 import '../../db/app_database.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
 import '../../readings/daily_content_repository.dart';
+import '../../readings/reading_models.dart';
 import '../saints_repository.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
@@ -338,11 +339,14 @@ ui.SpiritualTracker _spiritualTracker() {
   );
 }
 
-List<String> _sectionReferences(dynamic resolvedReadings, String sectionId) {
-  for (final section in resolvedReadings.sections as List<dynamic>) {
+List<String> _sectionReferences(
+  DailyReadingsResult resolvedReadings,
+  String sectionId,
+) {
+  for (final section in resolvedReadings.sections) {
     if (section.id == sectionId) {
       return section.passages
-          .map((passage) => '${passage.reference.source}'.trim())
+          .map<String>((passage) => passage.reference.source.trim())
           .toList(growable: false);
     }
   }

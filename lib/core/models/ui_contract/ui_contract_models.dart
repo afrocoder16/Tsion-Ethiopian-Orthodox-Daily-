@@ -24,12 +24,22 @@ class VerseCard {
     required this.title,
     required this.reference,
     required this.body,
+    required this.fullBody,
+    this.bookId,
+    this.chapter,
+    this.isPreviewTruncated = false,
+    this.ctaLabel,
   });
 
   final String id;
   final String title;
   final String reference;
   final String body;
+  final String fullBody;
+  final String? bookId;
+  final int? chapter;
+  final bool isPreviewTruncated;
+  final String? ctaLabel;
 }
 
 class VerseActionStat {

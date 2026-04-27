@@ -23,14 +23,18 @@ class BibleAssetLibraryRepository implements BibleLibraryRepository {
 
 class BibleAssetPassageRepository implements PassageRepository {
   @override
-  Future<PassageState> fetchPassage(String bookId, int chapter) async {
+  Future<PassageState> fetchPassage(String bookId, int chapter, {String lang = 'am'}) async {
     final entry = bibleAssetManifest.firstWhere(
       (item) => item.id == bookId,
       orElse: () => throw Exception('Book not found: $bookId'),
     );
-    final jsonStr = await rootBundle.loadString(
-      '$bibleAssetBasePath${entry.file}',
-    );
+    // Try the requested language; fall back to Amharic if the English file is missing.
+    String jsonStr;
+    try {
+      jsonStr = await rootBundle.loadString('${bibleAssetPath(lang)}${entry.file}');
+    } catch (_) {
+      jsonStr = await rootBundle.loadString('${bibleAssetPath('am')}${entry.file}');
+    }
     final data = json.decode(jsonStr) as Map<String, dynamic>;
     final chapters = data['chapters'] as List<dynamic>;
     final chapterData =
@@ -54,7 +58,7 @@ class BibleAssetPassageRepository implements PassageRepository {
     }
     return PassageState(
       bookId: bookId,
-      bookTitle: entry.am,
+      bookTitle: lang == 'en' ? entry.en : entry.am,
       chapter: chapter,
       verses: verses,
     );

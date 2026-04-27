@@ -30,7 +30,10 @@ final dailyReadingsRepositoryProvider = Provider<DailyReadingsRepository>(
 );
 
 final dailyVerseRepositoryProvider = Provider<DailyVerseRepository>(
-  (ref) => DailyVerseRepository(),
+  (ref) => DailyVerseRepository(
+    calendarEngine: ref.watch(calendarEngineProvider),
+    dailyReadingsRepository: ref.watch(dailyReadingsRepositoryProvider),
+  ),
 );
 
 final todayRepositoryProvider = Provider<TodayRepository>((ref) {

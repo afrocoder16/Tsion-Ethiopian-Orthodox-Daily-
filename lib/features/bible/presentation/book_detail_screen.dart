@@ -7,6 +7,7 @@ import '../../../core/actions/user_actions.dart';
 import '../../../core/repos/book_flow_repositories.dart';
 import '../../../core/providers/book_flow_providers.dart';
 import '../../../core/providers/repo_providers.dart';
+import '../../../core/providers/screen_state_providers.dart';
 
 class BookDetailScreen extends ConsumerWidget {
   const BookDetailScreen({
@@ -78,6 +79,7 @@ class _BookDetailContent extends ConsumerWidget {
                     progressText: 'Chapter 1',
                     updatedAtIso: DateTime.now().toIso8601String(),
                   );
+                  ref.invalidate(booksScreenStateProvider);
                   if (context.mounted) {
                     context.go(RoutePaths.bookReaderPath(detail.id));
                   }
@@ -94,6 +96,7 @@ class _BookDetailContent extends ConsumerWidget {
                     progressText: detail.resumeLabel,
                     updatedAtIso: DateTime.now().toIso8601String(),
                   );
+                  ref.invalidate(booksScreenStateProvider);
                   if (context.mounted) {
                     context.go(RoutePaths.bookReaderPath(detail.id));
                   }

@@ -51,6 +51,25 @@ class _BooksContent extends StatelessWidget {
           items: adapter.continueReadingItems,
           actionLabel: adapter.continueReadingActionLabel,
           onTap: (item) {
+            if (item.id == 'book-daily-prayers') {
+              context.go(RoutePaths.dailyPrayersBooksPath());
+              return;
+            }
+            if (item.id == 'book-bible') {
+              context.go(RoutePaths.bibleLibraryPath());
+              return;
+            }
+            if (item.isBible) {
+              final chapter = _parseChapterNumber(item.subtitle) ?? 1;
+              context.go(
+                RoutePaths.biblePassagePath(
+                  item.routeId,
+                  chapter,
+                  trackForContinueReading: true,
+                ),
+              );
+              return;
+            }
             context.go(RoutePaths.bookReaderPath(item.routeId));
           },
         ),
@@ -63,16 +82,6 @@ class _BooksContent extends StatelessWidget {
             RoutePaths.patronSaintPath(adapter.patronSaint.name),
           ),
         ),
-        const SizedBox(height: 12),
-        _SectionBlock(
-          isMuted: adapter.isBibleSelected,
-          child: _HorizontalShelf(
-            items: adapter.saintsShelf.take(3).toList(),
-            onTap: (item) {
-              context.go(RoutePaths.bookDetailPath(item.routeId));
-            },
-          ),
-        ),
         const SizedBox(height: 22),
         _SectionGroupTitle(title: adapter.libraryHeader.title),
         const SizedBox(height: 12),
@@ -81,6 +90,10 @@ class _BooksContent extends StatelessWidget {
           child: _HorizontalShelf(
             items: adapter.bibleShelf.take(3).toList(),
             onTap: (item) {
+              if (item.id == 'book-daily-prayers') {
+                context.go(RoutePaths.dailyPrayersBooksPath());
+                return;
+              }
               if (item.isBible) {
                 context.go(RoutePaths.bibleLibraryPath());
               } else {
@@ -604,4 +617,12 @@ class _SkeletonBox extends StatelessWidget {
       ),
     );
   }
+}
+
+int? _parseChapterNumber(String? text) {
+  if (text == null || text.trim().isEmpty) {
+    return null;
+  }
+  final match = RegExp(r'(\d+)').firstMatch(text);
+  return match == null ? null : int.tryParse(match.group(1)!);
 }

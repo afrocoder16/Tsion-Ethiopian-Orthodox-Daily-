@@ -30,4 +30,18 @@ class ReadingProgressDao extends DatabaseAccessor<AppDatabase>
     return (select(readingProgress)..where((tbl) => tbl.bookId.equals(bookId)))
         .getSingleOrNull();
   }
+
+  Future<List<ReadingProgressData>> fetchRecentReadingProgress({
+    int limit = 5,
+  }) {
+    final query = select(readingProgress)
+      ..orderBy([
+        (tbl) => OrderingTerm(
+              expression: tbl.updatedAtIso,
+              mode: OrderingMode.desc,
+            ),
+      ])
+      ..limit(limit);
+    return query.get();
+  }
 }

@@ -161,6 +161,8 @@ class SourceMeta {
   final String rowLabel;
   final String qaStatus;
 
+  bool get isTrusted => qaStatus == 'extracted_from_pdf_text';
+
   factory SourceMeta.fromJson(Map<String, dynamic> json) {
     return SourceMeta(
       document: '${json['document'] ?? ''}',
@@ -279,6 +281,8 @@ class DailyVerseEntry {
     required this.title,
     required this.reference,
     required this.body,
+    required this.fullBody,
+    this.isPreviewTruncated = false,
     this.bookId,
     this.chapter,
     this.verse,
@@ -289,6 +293,8 @@ class DailyVerseEntry {
   final String title;
   final String reference;
   final String body;
+  final String fullBody;
+  final bool isPreviewTruncated;
   final String? bookId;
   final int? chapter;
   final int? verse;
@@ -300,10 +306,34 @@ class DailyVerseEntry {
       title: '${json['title'] ?? ''}',
       reference: '${json['reference'] ?? ''}',
       body: '${json['body'] ?? ''}',
+      fullBody: '${json['full_body'] ?? json['body'] ?? ''}',
+      isPreviewTruncated: json['is_preview_truncated'] as bool? ?? false,
       bookId: json['book_id'] as String?,
       chapter: json['chapter'] as int?,
       verse: json['verse'] as int?,
       verseEnd: json['verse_end'] as int?,
     );
   }
+}
+
+class DailyVerseSupportingEntry {
+  const DailyVerseSupportingEntry({
+    required this.label,
+    required this.reference,
+    required this.previewBody,
+    required this.bookId,
+    required this.chapter,
+    this.verse,
+    this.verseEnd,
+    this.isPreviewTruncated = false,
+  });
+
+  final String label;
+  final String reference;
+  final String previewBody;
+  final String bookId;
+  final int chapter;
+  final int? verse;
+  final int? verseEnd;
+  final bool isPreviewTruncated;
 }

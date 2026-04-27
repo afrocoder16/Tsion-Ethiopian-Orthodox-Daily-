@@ -8,6 +8,7 @@ import '../features/bible/presentation/book_detail_screen.dart';
 import '../features/bible/presentation/reader_screen.dart';
 import '../features/bible/presentation/bible_library_screen.dart';
 import '../features/bible/presentation/bible_chapter_screen.dart';
+import '../features/bible/presentation/daily_prayers_books_screen.dart';
 import '../features/bible/presentation/passage_screen.dart';
 import '../features/prayers/presentation/prayers_screen.dart';
 import '../features/prayers/presentation/prayer_detail_screen.dart';
@@ -242,6 +243,10 @@ List<GoRoute> _booksRoutes() {
       builder: (context, state) => const BibleScreen(),
       routes: [
         GoRoute(
+          path: 'daily-prayers',
+          builder: (context, state) => const DailyPrayersBooksScreen(),
+        ),
+        GoRoute(
           path: 'book/:id',
           builder: (context, state) {
             final id = state.pathParameters['id'] ?? 'book';
@@ -272,7 +277,13 @@ List<GoRoute> _booksRoutes() {
                     final book = state.pathParameters['book'] ?? 'Book';
                     final chapterValue = state.pathParameters['chapter'] ?? '1';
                     final chapter = int.tryParse(chapterValue) ?? 1;
-                    return PassageScreen(bookId: book, chapter: chapter);
+                    final trackForContinueReading =
+                        state.uri.queryParameters['trackResume'] == '1';
+                    return PassageScreen(
+                      bookId: book,
+                      chapter: chapter,
+                      trackForContinueReading: trackForContinueReading,
+                    );
                   },
                 ),
               ],
@@ -322,7 +333,13 @@ List<GoRoute> _legacyBibleRoutes() {
                     final book = state.pathParameters['book'] ?? 'Book';
                     final chapterValue = state.pathParameters['chapter'] ?? '1';
                     final chapter = int.tryParse(chapterValue) ?? 1;
-                    return PassageScreen(bookId: book, chapter: chapter);
+                    final trackForContinueReading =
+                        state.uri.queryParameters['trackResume'] == '1';
+                    return PassageScreen(
+                      bookId: book,
+                      chapter: chapter,
+                      trackForContinueReading: trackForContinueReading,
+                    );
                   },
                 ),
               ],
@@ -338,6 +355,7 @@ List<GoRoute> _legacyBibleRoutes() {
             return PassageScreen(
               bookId: book,
               chapter: int.tryParse(chapter) ?? 1,
+              trackForContinueReading: false,
             );
           },
         ),

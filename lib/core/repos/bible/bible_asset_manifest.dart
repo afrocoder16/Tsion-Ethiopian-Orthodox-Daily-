@@ -14,7 +14,7 @@ class BibleAssetManifestEntry {
   final int chapters;
 }
 
-const bibleAssetBasePath = 'assets/80-weahadu-main/data/am/';
+String bibleAssetPath(String lang) => 'assets/80-weahadu-main/data/$lang/';
 
 const bibleAssetManifest = [
   BibleAssetManifestEntry(

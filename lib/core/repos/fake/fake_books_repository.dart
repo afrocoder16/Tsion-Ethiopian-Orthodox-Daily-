@@ -70,16 +70,12 @@ class FakeBooksRepository implements BooksRepository {
         hymnBody:
             'O glorious Prophet John, voice crying in the wilderness, prepare our hearts in repentance, that we may welcome the Light of Christ.',
       ),
-      saintsShelf: const [
-        BookItem(id: 'book-synaxarium', title: 'Synaxarium'),
-        BookItem(id: 'book-lives-of-saints', title: 'Lives of Saints'),
-        BookItem(id: 'book-daily-saint', title: 'Daily Saint'),
-      ],
+      saintsShelf: const [],
       libraryHeader: const SectionHeader(title: 'LIBRARY'),
       bibleShelf: const [
         BookItem(id: 'book-bible', title: 'Bible'),
-        BookItem(id: 'book-audio-bible', title: 'Audio Bible'),
-        BookItem(id: 'book-reading-plan', title: 'Reading Plan'),
+        BookItem(id: 'book-andemta-commentary', title: 'Andemta Commentary'),
+        BookItem(id: 'book-daily-prayers', title: 'Daily Prayers'),
       ],
       orthodoxBooksHeader: const SectionHeader(title: 'ORTHODOX BOOKS'),
       orthodoxBooks: const [

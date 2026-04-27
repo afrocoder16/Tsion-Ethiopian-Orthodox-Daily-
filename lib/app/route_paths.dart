@@ -34,6 +34,7 @@ class RoutePaths {
   static const booksRoot = '/books';
   static const bookDetail = '/books/book/:id';
   static const bookReader = '/books/reader/:id';
+  static const dailyPrayersBooks = '/books/daily-prayers';
 
   // Bible library flow
   static const bibleLibrary = '/books/bible';
@@ -45,19 +46,37 @@ class RoutePaths {
   static const bibleReader = '/bible/reader/:book/:chapter';
 
   // Helper to generate a real path (safe, no logic)
-  static String bibleReaderPath({required String book, required int chapter}) =>
-      '/books/bible/$book/$chapter';
+  static String bibleReaderPath({
+    required String book,
+    required int chapter,
+    bool trackForContinueReading = false,
+  }) => biblePassagePath(
+    book,
+    chapter,
+    trackForContinueReading: trackForContinueReading,
+  );
 
   static String bookDetailPath(String id) => '/books/book/$id';
 
   static String bookReaderPath(String id) => '/books/reader/$id';
 
+  static String dailyPrayersBooksPath() => dailyPrayersBooks;
+
   static String bibleLibraryPath() => '/books/bible';
 
   static String bibleChaptersPath(String book) => '/books/bible/$book';
 
-  static String biblePassagePath(String book, int chapter) =>
-      '/books/bible/$book/$chapter';
+  static String biblePassagePath(
+    String book,
+    int chapter, {
+    bool trackForContinueReading = false,
+  }) {
+    final base = '/books/bible/$book/$chapter';
+    if (!trackForContinueReading) {
+      return base;
+    }
+    return '$base?trackResume=1';
+  }
 
   static String prayerDetailPath(String id) => '/prayers/detail/$id';
 

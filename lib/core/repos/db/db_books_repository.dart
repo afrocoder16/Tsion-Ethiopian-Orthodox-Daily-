@@ -11,40 +11,23 @@ class DbBooksRepository implements BooksRepository {
 
   @override
   Future<BooksScreenState> fetchBooksScreen() async {
-    const defaultContinueReadingItems = [
-      ui.BookItem(
-        id: 'book-psalm-23',
-        title: 'Psalm 23',
-        subtitle: 'Last chapter: Verse 4',
-      ),
-      ui.BookItem(
-        id: 'book-gospel-matthew',
-        title: 'Gospel of Matthew',
-        subtitle: 'Last chapter: 5',
-      ),
-      ui.BookItem(
-        id: 'book-life-st-mary',
-        title: 'Life of St. Mary',
-        subtitle: 'Last chapter: 2',
-      ),
-    ];
-
     String? progressText;
     List<ui.BookItem> updatedContinueReading = <ui.BookItem>[];
     try {
-      final progressRow = await db.readingProgressDao.getReadingProgress(
-        defaultContinueReadingItems[0].id,
+      final progressRows = await db.readingProgressDao.fetchRecentReadingProgress(
+        limit: 5,
       );
-      progressText = progressRow?.progressText;
-      updatedContinueReading = progressRow == null
-          ? <ui.BookItem>[]
-          : [
-              ui.BookItem(
-                id: defaultContinueReadingItems[0].id,
-                title: defaultContinueReadingItems[0].title,
-                subtitle: progressRow.progressText,
-              ),
-            ];
+      final filteredRows = _filterContinueReadingRows(progressRows);
+      progressText = filteredRows.isEmpty ? null : filteredRows.first.progressText;
+      updatedContinueReading = filteredRows
+          .map(
+            (row) => ui.BookItem(
+              id: row.bookId,
+              title: _displayTitleForBookId(row.bookId),
+              subtitle: row.progressText,
+            ),
+          )
+          .toList(growable: false);
     } catch (_) {
       // Keep Books screen available even if local DB schema lags behind.
       progressText = null;
@@ -99,16 +82,12 @@ class DbBooksRepository implements BooksRepository {
         hymnBody:
             'O glorious Prophet John, voice crying in the wilderness, prepare our hearts in repentance, that we may welcome the Light of Christ.',
       ),
-      saintsShelf: const [
-        ui.BookItem(id: 'book-synaxarium', title: 'Synaxarium'),
-        ui.BookItem(id: 'book-lives-of-saints', title: 'Lives of Saints'),
-        ui.BookItem(id: 'book-daily-saint', title: 'Daily Saint'),
-      ],
+      saintsShelf: const [],
       libraryHeader: const ui.SectionHeader(title: 'LIBRARY'),
       bibleShelf: const [
         ui.BookItem(id: 'book-bible', title: 'Bible'),
-        ui.BookItem(id: 'book-audio-bible', title: 'Audio Bible'),
-        ui.BookItem(id: 'book-reading-plan', title: 'Reading Plan'),
+        ui.BookItem(id: 'book-andemta-commentary', title: 'Andemta Commentary'),
+        ui.BookItem(id: 'book-daily-prayers', title: 'Daily Prayers'),
       ],
       orthodoxBooksHeader: const ui.SectionHeader(title: 'ORTHODOX BOOKS'),
       orthodoxBooks: const [
@@ -129,4 +108,55 @@ class DbBooksRepository implements BooksRepository {
     }());
     return state;
   }
+}
+
+List<ReadingProgressData> _filterContinueReadingRows(
+  List<ReadingProgressData> rows,
+) {
+  final result = <ReadingProgressData>[];
+  var bibleIncluded = false;
+
+  for (final row in rows) {
+    final isBibleRow = _isBibleProgressId(row.bookId);
+    if (isBibleRow) {
+      if (bibleIncluded) {
+        continue;
+      }
+      bibleIncluded = true;
+    }
+    result.add(row);
+  }
+
+  return result;
+}
+
+bool _isBibleProgressId(String id) {
+  final trimmed = id.trim();
+  return trimmed.isNotEmpty && !trimmed.startsWith('book-');
+}
+
+String _displayTitleForBookId(String id) {
+  switch (id) {
+    case 'book-daily-prayers':
+      return 'Daily Prayers';
+    case 'book-andemta-commentary':
+      return 'Andemta Commentary';
+    case 'book-bible':
+      return 'Bible';
+    case 'book-wudase-mariyam':
+      return 'Wudase Mariyam';
+    case 'book-psalms':
+      return 'Psalms';
+    case 'book-sene-gologota':
+      return 'Sene Gologota';
+    case 'book-seyfe-selase':
+      return 'Seyfe Selase';
+    case 'book-seyfe-melekot':
+      return 'Seyfe Melekot';
+  }
+  return id
+      .split('-')
+      .where((part) => part.isNotEmpty && part != 'book')
+      .map((part) => part[0].toUpperCase() + part.substring(1))
+      .join(' ');
 }

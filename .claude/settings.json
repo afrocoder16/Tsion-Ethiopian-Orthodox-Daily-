@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(gh api *)",
+      "Bash(curl -s \"https://api.github.com/repos/scrollmapper/bible_databases/git/trees/master?recursive=1\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(t['path']\\) for t in data.get\\('tree',[]\\) if 'json' in t['path'].lower\\(\\)]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(t['path']\\) for t in data.get\\('tree',[]\\) if 'json' in t['path'].lower\\(\\) and \\('KJVA' in t['path'] or 'BSB' in t['path']\\)]\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/scrollmapper/bible_databases/master/formats/json/BSB.json\" -o BSB.json)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/scrollmapper/bible_databases/master/formats/json/KJVA.json\" -o d:/projects/Tsion-Ethiopian-Orthodox-Daily-/tools/sources/KJVA.json)",
+      "Bash(wait)",
+      "Bash(python3 tools/build_english_bible.py)",
+      "WebFetch(domain:www.gutenberg.org)",
+      "WebFetch(domain:sacred-texts.com)",
+      "Bash(curl -s \"https://www.gutenberg.org/cache/epub/77935/pg77935.txt\" -o d:/projects/Tsion-Ethiopian-Orthodox-Daily-/tools/sources/charles_cache/Enoch.txt)",
+      "WebFetch(domain:www.sacred-texts.com)",
+      "WebFetch(domain:ebible.org)"
+    ],
+    "additionalDirectories": [
+      "d:\\projects\\Tsion-Ethiopian-Orthodox-Daily-\\doc"
+    ]
+  }
+}

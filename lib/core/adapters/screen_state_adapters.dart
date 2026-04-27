@@ -75,13 +75,51 @@ class VerseCardView {
     required this.title,
     required this.reference,
     required this.body,
+    required this.fullBody,
+    required this.bookId,
+    required this.chapter,
+    required this.isPreviewTruncated,
+    required this.ctaLabel,
     required this.stats,
   });
 
   final String title;
   final String reference;
   final String body;
+  final String fullBody;
+  final String? bookId;
+  final int? chapter;
+  final bool isPreviewTruncated;
+  final String ctaLabel;
   final List<ActionStatView> stats;
+}
+
+class DailyVerseSupportingItemView {
+  const DailyVerseSupportingItemView({
+    required this.label,
+    required this.reference,
+    required this.body,
+    required this.bookId,
+    required this.chapter,
+    required this.isPreviewTruncated,
+  });
+
+  final String label;
+  final String reference;
+  final String body;
+  final String bookId;
+  final int chapter;
+  final bool isPreviewTruncated;
+}
+
+class DailyVersePageView {
+  const DailyVersePageView({
+    required this.verseCard,
+    required this.supportingReadings,
+  });
+
+  final VerseCardView verseCard;
+  final List<DailyVerseSupportingItemView> supportingReadings;
 }
 
 class AudioCardView {
@@ -132,6 +170,11 @@ class TodayAdapter {
     title: _safeText(state.verseCard.title, 'Verse of the Day'),
     reference: _safeText(state.verseCard.reference, '-'),
     body: _safeText(state.verseCard.body, '-'),
+    fullBody: _safeText(state.verseCard.fullBody, '-'),
+    bookId: state.verseCard.bookId,
+    chapter: state.verseCard.chapter,
+    isPreviewTruncated: state.verseCard.isPreviewTruncated,
+    ctaLabel: _safeText(state.verseCard.ctaLabel, 'Read full passage'),
     stats: state.verseStats
         .map(
           (stat) => ActionStatView(
@@ -1263,6 +1306,9 @@ String _safeId(String id, String title) {
 
 bool _isBibleItem(String id, String title) {
   if (id.trim() == 'book-bible') {
+    return true;
+  }
+  if (id.trim().isNotEmpty && !id.trim().startsWith('book-')) {
     return true;
   }
   return title.trim().toLowerCase() == 'bible';

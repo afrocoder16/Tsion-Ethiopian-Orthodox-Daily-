@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json; data=json.load\\(open\\('d:/projects/Tsion-Ethiopian-Orthodox-Daily-/assets/data/daily_verse_entries.json',encoding='utf-8'\\)\\); [print\\(e\\) for e in data if 'galatians' in str\\(e\\).lower\\(\\) or '2:20' in str\\(e\\)]\")"
+    ]
+  }
+}

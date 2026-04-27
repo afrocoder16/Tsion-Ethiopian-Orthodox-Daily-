@@ -36,6 +36,10 @@ class _DailyReadingsContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final visibleSections = view.sections
+        .where((section) => section.id == 'morning' || section.id == 'evening')
+        .toList(growable: false);
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -99,14 +103,14 @@ class _DailyReadingsContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 16),
-        if (view.sections.isEmpty) ...[
+        if (visibleSections.isEmpty) ...[
           _ReadingCard(
             title: 'Readings',
             reference: 'Reading details will appear here once loaded.',
             icon: Icons.menu_book_rounded,
           ),
         ] else ...[
-          ...view.sections.map(
+          ...visibleSections.map(
             (section) => Padding(
               padding: const EdgeInsets.only(bottom: 18),
               child: _ReadingSection(section: section),

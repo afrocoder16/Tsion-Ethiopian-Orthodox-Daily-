@@ -27,6 +27,11 @@ class FakeTodayRepository implements TodayRepository {
         body:
             'Jesus said to her, "I am the resurrection and the life. Whoever '
             'believes in me, though he die, yet shall he live."',
+        fullBody:
+            'Jesus said to her, "I am the resurrection and the life. Whoever '
+            'believes in me, though he die, yet shall he live."',
+        bookId: 'john',
+        chapter: 11,
       ),
       verseStats: const [
         VerseActionStat(iconKey: 'info', label: '124'),
