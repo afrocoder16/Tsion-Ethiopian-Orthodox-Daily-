@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/actions/user_actions.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/repos/book_flow_repositories.dart';
 import '../../../core/providers/book_flow_providers.dart';
 import '../../../core/providers/repo_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 
 class ReaderScreen extends ConsumerWidget {
   const ReaderScreen({super.key, required this.bookId});
@@ -38,18 +40,30 @@ class _ReaderContent extends ConsumerWidget {
       _Control(
         Icons.bookmark_border,
         onTap: () async {
-          await toggleSave(
-            db: ref.read(dbProvider),
-            id: 'reader-${reader.bookId}',
-            title: reader.bookTitle,
-            kind: 'bookmark',
-            createdAtIso: DateTime.now().toIso8601String(),
-          );
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Bookmark saved')),
-            );
-          }
+          await ref
+              .read(signInGuardProvider)
+              .run<void>(
+                context,
+                feature: SignInFeature.bookmarks,
+                action: () async {
+                  final sync = await ref.read(
+                    userDataSyncServiceProvider.future,
+                  );
+                  await toggleSave(
+                    db: ref.read(dbProvider),
+                    id: 'reader-${reader.bookId}',
+                    title: reader.bookTitle,
+                    kind: 'bookmark',
+                    createdAtIso: DateTime.now().toIso8601String(),
+                    sync: sync,
+                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Bookmark saved')),
+                    );
+                  }
+                },
+              );
         },
       ),
       _Control(Icons.edit_outlined),
@@ -73,15 +87,9 @@ class _ReaderContent extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: const BoxDecoration(
               color: Color(0xFFF6F3EE),
-              border: Border(
-                bottom: BorderSide(color: Color(0xFFE0E0E0)),
-              ),
+              border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
             ),
-            child: Row(
-              children: [
-                ...controls,
-              ],
-            ),
+            child: Row(children: [...controls]),
           ),
           Expanded(
             child: ListView(
@@ -126,9 +134,7 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -147,10 +153,7 @@ class _ErrorCard extends StatelessWidget {
           children: [
             Text(message),
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: onRetry,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
           ],
         ),
       ),

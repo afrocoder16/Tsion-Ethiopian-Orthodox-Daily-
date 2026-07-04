@@ -11,7 +11,8 @@ class PrayerCompletionsDao extends DatabaseAccessor<AppDatabase>
   PrayerCompletionsDao(super.db);
 
   Future<List<PrayerCompletion>> listTodaysCompletions(String dateYmd) {
-    return (select(prayerCompletions)..where((tbl) => tbl.dateYmd.equals(dateYmd)))
-        .get();
+    return (select(
+      prayerCompletions,
+    )..where((tbl) => tbl.dateYmd.equals(dateYmd))).get();
   }
 }

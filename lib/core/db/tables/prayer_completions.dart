@@ -7,7 +7,5 @@ class PrayerCompletions extends Table {
   TextColumn get completedAtIso => text().named('completed_at_iso')();
 
   @override
-  List<String> get customConstraints => [
-        'UNIQUE(date_ymd, slot_id)',
-      ];
+  List<String> get customConstraints => ['UNIQUE(date_ymd, slot_id)'];
 }

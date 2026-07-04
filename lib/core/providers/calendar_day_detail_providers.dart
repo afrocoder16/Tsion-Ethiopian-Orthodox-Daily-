@@ -77,10 +77,11 @@ final synaxariumSnippetBookmarksAllProvider = FutureProvider.autoDispose
     });
 
 final synaxariumSnippetBookmarksForEntryProvider = FutureProvider.autoDispose
-    .family<List<SynaxariumSnippetBookmark>, ({String entryKey, int version})>(
-      (ref, request) {
-        return ref
-            .watch(synaxariumRepositoryProvider)
-            .fetchSnippetBookmarks(entryKey: request.entryKey);
-      },
-    );
+    .family<List<SynaxariumSnippetBookmark>, ({String entryKey, int version})>((
+      ref,
+      request,
+    ) {
+      return ref
+          .watch(synaxariumRepositoryProvider)
+          .fetchSnippetBookmarks(entryKey: request.entryKey);
+    });

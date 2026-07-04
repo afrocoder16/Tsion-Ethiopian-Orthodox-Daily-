@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/actions/user_actions.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/prayer_flow_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
 import '../../../core/providers/repo_providers.dart';
 import '../../../core/repos/prayer_flow_repositories.dart';
 import '../../../core/providers/streak_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 import '../../../core/streak/streak_tasks.dart';
 
 class PrayerDetailScreen extends ConsumerWidget {
-  const PrayerDetailScreen({
-    super.key,
-    required this.prayerId,
-  });
+  const PrayerDetailScreen({super.key, required this.prayerId});
 
   final String prayerId;
 
@@ -22,9 +21,8 @@ class PrayerDetailScreen extends ConsumerWidget {
     final state = ref.watch(prayerDetailProvider(prayerId));
     return state.when(
       data: (detail) => _PrayerDetailContent(detail: detail),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, _) => Scaffold(
         body: Center(
           child: Column(
@@ -57,18 +55,30 @@ class _PrayerDetailContent extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              await toggleSave(
-                db: ref.read(dbProvider),
-                id: detail.id,
-                title: detail.title,
-                kind: 'prayer',
-                createdAtIso: DateTime.now().toIso8601String(),
-              );
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Saved')),
-                );
-              }
+              await ref
+                  .read(signInGuardProvider)
+                  .run<void>(
+                    context,
+                    feature: SignInFeature.bookmarks,
+                    action: () async {
+                      final sync = await ref.read(
+                        userDataSyncServiceProvider.future,
+                      );
+                      await toggleSave(
+                        db: ref.read(dbProvider),
+                        id: detail.id,
+                        title: detail.title,
+                        kind: 'prayer',
+                        createdAtIso: DateTime.now().toIso8601String(),
+                        sync: sync,
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(const SnackBar(content: Text('Saved')));
+                      }
+                    },
+                  );
             },
             icon: const Icon(Icons.bookmark_border),
           ),
@@ -92,10 +102,7 @@ class _PrayerDetailContent extends ConsumerWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-          Text(
-            detail.body,
-            style: const TextStyle(fontSize: 14, height: 1.5),
-          ),
+          Text(detail.body, style: const TextStyle(fontSize: 14, height: 1.5)),
           const SizedBox(height: 18),
           Row(
             children: const [
@@ -110,27 +117,40 @@ class _PrayerDetailContent extends ConsumerWidget {
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () async {
-              final now = DateTime.now();
-              final dateYmd = _formatYmd(now);
-              await completePrayer(
-                db: ref.read(dbProvider),
-                dateYmd: dateYmd,
-                slotId: detail.slotId,
-                completedAtIso: now.toIso8601String(),
-              );
-              await completeStreakTask(
-                db: ref.read(dbProvider),
-                dateYmd: dateYmd,
-                taskId: streakTaskPrayer,
-                completedAtIso: now.toIso8601String(),
-              );
-              ref.invalidate(prayersScreenStateProvider);
-              ref.invalidate(streakScreenProvider);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Prayer offered')),
-                );
-              }
+              await ref
+                  .read(signInGuardProvider)
+                  .run<void>(
+                    context,
+                    feature: SignInFeature.prayerCompletion,
+                    action: () async {
+                      final sync = await ref.read(
+                        userDataSyncServiceProvider.future,
+                      );
+                      final now = DateTime.now();
+                      final dateYmd = _formatYmd(now);
+                      await completePrayer(
+                        db: ref.read(dbProvider),
+                        dateYmd: dateYmd,
+                        slotId: detail.slotId,
+                        completedAtIso: now.toIso8601String(),
+                        sync: sync,
+                      );
+                      await completeStreakTask(
+                        db: ref.read(dbProvider),
+                        dateYmd: dateYmd,
+                        taskId: streakTaskPrayer,
+                        completedAtIso: now.toIso8601String(),
+                        sync: sync,
+                      );
+                      ref.invalidate(prayersScreenStateProvider);
+                      ref.invalidate(streakScreenProvider);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Prayer offered')),
+                        );
+                      }
+                    },
+                  );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),

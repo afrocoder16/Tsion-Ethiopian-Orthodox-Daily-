@@ -7,12 +7,26 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/native.dart';
 
 import 'package:tsion_orthodox_daily_app/app/app.dart';
+import 'package:tsion_orthodox_daily_app/core/db/app_database.dart';
+import 'package:tsion_orthodox_daily_app/core/providers/repo_providers.dart';
 
 void main() {
   testWidgets('App builds', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: TsionApp()));
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [dbProvider.overrideWithValue(db)],
+        child: const TsionApp(
+          enableNotificationBootstrap: false,
+          enableBibleBootstrap: false,
+        ),
+      ),
+    );
     expect(find.byType(TsionApp), findsOneWidget);
   });
 }

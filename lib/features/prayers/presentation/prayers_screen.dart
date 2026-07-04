@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/prayer_flow_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
@@ -88,8 +89,16 @@ class _PrayersContent extends ConsumerWidget {
         const SizedBox(height: 12),
         _PrayerTileRow(
           items: adapter.myPrayers,
-          onTap: (item) {
-            context.go('${RoutePaths.prayers}/detail/${item.routeId}');
+          onTap: (item) async {
+            await ref
+                .read(signInGuardProvider)
+                .run<void>(
+                  context,
+                  feature: SignInFeature.personalPrayerList,
+                  action: () {
+                    context.go(RoutePaths.prayerDetailPath(item.routeId));
+                  },
+                );
           },
         ),
         const SizedBox(height: 18),

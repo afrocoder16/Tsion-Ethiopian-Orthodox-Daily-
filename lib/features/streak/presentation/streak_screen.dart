@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/adapters/streak_adapters.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
 import '../../../core/providers/streak_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 import '../../../core/actions/user_actions.dart';
 import '../../calendar/presentation/daily_readings_screen.dart';
 import '../../calendar/presentation/synaxarium_screen.dart';
@@ -19,31 +21,34 @@ class StreakScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(streakScreenProvider);
-    return state.when(
-      data: (screen) => _StreakContent(adapter: StreakAdapter(screen)),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Unable to load streaks'),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Text(
-                  '$error',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+    return SignInGate(
+      feature: SignInFeature.streak,
+      child: state.when(
+        data: (screen) => _StreakContent(adapter: StreakAdapter(screen)),
+        loading: () =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (error, _) => Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Unable to load streaks'),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    '$error',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () => ref.refresh(streakScreenProvider),
-                child: const Text('Retry'),
-              ),
-            ],
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () => ref.refresh(streakScreenProvider),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -65,14 +70,18 @@ class _StreakContent extends ConsumerWidget {
     final rhythmItems = [
       ...adapter.practiceItems.map(_RhythmCardItem.fromPractice),
       _RhythmCardItem.dailySaint(
-        title: saintPreview?.isAvailable == true ? saintPreview!.name : 'Daily Saint',
+        title: saintPreview?.isAvailable == true
+            ? saintPreview!.name
+            : 'Daily Saint',
         subtitle: saintPreview?.isAvailable == true
             ? saintPreview?.summary ?? 'Open today\'s saint'
             : 'Open today\'s saint',
         routePath: RoutePaths.streakSynaxariumPath(_todayYmd()),
       ),
     ];
-    final rhythmCompletedCount = adapter.practiceItems.where((item) => item.isDone).length;
+    final rhythmCompletedCount = adapter.practiceItems
+        .where((item) => item.isDone)
+        .length;
     final rhythmTotalCount = rhythmItems.length;
     return Scaffold(
       appBar: AppBar(
@@ -124,6 +133,7 @@ class _StreakContent extends ConsumerWidget {
               if (item.isDailySaint) {
                 return;
               }
+              final sync = await ref.read(userDataSyncServiceProvider.future);
               final now = DateTime.now();
               final dateYmd = _formatYmd(now);
               await toggleStreakTask(
@@ -131,6 +141,7 @@ class _StreakContent extends ConsumerWidget {
                 dateYmd: dateYmd,
                 taskId: item.id,
                 completedAtIso: now.toIso8601String(),
+                sync: sync,
               );
               ref.invalidate(streakScreenProvider);
               ref.invalidate(todayScreenStateProvider);
@@ -186,7 +197,10 @@ class _SummaryCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       adapter.dateLine,
-                      style: const TextStyle(fontSize: 13, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ),
@@ -768,9 +782,7 @@ void _openStreakDestination(BuildContext context, _RhythmCardItem item) {
   }
 
   if (page != null) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => page!),
-    );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page!));
     return;
   }
 

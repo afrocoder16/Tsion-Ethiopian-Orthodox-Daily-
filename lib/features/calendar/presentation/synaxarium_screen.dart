@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/calendar_day_detail_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 
 class SynaxariumScreen extends ConsumerWidget {
   const SynaxariumScreen({super.key, required this.dateKey});
@@ -29,14 +31,21 @@ class SynaxariumScreen extends ConsumerWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Read Synaxarium'),
-              leading: BackButton(
-                onPressed: () => context.pop(),
-              ),
+              leading: BackButton(onPressed: () => context.pop()),
               actions: [
                 IconButton(
                   tooltip: 'Saved days',
-                  onPressed: () =>
-                      context.push(RoutePaths.calendarSynaxariumBookmarksPath()),
+                  onPressed: () => ref
+                      .read(signInGuardProvider)
+                      .run<void>(
+                        context,
+                        feature: SignInFeature.bookmarks,
+                        action: () {
+                          context.push(
+                            RoutePaths.calendarSynaxariumBookmarksPath(),
+                          );
+                        },
+                      ),
                   icon: const Icon(Icons.bookmarks_outlined),
                 ),
                 IconButton(
@@ -45,21 +54,49 @@ class SynaxariumScreen extends ConsumerWidget {
                       ? null
                       : () async {
                           await ref
-                              .read(synaxariumRepositoryProvider)
-                              .toggleBookmark(entry.key);
-                          ref.invalidate(synaxariumBookmarkedProvider(dateKey));
-                          ref.invalidate(synaxariumBookmarksProvider(0));
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  isBookmarked
-                                      ? 'Removed from saved days'
-                                      : 'Saved day',
-                                ),
-                              ),
-                            );
-                          }
+                              .read(signInGuardProvider)
+                              .run<void>(
+                                context,
+                                feature: SignInFeature.bookmarks,
+                                action: () async {
+                                  final sync = await ref.read(
+                                    userDataSyncServiceProvider.future,
+                                  );
+                                  await ref
+                                      .read(synaxariumRepositoryProvider)
+                                      .toggleBookmark(entry.key);
+                                  if (isBookmarked) {
+                                    await sync?.mirrorBookmarkDeleted(
+                                      'synaxarium-${entry.key}',
+                                    );
+                                  } else {
+                                    await sync?.mirrorBookmarkSaved(
+                                      id: 'synaxarium-${entry.key}',
+                                      title: detail.ethiopianDate,
+                                      kind: 'synaxarium',
+                                      createdAtIso: DateTime.now()
+                                          .toIso8601String(),
+                                    );
+                                  }
+                                  ref.invalidate(
+                                    synaxariumBookmarkedProvider(dateKey),
+                                  );
+                                  ref.invalidate(
+                                    synaxariumBookmarksProvider(0),
+                                  );
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          isBookmarked
+                                              ? 'Removed from saved days'
+                                              : 'Saved day',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
                         },
                   icon: Icon(
                     isBookmarked
@@ -72,7 +109,9 @@ class SynaxariumScreen extends ConsumerWidget {
                   onPressed: prepared.trim().isEmpty
                       ? null
                       : () async {
-                          await Clipboard.setData(ClipboardData(text: prepared));
+                          await Clipboard.setData(
+                            ClipboardData(text: prepared),
+                          );
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Copied reading')),
@@ -88,7 +127,10 @@ class SynaxariumScreen extends ConsumerWidget {
               children: [
                 Text(
                   detail.ethiopianDate,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 if (detail.saints.isNotEmpty)
@@ -105,7 +147,9 @@ class SynaxariumScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: const Color(0xFFF7F7F7),
                               borderRadius: BorderRadius.circular(999),
-                              border: Border.all(color: const Color(0xFFE0E0E0)),
+                              border: Border.all(
+                                color: const Color(0xFFE0E0E0),
+                              ),
                             ),
                             child: Text(
                               saint.name,
@@ -211,39 +255,36 @@ String _prepareSynaxariumText(String raw) {
     final tail = compact.substring(idx).trim();
     return '$introNeedle\n\n${tail.replaceFirst(RegExp(r'^IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT,?\s*ONE GOD\.?\s*AMEN\.?', caseSensitive: false), '').trim()}';
   }
-  final lines = text
-      .split('\n')
-      .map((line) => line.trim())
-      .where((line) {
-        if (line.isEmpty) {
-          return false;
-        }
-        final l = line.toLowerCase();
-        return l != 'back to' &&
-            l != 'list' &&
-            l != 'next' &&
-            l != 'previous' &&
-            !l.startsWith('the first month') &&
-            !l.startsWith('the second month') &&
-            !l.startsWith('the third month') &&
-            !l.startsWith('the fourth month') &&
-            !l.startsWith('the fifth month') &&
-            !l.startsWith('the sixth month') &&
-            !l.startsWith('the seventh month') &&
-            !l.startsWith('the eighth month') &&
-            !l.startsWith('the nineth month') &&
-            !l.startsWith('the ninth month') &&
-            !l.startsWith('the tenth month') &&
-            !l.startsWith('the eleventh month') &&
-            !l.startsWith('the twelfth month') &&
-            !l.startsWith('the thirteenth month');
-      })
-      .toList();
+  final lines = text.split('\n').map((line) => line.trim()).where((line) {
+    if (line.isEmpty) {
+      return false;
+    }
+    final l = line.toLowerCase();
+    return l != 'back to' &&
+        l != 'list' &&
+        l != 'next' &&
+        l != 'previous' &&
+        !l.startsWith('the first month') &&
+        !l.startsWith('the second month') &&
+        !l.startsWith('the third month') &&
+        !l.startsWith('the fourth month') &&
+        !l.startsWith('the fifth month') &&
+        !l.startsWith('the sixth month') &&
+        !l.startsWith('the seventh month') &&
+        !l.startsWith('the eighth month') &&
+        !l.startsWith('the nineth month') &&
+        !l.startsWith('the ninth month') &&
+        !l.startsWith('the tenth month') &&
+        !l.startsWith('the eleventh month') &&
+        !l.startsWith('the twelfth month') &&
+        !l.startsWith('the thirteenth month');
+  }).toList();
   return '$introNeedle\n\n${lines.join(' ')}'.trim();
 }
 
 String _bodyWithoutIntro(String text) {
-  const intro = 'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.';
+  const intro =
+      'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.';
   if (text.startsWith(intro)) {
     return text.substring(intro.length).trim();
   }

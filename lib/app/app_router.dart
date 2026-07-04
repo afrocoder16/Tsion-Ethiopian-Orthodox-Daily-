@@ -2,7 +2,9 @@ import 'package:go_router/go_router.dart';
 
 import 'app_shell.dart';
 import 'route_paths.dart';
+import '../core/auth/sign_in_guard.dart';
 import '../features/today/presentation/today_screen.dart';
+import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/bible/presentation/bible_screen.dart';
 import '../features/bible/presentation/book_detail_screen.dart';
 import '../features/bible/presentation/reader_screen.dart';
@@ -42,8 +44,12 @@ import '../features/bible/presentation/patron_saint_screen.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
-    initialLocation: RoutePaths.today,
+    initialLocation: RoutePaths.onboarding,
     routes: [
+      GoRoute(
+        path: RoutePaths.onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
@@ -79,6 +85,13 @@ GoRouter buildRouter() {
               GoRoute(
                 path: 'light-candle',
                 builder: (context, state) => const LightCandleScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) {
+                  final id = state.pathParameters['id'] ?? 'prayer';
+                  return PrayerDetailScreen(prayerId: id);
+                },
               ),
             ],
           ),
@@ -200,7 +213,10 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: RoutePaths.profile,
-        builder: (context, state) => const ProfileScreen(),
+        builder: (context, state) => const SignInGate(
+          feature: SignInFeature.profile,
+          child: ProfileScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'sign-in',
@@ -216,19 +232,31 @@ GoRouter buildRouter() {
           ),
           GoRoute(
             path: 'edit',
-            builder: (context, state) => const EditProfileScreen(),
+            builder: (context, state) => const SignInGate(
+              feature: SignInFeature.profile,
+              child: EditProfileScreen(),
+            ),
           ),
           GoRoute(
             path: 'preferences',
-            builder: (context, state) => const ProfilePreferencesScreen(),
+            builder: (context, state) => const SignInGate(
+              feature: SignInFeature.profile,
+              child: ProfilePreferencesScreen(),
+            ),
           ),
           GoRoute(
             path: 'prayer-reminders',
-            builder: (context, state) => const PrayerRemindersScreen(),
+            builder: (context, state) => const SignInGate(
+              feature: SignInFeature.profile,
+              child: PrayerRemindersScreen(),
+            ),
           ),
           GoRoute(
             path: 'notifications',
-            builder: (context, state) => const NotificationCenterScreen(),
+            builder: (context, state) => const SignInGate(
+              feature: SignInFeature.profile,
+              child: NotificationCenterScreen(),
+            ),
           ),
         ],
       ),

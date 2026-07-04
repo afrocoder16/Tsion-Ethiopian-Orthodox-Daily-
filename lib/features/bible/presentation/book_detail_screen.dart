@@ -10,10 +10,7 @@ import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
 class BookDetailScreen extends ConsumerWidget {
-  const BookDetailScreen({
-    super.key,
-    required this.bookId,
-  });
+  const BookDetailScreen({super.key, required this.bookId});
 
   final String bookId;
 
@@ -56,10 +53,7 @@ class _BookDetailContent extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             detail.title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
@@ -133,9 +127,7 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -154,10 +146,7 @@ class _ErrorCard extends StatelessWidget {
           children: [
             Text(message),
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: onRetry,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
           ],
         ),
       ),

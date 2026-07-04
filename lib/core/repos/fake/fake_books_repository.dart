@@ -1,4 +1,5 @@
 import '../../models/ui_contract/ui_contract_models.dart';
+import '../../strings/app_strings.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
 import '../screen_states.dart';
@@ -11,7 +12,7 @@ class FakeBooksRepository implements BooksRepository {
         label: '7-day reading streak',
         compact: true,
       ),
-      searchBar: const SearchBar(placeholder: 'Search by title'),
+      searchBar: const SearchBar(placeholder: AppStrings.bibleSearchHint),
       filters: const [
         BooksFilterOption(text: 'All', value: 'all'),
         BooksFilterOption(text: 'Bible', value: 'bible'),
@@ -97,4 +98,3 @@ class FakeBooksRepository implements BooksRepository {
     return Future.value(state);
   }
 }
-

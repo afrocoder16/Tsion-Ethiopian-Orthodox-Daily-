@@ -23,7 +23,11 @@ class BibleAssetLibraryRepository implements BibleLibraryRepository {
 
 class BibleAssetPassageRepository implements PassageRepository {
   @override
-  Future<PassageState> fetchPassage(String bookId, int chapter, {String lang = 'am'}) async {
+  Future<PassageState> fetchPassage(
+    String bookId,
+    int chapter, {
+    String lang = 'am',
+  }) async {
     final entry = bibleAssetManifest.firstWhere(
       (item) => item.id == bookId,
       orElse: () => throw Exception('Book not found: $bookId'),
@@ -31,9 +35,13 @@ class BibleAssetPassageRepository implements PassageRepository {
     // Try the requested language; fall back to Amharic if the English file is missing.
     String jsonStr;
     try {
-      jsonStr = await rootBundle.loadString('${bibleAssetPath(lang)}${entry.file}');
+      jsonStr = await rootBundle.loadString(
+        '${bibleAssetPath(lang)}${entry.file}',
+      );
     } catch (_) {
-      jsonStr = await rootBundle.loadString('${bibleAssetPath('am')}${entry.file}');
+      jsonStr = await rootBundle.loadString(
+        '${bibleAssetPath('am')}${entry.file}',
+      );
     }
     final data = json.decode(jsonStr) as Map<String, dynamic>;
     final chapters = data['chapters'] as List<dynamic>;

@@ -1,11 +1,16 @@
 import 'package:drift/drift.dart';
 
+import 'daos/bible_dao.dart';
 import 'daos/meta_dao.dart';
+import 'daos/personal_prayers_dao.dart';
 import 'daos/prayer_dao.dart';
 import 'daos/reading_progress_dao.dart';
 import 'daos/saved_items_dao.dart';
 import 'daos/streak_dao.dart';
+import 'tables/bible_books.dart';
+import 'tables/bible_verses.dart';
 import 'tables/meta.dart';
+import 'tables/personal_prayers.dart';
 import 'tables/prayer_completions.dart';
 import 'tables/prayer_schedule.dart';
 import 'tables/reading_progress.dart';
@@ -24,6 +29,9 @@ part 'app_database.g.dart';
     StreakEvents,
     PrayerSchedule,
     PrayerCompletions,
+    PersonalPrayers,
+    BibleBooks,
+    BibleVerses,
   ],
   daos: [
     MetaDao,
@@ -31,18 +39,22 @@ part 'app_database.g.dart';
     ReadingProgressDao,
     StreakDao,
     PrayerDao,
+    PersonalPrayersDao,
+    BibleDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
+      await _createBibleFts();
+      await _markBibleSeedPending();
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
@@ -64,9 +76,7 @@ CREATE TABLE IF NOT EXISTS streak_events (
 ''');
       }
       if (from < 3) {
-        await customStatement(
-          'ALTER TABLE saved_items ADD COLUMN body TEXT;',
-        );
+        await customStatement('ALTER TABLE saved_items ADD COLUMN body TEXT;');
       }
       if (from < 4) {
         await customStatement('''
@@ -78,6 +88,35 @@ CREATE TABLE IF NOT EXISTS reading_progress (
 )
 ''');
       }
+      if (from < 5) {
+        await customStatement(
+          'ALTER TABLE streak_tasks ADD COLUMN is_bonus INTEGER NOT NULL DEFAULT 0;',
+        );
+        await m.createTable(bibleBooks);
+        await m.createTable(bibleVerses);
+        await m.createTable(personalPrayers);
+        await _createBibleFts();
+        await _markBibleSeedPending();
+      }
     },
   );
+
+  Future<void> _createBibleFts() {
+    return customStatement('''
+CREATE VIRTUAL TABLE IF NOT EXISTS bible_verses_fts USING fts5(
+  text_en,
+  text_am,
+  book_id UNINDEXED,
+  chapter UNINDEXED,
+  verse UNINDEXED
+)
+''');
+  }
+
+  Future<void> _markBibleSeedPending() {
+    return customStatement('''
+INSERT OR REPLACE INTO meta (key, value)
+VALUES ('bible_seed_status', 'pending')
+''');
+  }
 }

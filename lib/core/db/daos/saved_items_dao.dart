@@ -45,9 +45,9 @@ class SavedItemsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<bool> isItemSaved(String id) async {
-    final item = await (select(savedItems)
-          ..where((tbl) => tbl.id.equals(id)))
-        .getSingleOrNull();
+    final item = await (select(
+      savedItems,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
     return item != null;
   }
 }

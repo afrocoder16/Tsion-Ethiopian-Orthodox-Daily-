@@ -7,10 +7,7 @@ import '../tables/streak_tasks.dart';
 part 'streak_dao.g.dart';
 
 class StreakTaskStatus {
-  const StreakTaskStatus({
-    required this.task,
-    required this.completed,
-  });
+  const StreakTaskStatus({required this.task, required this.completed});
 
   final StreakTask task;
   final bool completed;
@@ -24,12 +21,14 @@ class StreakDao extends DatabaseAccessor<AppDatabase> with _$StreakDaoMixin {
     required String taskId,
     required String title,
     required bool isRequired,
+    bool isBonus = false,
   }) {
     return into(streakTasks).insertOnConflictUpdate(
       StreakTasksCompanion(
         taskId: Value(taskId),
         title: Value(title),
         isRequired: Value(isRequired),
+        isBonus: Value(isBonus),
       ),
     );
   }
@@ -52,11 +51,9 @@ class StreakDao extends DatabaseAccessor<AppDatabase> with _$StreakDaoMixin {
     required String dateYmd,
     required String taskId,
   }) {
-    return (delete(streakEvents)
-          ..where(
-            (tbl) =>
-                tbl.dateYmd.equals(dateYmd) & tbl.taskId.equals(taskId),
-          ))
+    return (delete(streakEvents)..where(
+          (tbl) => tbl.dateYmd.equals(dateYmd) & tbl.taskId.equals(taskId),
+        ))
         .go();
   }
 
@@ -73,10 +70,7 @@ class StreakDao extends DatabaseAccessor<AppDatabase> with _$StreakDaoMixin {
     return rows.map((row) {
       final task = row.readTable(streakTasks);
       final event = row.readTableOrNull(streakEvents);
-      return StreakTaskStatus(
-        task: task,
-        completed: event != null,
-      );
+      return StreakTaskStatus(task: task, completed: event != null);
     }).toList();
   }
 }

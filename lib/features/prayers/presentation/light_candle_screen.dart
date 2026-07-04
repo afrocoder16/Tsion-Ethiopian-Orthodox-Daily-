@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
 class LightCandleScreen extends ConsumerStatefulWidget {
@@ -26,19 +27,22 @@ class _LightCandleScreenState extends ConsumerState<LightCandleScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(prayersScreenStateProvider);
-    return Scaffold(
-      body: state.when(
-        data: (raw) => _LightCandleContent(
-          view: PrayersAdapter(raw).lightCandle,
-          isLiving: _isLiving,
-          enableFlash: _enableFlash,
-          namesController: _namesController,
-          onSwitchGroup: (value) => setState(() => _isLiving = value),
-          onSwitchFlash: (value) => setState(() => _enableFlash = value),
+    return SignInGate(
+      feature: SignInFeature.lightCandle,
+      child: Scaffold(
+        body: state.when(
+          data: (raw) => _LightCandleContent(
+            view: PrayersAdapter(raw).lightCandle,
+            isLiving: _isLiving,
+            enableFlash: _enableFlash,
+            namesController: _namesController,
+            onSwitchGroup: (value) => setState(() => _isLiving = value),
+            onSwitchFlash: (value) => setState(() => _enableFlash = value),
+          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) =>
+              const Center(child: Text('Unable to load candle form')),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) =>
-            const Center(child: Text('Unable to load candle form')),
       ),
     );
   }

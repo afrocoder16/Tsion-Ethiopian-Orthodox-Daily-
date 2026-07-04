@@ -7,10 +7,7 @@ import '../tables/streak_tasks.dart';
 part 'streak_events_dao.g.dart';
 
 class StreakEventStatus {
-  const StreakEventStatus({
-    required this.task,
-    required this.completed,
-  });
+  const StreakEventStatus({required this.task, required this.completed});
 
   final StreakTask task;
   final bool completed;
@@ -34,10 +31,7 @@ class StreakEventsDao extends DatabaseAccessor<AppDatabase>
     return rows.map((row) {
       final task = row.readTable(streakTasks);
       final event = row.readTableOrNull(streakEvents);
-      return StreakEventStatus(
-        task: task,
-        completed: event != null,
-      );
+      return StreakEventStatus(task: task, completed: event != null);
     }).toList();
   }
 }

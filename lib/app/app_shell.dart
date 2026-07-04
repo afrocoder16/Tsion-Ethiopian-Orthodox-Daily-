@@ -13,9 +13,15 @@ class AppShell extends StatelessWidget {
         location.startsWith(RoutePaths.legacyBibleRoot)) {
       return 1;
     }
-    if (location.startsWith(RoutePaths.prayers)) { return 2; }
-    if (location.startsWith(RoutePaths.calendar)) { return 3; }
-    if (location.startsWith(RoutePaths.explore)) { return 4; }
+    if (location.startsWith(RoutePaths.prayers)) {
+      return 2;
+    }
+    if (location.startsWith(RoutePaths.calendar)) {
+      return 3;
+    }
+    if (location.startsWith(RoutePaths.explore)) {
+      return 4;
+    }
     return 0;
   }
 
@@ -53,7 +59,10 @@ class AppShell extends StatelessWidget {
           NavigationDestination(icon: Icon(Icons.today), label: 'Today'),
           NavigationDestination(icon: Icon(Icons.menu_book), label: 'Books'),
           NavigationDestination(icon: Icon(Icons.favorite), label: 'Prayers'),
-          NavigationDestination(icon: Icon(Icons.calendar_month), label: 'Calendar'),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
           NavigationDestination(icon: Icon(Icons.explore), label: 'Explore'),
         ],
       ),

@@ -5,30 +5,31 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/auth/sign_in_guard.dart';
 import '../data/mezmur_library.dart';
 
 // ── Palette — Ethiopian Orthodox manuscript aesthetic ────────────────────────
 // Parchment + sepia ink + aged gold + liturgical oxblood
 const _screenBackground = Color(0xFFFBF5E1); // parchment surface
-const _panelBackground  = Color(0xFFF5ECD4); // parchment card
-const _cardBackground   = Color(0xFFFDF8E8); // lightest card
-const _oxblood          = Color(0xFF6B2222); // primary liturgical red
-const _oxbloodDeep      = Color(0xFF4A1414); // deep burgundy
-const _gold             = Color(0xFFB8914C); // aged gold
-const _goldDeep         = Color(0xFF8A6A2E); // ochre gold
-const _ink              = Color(0xFF2B1D10); // primary text
-const _inkSoft          = Color(0xFF4E3A25); // body text
-const _mutedText        = Color(0xFF7A664D); // muted / labels
-const _outlineColor     = Color(0x23432913); // hairline
-const _divider          = Color(0x142B1D10); // divider
+const _panelBackground = Color(0xFFF5ECD4); // parchment card
+const _cardBackground = Color(0xFFFDF8E8); // lightest card
+const _oxblood = Color(0xFF6B2222); // primary liturgical red
+const _oxbloodDeep = Color(0xFF4A1414); // deep burgundy
+const _gold = Color(0xFFB8914C); // aged gold
+const _goldDeep = Color(0xFF8A6A2E); // ochre gold
+const _ink = Color(0xFF2B1D10); // primary text
+const _inkSoft = Color(0xFF4E3A25); // body text
+const _mutedText = Color(0xFF7A664D); // muted / labels
+const _outlineColor = Color(0x23432913); // hairline
+const _divider = Color(0x142B1D10); // divider
 
 // Legacy alias so unchanged code keeps compiling
 const _accent = _oxblood;
-
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 String _formatDuration(Duration d) {
@@ -88,10 +89,14 @@ class _TrackArtPainter extends CustomPainter {
     if (v == 0 || v == 3) {
       // Meskel cross with diamond
       final pts = [
-        Offset(cx, cy - r * 1.1), Offset(cx + r * 0.35, cy - r * 0.55),
-        Offset(cx + r * 1.1, cy), Offset(cx + r * 0.35, cy + r * 0.55),
-        Offset(cx, cy + r * 1.1), Offset(cx - r * 0.35, cy + r * 0.55),
-        Offset(cx - r * 1.1, cy), Offset(cx - r * 0.35, cy - r * 0.55),
+        Offset(cx, cy - r * 1.1),
+        Offset(cx + r * 0.35, cy - r * 0.55),
+        Offset(cx + r * 1.1, cy),
+        Offset(cx + r * 0.35, cy + r * 0.55),
+        Offset(cx, cy + r * 1.1),
+        Offset(cx - r * 0.35, cy + r * 0.55),
+        Offset(cx - r * 1.1, cy),
+        Offset(cx - r * 0.35, cy - r * 0.55),
       ];
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
       for (final p in pts.skip(1)) {
@@ -99,39 +104,81 @@ class _TrackArtPainter extends CustomPainter {
       }
       path.close();
       canvas.drawPath(path, linePaint);
-      canvas.drawLine(Offset(cx, cy - r * 0.6), Offset(cx, cy + r * 0.6), linePaint);
-      canvas.drawLine(Offset(cx - r * 0.6, cy), Offset(cx + r * 0.6, cy), linePaint);
-      canvas.drawCircle(Offset(cx, cy), sz.width * 0.04,
-          Paint()..color = const Color(0xFF8A6A2E).withValues(alpha: 0.7));
+      canvas.drawLine(
+        Offset(cx, cy - r * 0.6),
+        Offset(cx, cy + r * 0.6),
+        linePaint,
+      );
+      canvas.drawLine(
+        Offset(cx - r * 0.6, cy),
+        Offset(cx + r * 0.6, cy),
+        linePaint,
+      );
+      canvas.drawCircle(
+        Offset(cx, cy),
+        sz.width * 0.04,
+        Paint()..color = const Color(0xFF8A6A2E).withValues(alpha: 0.7),
+      );
     } else if (v == 1) {
       // Arch / tabot form
       final archPath = Path()
         ..moveTo(cx - r, cy + r * 0.6)
         ..lineTo(cx - r, cy - r * 0.2)
-        ..arcToPoint(Offset(cx + r, cy - r * 0.2),
-            radius: Radius.circular(r), clockwise: false)
+        ..arcToPoint(
+          Offset(cx + r, cy - r * 0.2),
+          radius: Radius.circular(r),
+          clockwise: false,
+        )
         ..lineTo(cx + r, cy + r * 0.6)
         ..close();
       canvas.drawPath(archPath, linePaint);
-      canvas.drawLine(Offset(cx, cy - r * 0.6), Offset(cx, cy + r * 0.5), linePaint);
-      canvas.drawLine(Offset(cx - r * 0.45, cy), Offset(cx + r * 0.45, cy), linePaint);
+      canvas.drawLine(
+        Offset(cx, cy - r * 0.6),
+        Offset(cx, cy + r * 0.5),
+        linePaint,
+      );
+      canvas.drawLine(
+        Offset(cx - r * 0.45, cy),
+        Offset(cx + r * 0.45, cy),
+        linePaint,
+      );
     } else if (v == 2) {
       // Interlace grid
       final step = sz.width / 5;
       for (var i = 1; i < 5; i++) {
-        canvas.drawLine(Offset(step * i, 0), Offset(step * i, sz.height), linePaint);
-        canvas.drawLine(Offset(0, step * i), Offset(sz.width, step * i), linePaint);
+        canvas.drawLine(
+          Offset(step * i, 0),
+          Offset(step * i, sz.height),
+          linePaint,
+        );
+        canvas.drawLine(
+          Offset(0, step * i),
+          Offset(sz.width, step * i),
+          linePaint,
+        );
       }
       canvas.drawLine(Offset(0, 0), Offset(sz.width, sz.height), linePaint);
       canvas.drawLine(Offset(sz.width, 0), Offset(0, sz.height), linePaint);
     } else {
       // Margin grid with central cross
       canvas.drawRect(
-        Rect.fromCenter(center: Offset(cx, cy), width: r * 1.8, height: r * 1.8),
+        Rect.fromCenter(
+          center: Offset(cx, cy),
+          width: r * 1.8,
+          height: r * 1.8,
+        ),
         linePaint,
       );
-      canvas.drawLine(Offset(cx, cy - r * 0.7), Offset(cx, cy + r * 0.7), linePaint);
-      canvas.drawLine(Offset(cx - r * 0.7, cy), Offset(cx + r * 0.7, cy), linePaint);
+      canvas.drawLine(
+        Offset(cx, cy - r * 0.7),
+        Offset(cx, cy + r * 0.7),
+        linePaint,
+      );
+      canvas.drawLine(
+        Offset(cx - r * 0.7, cy),
+        Offset(cx + r * 0.7, cy),
+        linePaint,
+      );
     }
   }
 
@@ -168,7 +215,8 @@ class _ArtistAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return SizedBox(
-      width: size, height: size,
+      width: size,
+      height: size,
       child: CustomPaint(
         painter: _AvatarCoinPainter(),
         child: Container(
@@ -235,7 +283,8 @@ class _MeskelCrossIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size, height: size,
+      width: size,
+      height: size,
       child: CustomPaint(painter: _CrossPainter(color: color)),
     );
   }
@@ -246,12 +295,19 @@ class _CrossPainter extends CustomPainter {
   final Color color;
   @override
   void paint(Canvas canvas, Size s) {
-    final p = Paint()..color = color..strokeWidth = s.width * 0.14..strokeCap = StrokeCap.round;
+    final p = Paint()
+      ..color = color
+      ..strokeWidth = s.width * 0.14
+      ..strokeCap = StrokeCap.round;
     canvas.drawLine(Offset(s.width / 2, 0), Offset(s.width / 2, s.height), p);
     canvas.drawLine(Offset(0, s.height / 2), Offset(s.width, s.height / 2), p);
-    canvas.drawCircle(Offset(s.width / 2, s.height / 2), s.width * 0.09,
-        Paint()..color = color);
+    canvas.drawCircle(
+      Offset(s.width / 2, s.height / 2),
+      s.width * 0.09,
+      Paint()..color = color,
+    );
   }
+
   @override
   bool shouldRepaint(_CrossPainter old) => old.color != color;
 }
@@ -283,7 +339,11 @@ class _StarCrossPainter extends CustomPainter {
     // outer circle
     canvas.drawCircle(Offset(cx, cy), r, p..strokeWidth = s.width * 0.018);
     // inner circle
-    canvas.drawCircle(Offset(cx, cy), r * 0.28, p..strokeWidth = s.width * 0.018);
+    canvas.drawCircle(
+      Offset(cx, cy),
+      r * 0.28,
+      p..strokeWidth = s.width * 0.018,
+    );
     // cross overlay
     final cp = Paint()
       ..color = color
@@ -298,60 +358,6 @@ class _StarCrossPainter extends CustomPainter {
   bool shouldRepaint(_StarCrossPainter old) => old.color != color;
 }
 
-// Kebero drum watermark painter
-class _KeberoWatermark extends StatelessWidget {
-  const _KeberoWatermark({this.color = _gold});
-  final Color color;
-  static const double size = 80;
-  static const double opacity = 0.15;
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: opacity,
-      child: SizedBox(
-        width: size, height: size,
-        child: CustomPaint(painter: _KeberoPainter(color: color)),
-      ),
-    );
-  }
-}
-
-class _KeberoPainter extends CustomPainter {
-  const _KeberoPainter({required this.color});
-  final Color color;
-  @override
-  void paint(Canvas canvas, Size s) {
-    final p = Paint()
-      ..color = color..strokeWidth = s.width * 0.025
-      ..style = PaintingStyle.stroke..strokeCap = StrokeCap.round;
-    final cx = s.width / 2;
-    // drum head top ellipse
-    canvas.drawOval(Rect.fromCenter(center: Offset(cx, s.height * 0.2),
-        width: s.width * 0.7, height: s.height * 0.12), p);
-    // drum head bottom ellipse
-    canvas.drawOval(Rect.fromCenter(center: Offset(cx, s.height * 0.8),
-        width: s.width * 0.5, height: s.height * 0.09), p);
-    // sides
-    canvas.drawLine(Offset(cx - s.width * 0.35, s.height * 0.2),
-        Offset(cx - s.width * 0.25, s.height * 0.8), p);
-    canvas.drawLine(Offset(cx + s.width * 0.35, s.height * 0.2),
-        Offset(cx + s.width * 0.25, s.height * 0.8), p);
-    // lacing zig-zag
-    final lp = Paint()..color = color..strokeWidth = s.width * 0.016
-      ..style = PaintingStyle.stroke..strokeCap = StrokeCap.round;
-    final path = Path();
-    path.moveTo(cx - s.width * 0.3, s.height * 0.3);
-    for (var i = 0; i < 5; i++) {
-      final x = i.isEven ? cx + s.width * 0.3 : cx - s.width * 0.3;
-      path.lineTo(x, s.height * (0.3 + i * 0.09));
-    }
-    canvas.drawPath(path, lp);
-  }
-  @override
-  bool shouldRepaint(_KeberoPainter old) => old.color != color;
-}
-
 // Instrument backdrop (subtle watermark for hero sections)
 class _InstrumentBackdrop extends StatelessWidget {
   const _InstrumentBackdrop();
@@ -361,10 +367,7 @@ class _InstrumentBackdrop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Opacity(
       opacity: opacity,
-      child: CustomPaint(
-        painter: _BackdropPainter(),
-        size: Size.infinite,
-      ),
+      child: CustomPaint(painter: _BackdropPainter(), size: Size.infinite),
     );
   }
 }
@@ -374,31 +377,27 @@ class _ParchmentThumbShape extends SliderComponentShape {
   final double radius;
 
   @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) => Size(radius * 2, radius * 2);
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
+      Size(radius * 2, radius * 2);
 
   @override
-  void paint(PaintingContext context, Offset center,
-      {required Animation<double> activationAnimation,
-      required Animation<double> enableAnimation,
-      required bool isDiscrete,
-      required TextPainter labelPainter,
-      required RenderBox parentBox,
-      required SliderThemeData sliderTheme,
-      required TextDirection textDirection,
-      required double value,
-      required double textScaleFactor,
-      required Size sizeWithOverflow}) {
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
     final canvas = context.canvas;
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()..color = _oxblood,
-    );
-    canvas.drawCircle(
-      center,
-      radius - 2.5,
-      Paint()..color = _screenBackground,
-    );
+    canvas.drawCircle(center, radius, Paint()..color = _oxblood);
+    canvas.drawCircle(center, radius - 2.5, Paint()..color = _screenBackground);
     canvas.drawCircle(
       center,
       radius - 2.5,
@@ -414,8 +413,10 @@ class _BackdropPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size s) {
     final p = Paint()
-      ..color = _gold..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke..strokeCap = StrokeCap.round;
+      ..color = _gold
+      ..strokeWidth = 0.8
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
 
     // Begena (lyre) — top left rotated
     canvas.save();
@@ -423,14 +424,24 @@ class _BackdropPainter extends CustomPainter {
     canvas.rotate(-0.21);
     final lyreSz = s.width * 0.28;
     // box
-    canvas.drawRect(Rect.fromLTWH(0, lyreSz * 0.55, lyreSz * 0.68, lyreSz * 0.35), p);
+    canvas.drawRect(
+      Rect.fromLTWH(0, lyreSz * 0.55, lyreSz * 0.68, lyreSz * 0.35),
+      p,
+    );
     // arms
     canvas.drawLine(Offset(lyreSz * 0.06, lyreSz * 0.55), Offset(0, 0), p);
-    canvas.drawLine(Offset(lyreSz * 0.62, lyreSz * 0.55), Offset(lyreSz * 0.68, 0), p);
+    canvas.drawLine(
+      Offset(lyreSz * 0.62, lyreSz * 0.55),
+      Offset(lyreSz * 0.68, 0),
+      p,
+    );
     canvas.drawLine(Offset(0, 0), Offset(lyreSz * 0.68, 0), p);
     for (var i = 1; i <= 5; i++) {
-      canvas.drawLine(Offset(lyreSz * i / 6.5, 0),
-          Offset(lyreSz * i / 6.5, lyreSz * 0.55), p);
+      canvas.drawLine(
+        Offset(lyreSz * i / 6.5, 0),
+        Offset(lyreSz * i / 6.5, lyreSz * 0.55),
+        p,
+      );
     }
     canvas.restore();
 
@@ -439,10 +450,22 @@ class _BackdropPainter extends CustomPainter {
     canvas.translate(s.width * 0.68, s.height * 0.6);
     canvas.rotate(0.26);
     final kSz = s.width * 0.22;
-    canvas.drawOval(Rect.fromCenter(center: Offset(kSz / 2, kSz * 0.15),
-        width: kSz, height: kSz * 0.22), p);
-    canvas.drawOval(Rect.fromCenter(center: Offset(kSz / 2, kSz * 0.85),
-        width: kSz * 0.7, height: kSz * 0.16), p);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(kSz / 2, kSz * 0.15),
+        width: kSz,
+        height: kSz * 0.22,
+      ),
+      p,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(kSz / 2, kSz * 0.85),
+        width: kSz * 0.7,
+        height: kSz * 0.16,
+      ),
+      p,
+    );
     canvas.drawLine(Offset(0, kSz * 0.15), Offset(kSz * 0.15, kSz * 0.85), p);
     canvas.drawLine(Offset(kSz, kSz * 0.15), Offset(kSz * 0.85, kSz * 0.85), p);
     canvas.restore();
@@ -453,15 +476,26 @@ class _BackdropPainter extends CustomPainter {
     canvas.rotate(0.14);
     final tSz = s.width * 0.14;
     final uPath = Path()
-      ..moveTo(0, tSz * 0.4)..lineTo(0, tSz * 1.0)
-      ..arcToPoint(Offset(tSz, tSz * 1.0), radius: Radius.circular(tSz / 2), clockwise: false)
+      ..moveTo(0, tSz * 0.4)
+      ..lineTo(0, tSz * 1.0)
+      ..arcToPoint(
+        Offset(tSz, tSz * 1.0),
+        radius: Radius.circular(tSz / 2),
+        clockwise: false,
+      )
       ..lineTo(tSz, tSz * 0.4);
     canvas.drawPath(uPath, p);
     for (var i = 1; i <= 3; i++) {
-      canvas.drawLine(Offset(-tSz * 0.1, tSz * i * 0.28),
-          Offset(tSz * 1.1, tSz * i * 0.28), p);
+      canvas.drawLine(
+        Offset(-tSz * 0.1, tSz * i * 0.28),
+        Offset(tSz * 1.1, tSz * i * 0.28),
+        p,
+      );
     }
-    canvas.drawRect(Rect.fromLTWH(tSz * 0.4, tSz * 1.0, tSz * 0.2, tSz * 0.6), p);
+    canvas.drawRect(
+      Rect.fromLTWH(tSz * 0.4, tSz * 1.0, tSz * 0.2, tSz * 0.6),
+      p,
+    );
     canvas.restore();
   }
 
@@ -480,14 +514,15 @@ class MezmurScreen extends StatelessWidget {
   Widget build(BuildContext context) => const _MezmurLibraryScreen();
 }
 
-class _MezmurLibraryScreen extends StatefulWidget {
+class _MezmurLibraryScreen extends ConsumerStatefulWidget {
   const _MezmurLibraryScreen();
 
   @override
-  State<_MezmurLibraryScreen> createState() => _MezmurLibraryScreenState();
+  ConsumerState<_MezmurLibraryScreen> createState() =>
+      _MezmurLibraryScreenState();
 }
 
-class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
+class _MezmurLibraryScreenState extends ConsumerState<_MezmurLibraryScreen> {
   static const _repository = MezmurLibraryRepository();
 
   // Audio
@@ -550,8 +585,8 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
   // ── Computed ────────────────────────────────────────────────────────────────
   MezmurTrack? get _currentTrack =>
       _queueIndex >= 0 && _queueIndex < _playQueue.length
-          ? _playQueue[_queueIndex]
-          : null;
+      ? _playQueue[_queueIndex]
+      : null;
 
   bool get _hasNext =>
       _playQueue.isNotEmpty &&
@@ -678,10 +713,7 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
     if (updated.length > 20) updated.removeRange(20, updated.length);
     setState(() => _recentlyPlayedIds = updated);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      'mezmur_recently_played_ids',
-      jsonEncode(updated),
-    );
+    await prefs.setString('mezmur_recently_played_ids', jsonEncode(updated));
   }
 
   // ── Sleep timer ─────────────────────────────────────────────────────────────
@@ -729,6 +761,13 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
     String? queueLabel,
     bool openPlayer = true,
   }) async {
+    final allowed = await ref
+        .read(signInGuardProvider)
+        .ensureSignedIn(context, feature: SignInFeature.mezmurPlayback);
+    if (!allowed) {
+      return;
+    }
+
     if (queue != null && queue.isNotEmpty) {
       final qi = queue.indexWhere((t) => t.id == track.id);
       setState(() {
@@ -775,6 +814,12 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
   Future<void> _togglePlayback() async {
     final t = _currentTrack;
     if (t == null) return;
+    final allowed = await ref
+        .read(signInGuardProvider)
+        .ensureSignedIn(context, feature: SignInFeature.mezmurPlayback);
+    if (!allowed) {
+      return;
+    }
     try {
       if (_playerState == PlayerState.playing) {
         await _player.pause();
@@ -858,9 +903,9 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
       _playQueue = q;
       _queueLabel = 'Manual Queue';
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${track.title} will play next.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${track.title} will play next.')));
   }
 
   void _addTrackToQueue(MezmurTrack track) {
@@ -872,9 +917,9 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
       if (_queueIndex < 0) _queueIndex = 0;
       _queueLabel = 'Manual Queue';
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${track.title} added to queue.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${track.title} added to queue.')));
   }
 
   // ── Asset materialisation ───────────────────────────────────────────────────
@@ -919,16 +964,10 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
           albums: albums,
           currentTrackId: _currentTrack?.id,
           likedTrackIds: _likedTrackIds,
-          onPlayAll: (tracks) => _playTrack(
-            tracks.first,
-            queue: tracks,
-            queueLabel: name,
-          ),
-          onPlayTrack: (track) => _playTrack(
-            track,
-            queue: artistTracks,
-            queueLabel: name,
-          ),
+          onPlayAll: (tracks) =>
+              _playTrack(tracks.first, queue: tracks, queueLabel: name),
+          onPlayTrack: (track) =>
+              _playTrack(track, queue: artistTracks, queueLabel: name),
           onLike: (track) => _toggleLike(track),
           onMore: (track, queue) => _showTrackActions(track, queue),
         ),
@@ -963,15 +1002,19 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
   }
 
   List<MezmurTrack> _applyFocus(List<MezmurTrack> tracks) {
-    return tracks.where((t) {
-      if (_focusedCompilation) {
-        if (!t.isCompilation) return false;
-        return _focusedAlbum == null || t.album == _focusedAlbum;
-      }
-      if (_focusedArtist != null && t.artist != _focusedArtist) return false;
-      if (_focusedAlbum != null && t.album != _focusedAlbum) return false;
-      return true;
-    }).toList(growable: false);
+    return tracks
+        .where((t) {
+          if (_focusedCompilation) {
+            if (!t.isCompilation) return false;
+            return _focusedAlbum == null || t.album == _focusedAlbum;
+          }
+          if (_focusedArtist != null && t.artist != _focusedArtist) {
+            return false;
+          }
+          if (_focusedAlbum != null && t.album != _focusedAlbum) return false;
+          return true;
+        })
+        .toList(growable: false);
   }
 
   String _queueContextLabel() {
@@ -1030,10 +1073,7 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
               const SizedBox(height: 2),
               Text(
                 _queueLabel,
-                style: const TextStyle(
-                  color: _mutedText,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: _mutedText, fontSize: 12),
               ),
               const SizedBox(height: 12),
               Flexible(
@@ -1071,15 +1111,23 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                           setSheetState(() {});
                         },
                         child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 2),
-                          leading: _TrackArt(seed: t.title, size: 40, radius: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                          ),
+                          leading: _TrackArt(
+                            seed: t.title,
+                            size: 40,
+                            radius: 10,
+                          ),
                           title: Text(
                             t.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: isCurrent ? _oxblood : _ink,
-                              fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isCurrent
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -1087,10 +1135,17 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                             '${t.artist} · ${t.album}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: _mutedText, fontSize: 12),
+                            style: const TextStyle(
+                              color: _mutedText,
+                              fontSize: 12,
+                            ),
                           ),
                           trailing: isCurrent
-                              ? const Icon(Icons.equalizer, color: _oxblood, size: 18)
+                              ? const Icon(
+                                  Icons.equalizer,
+                                  color: _oxblood,
+                                  size: 18,
+                                )
                               : IconButton(
                                   icon: const Icon(
                                     Icons.remove_circle_outline_rounded,
@@ -1098,9 +1153,9 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                                     size: 20,
                                   ),
                                   onPressed: () {
-                                    final newQueue =
-                                        List<MezmurTrack>.from(_playQueue)
-                                          ..removeAt(i);
+                                    final newQueue = List<MezmurTrack>.from(
+                                      _playQueue,
+                                    )..removeAt(i);
                                     setState(() {
                                       _playQueue = newQueue;
                                       if (_queueIndex > i) _queueIndex--;
@@ -1166,7 +1221,10 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                           '${track.artist} · ${track.album}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: _mutedText, fontSize: 12),
+                          style: const TextStyle(
+                            color: _mutedText,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -1410,7 +1468,10 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
   }
 
   // ── Liked songs list screen ───────────────────────────────────────────────────
-  void _showLikedSongsList(List<MezmurTrack> likedTracks, MezmurLibrary library) {
+  void _showLikedSongsList(
+    List<MezmurTrack> likedTracks,
+    MezmurLibrary library,
+  ) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (ctx) => _TrackListScreen(
@@ -1483,11 +1544,7 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                           _addTrackToPlaylist(name, track);
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Added to "$name"',
-                                ),
-                              ),
+                              SnackBar(content: Text('Added to "$name"')),
                             );
                           }
                         }
@@ -1509,8 +1566,9 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                   )
                 else
                   ...(_playlists.keys.toList()..sort()).map((name) {
-                    final alreadyAdded =
-                        (_playlists[name] ?? []).contains(track.id);
+                    final alreadyAdded = (_playlists[name] ?? []).contains(
+                      track.id,
+                    );
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Container(
@@ -1650,7 +1708,8 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !_playerExpanded &&
+      canPop:
+          !_playerExpanded &&
           _focusedArtist == null &&
           _focusedAlbum == null &&
           !_focusedCompilation,
@@ -1719,7 +1778,9 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
             final focused = _applyFocus(searched);
 
             final recentTracks = _recentlyPlayedIds
-                .map((id) => library.tracks.where((t) => t.id == id).firstOrNull)
+                .map(
+                  (id) => library.tracks.where((t) => t.id == id).firstOrNull,
+                )
                 .whereType<MezmurTrack>()
                 .toList();
 
@@ -1772,10 +1833,8 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                           child: _LikedSongsCard(
                             count: likedTracks.length,
-                            onTap: () => _showLikedSongsList(
-                              likedTracks,
-                              library,
-                            ),
+                            onTap: () =>
+                                _showLikedSongsList(likedTracks, library),
                             onPlayAll: () {
                               final sorted = List<MezmurTrack>.from(likedTracks)
                                 ..sort((a, b) {
@@ -1855,8 +1914,10 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
                 if (_playerExpanded && _currentTrack != null)
                   GestureDetector(
                     onVerticalDragUpdate: (d) => setState(
-                      () => _playerDragOffset =
-                          max(0.0, _playerDragOffset + d.delta.dy),
+                      () => _playerDragOffset = max(
+                        0.0,
+                        _playerDragOffset + d.delta.dy,
+                      ),
                     ),
                     onVerticalDragEnd: (d) {
                       if (_playerDragOffset > 80 ||
@@ -1914,9 +1975,8 @@ class _MezmurLibraryScreenState extends State<_MezmurLibraryScreen> {
     MezmurLibrary library,
   ) {
     // Determine which list to show based on filter
-    final effectiveFilter = _focusedArtist != null ||
-            _focusedAlbum != null ||
-            _focusedCompilation
+    final effectiveFilter =
+        _focusedArtist != null || _focusedAlbum != null || _focusedCompilation
         ? _BrowseFilter.tracks
         : _filter;
 
@@ -2049,34 +2109,50 @@ class _RecentlyPlayedSection extends StatelessWidget {
                           ),
                           if (isCurrent)
                             Positioned(
-                              right: 6, bottom: 6,
+                              right: 6,
+                              bottom: 6,
                               child: Container(
-                                width: 28, height: 28,
+                                width: 28,
+                                height: 28,
                                 decoration: BoxDecoration(
                                   color: _oxblood,
                                   shape: BoxShape.circle,
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black26, blurRadius: 6,
-                                  )],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                    ),
+                                  ],
                                 ),
-                                child: const Icon(Icons.equalizer_rounded,
-                                    color: Color(0xFFF5ECD4), size: 14),
+                                child: const Icon(
+                                  Icons.equalizer_rounded,
+                                  color: Color(0xFFF5ECD4),
+                                  size: 14,
+                                ),
                               ),
                             )
                           else
                             Positioned(
-                              right: 6, bottom: 6,
+                              right: 6,
+                              bottom: 6,
                               child: Container(
-                                width: 28, height: 28,
+                                width: 28,
+                                height: 28,
                                 decoration: BoxDecoration(
                                   color: _oxblood,
                                   shape: BoxShape.circle,
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black26, blurRadius: 6,
-                                  )],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                    ),
+                                  ],
                                 ),
-                                child: const Icon(Icons.play_arrow_rounded,
-                                    color: Color(0xFFF5ECD4), size: 16),
+                                child: const Icon(
+                                  Icons.play_arrow_rounded,
+                                  color: Color(0xFFF5ECD4),
+                                  size: 16,
+                                ),
                               ),
                             ),
                         ],
@@ -2138,7 +2214,11 @@ class _LikedSongsCard extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
           boxShadow: const [
-            BoxShadow(color: Color(0x18000000), blurRadius: 16, offset: Offset(0, 6)),
+            BoxShadow(
+              color: Color(0x18000000),
+              blurRadius: 16,
+              offset: Offset(0, 6),
+            ),
           ],
         ),
         child: Row(
@@ -2150,8 +2230,11 @@ class _LikedSongsCard extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.favorite_rounded,
-                  color: Color(0xFF4A1414), size: 26),
+              child: const Icon(
+                Icons.favorite_rounded,
+                color: Color(0xFF4A1414),
+                size: 26,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -2182,7 +2265,10 @@ class _LikedSongsCard extends StatelessWidget {
               onTap: onPlayAll,
               borderRadius: BorderRadius.circular(100),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
                 decoration: BoxDecoration(
                   color: _oxbloodDeep,
                   borderRadius: BorderRadius.circular(100),
@@ -2190,8 +2276,11 @@ class _LikedSongsCard extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.play_arrow_rounded,
-                        color: Color(0xFFF5ECD4), size: 16),
+                    Icon(
+                      Icons.play_arrow_rounded,
+                      color: Color(0xFFF5ECD4),
+                      size: 16,
+                    ),
                     SizedBox(width: 5),
                     Text(
                       'Play All',
@@ -2214,10 +2303,7 @@ class _LikedSongsCard extends StatelessWidget {
 
 // ── Artists Carousel ──────────────────────────────────────────────────────────
 class _FeaturedArtistsCarousel extends StatelessWidget {
-  const _FeaturedArtistsCarousel({
-    required this.artists,
-    required this.onTap,
-  });
+  const _FeaturedArtistsCarousel({required this.artists, required this.onTap});
 
   final List<MezmurArtistSummary> artists;
   final ValueChanged<MezmurArtistSummary> onTap;
@@ -2318,8 +2404,11 @@ class _AlbumsCarousel extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: _outlineColor),
                           boxShadow: const [
-                            BoxShadow(color: Color(0x0C000000),
-                                blurRadius: 10, offset: Offset(0, 4)),
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
                           ],
                         ),
                         child: _TrackArt(
@@ -2360,10 +2449,7 @@ class _AlbumsCarousel extends StatelessWidget {
 
 // ── Compilations Section (2-row horizontal grid) ─────────────────────────────
 class _CompilationsSection extends StatelessWidget {
-  const _CompilationsSection({
-    required this.compilations,
-    required this.onTap,
-  });
+  const _CompilationsSection({required this.compilations, required this.onTap});
 
   final List<MezmurAlbumSummary> compilations;
   final ValueChanged<MezmurAlbumSummary> onTap;
@@ -2386,42 +2472,38 @@ class _CompilationsSection extends StatelessWidget {
     }
 
     Widget chip(MezmurAlbumSummary c) => InkWell(
-          onTap: () => onTap(c),
+      onTap: () => onTap(c),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: _itemW,
+        height: _itemH,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: _cardBackground,
           borderRadius: BorderRadius.circular(14),
-          child: Container(
-            width: _itemW,
-            height: _itemH,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: _cardBackground,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _outlineColor),
-            ),
-            child: Row(
-              children: [
-                _TrackArt(
-                  seed: '${c.name}comp',
-                  size: 28,
-                  radius: 6,
+          border: Border.all(color: _outlineColor),
+        ),
+        child: Row(
+          children: [
+            _TrackArt(seed: '${c.name}comp', size: 28, radius: 6),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                c.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.italic,
+                  color: _ink,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    c.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.italic,
-                      color: _ink,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        );
+          ],
+        ),
+      ),
+    );
 
     final colCount = row0.length;
     final totalW = colCount * _itemW + (colCount - 1) * _gap + 32;
@@ -2443,19 +2525,23 @@ class _CompilationsSection extends StatelessWidget {
               children: [
                 Row(
                   children: row0
-                      .map((c) => Padding(
-                            padding: const EdgeInsets.only(right: _gap),
-                            child: chip(c),
-                          ))
+                      .map(
+                        (c) => Padding(
+                          padding: const EdgeInsets.only(right: _gap),
+                          child: chip(c),
+                        ),
+                      )
                       .toList(),
                 ),
                 const SizedBox(height: _gap),
                 Row(
                   children: row1
-                      .map((c) => Padding(
-                            padding: const EdgeInsets.only(right: _gap),
-                            child: chip(c),
-                          ))
+                      .map(
+                        (c) => Padding(
+                          padding: const EdgeInsets.only(right: _gap),
+                          child: chip(c),
+                        ),
+                      )
                       .toList(),
                 ),
               ],
@@ -2488,9 +2574,7 @@ class _CarouselHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        Expanded(
-          child: Container(height: 1, color: _outlineColor),
-        ),
+        Expanded(child: Container(height: 1, color: _outlineColor)),
         const SizedBox(width: 8),
         const _MeskelCrossIcon(size: 13, color: _gold),
       ],
@@ -2554,7 +2638,6 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         children: [
-
           if (hasFocus) ...[
             _FilterChip(
               label: '× $focusLabel',
@@ -2630,9 +2713,7 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: selected ? _oxblood : _outlineColor,
-          ),
+          border: Border.all(color: selected ? _oxblood : _outlineColor),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -2703,7 +2784,11 @@ class _ArtistListRow extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: _mutedText, size: 20),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: _mutedText,
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -2764,7 +2849,11 @@ class _AlbumListRow extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: _mutedText, size: 20),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: _mutedText,
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -2803,14 +2892,10 @@ class _TrackRow extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isCurrent
-              ? _oxblood.withValues(alpha: 0.06)
-              : _cardBackground,
+          color: isCurrent ? _oxblood.withValues(alpha: 0.06) : _cardBackground,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isCurrent
-                ? _oxblood.withValues(alpha: 0.28)
-                : _outlineColor,
+            color: isCurrent ? _oxblood.withValues(alpha: 0.28) : _outlineColor,
           ),
         ),
         child: Row(
@@ -2825,20 +2910,27 @@ class _TrackRow extends StatelessWidget {
                 ),
                 if (isLoading)
                   const SizedBox(
-                    width: 20, height: 20,
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Color(0xFFF5ECD4)),
+                      strokeWidth: 2,
+                      color: Color(0xFFF5ECD4),
+                    ),
                   )
                 else if (isCurrent)
                   Container(
-                    width: 44, height: 44,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
                       color: _oxblood.withValues(alpha: 0.72),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                      color: const Color(0xFFF5ECD4), size: 20,
+                      isPlaying
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      color: const Color(0xFFF5ECD4),
+                      size: 20,
                     ),
                   ),
               ],
@@ -2880,7 +2972,11 @@ class _TrackRow extends StatelessWidget {
             ),
             IconButton(
               onPressed: onMore,
-              icon: const Icon(Icons.more_vert_rounded, color: _mutedText, size: 18),
+              icon: const Icon(
+                Icons.more_vert_rounded,
+                color: _mutedText,
+                size: 18,
+              ),
               visualDensity: VisualDensity.compact,
             ),
           ],
@@ -2990,9 +3086,7 @@ class _MiniPlayerBar extends StatelessWidget {
                           onPressed: onLike,
                           icon: Icon(
                             isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: isLiked
-                                ? _gold
-                                : const Color(0x88F5ECD4),
+                            color: isLiked ? _gold : const Color(0x88F5ECD4),
                             size: 20,
                           ),
                           visualDensity: VisualDensity.compact,
@@ -3001,7 +3095,8 @@ class _MiniPlayerBar extends StatelessWidget {
                         GestureDetector(
                           onTap: onPlayPause,
                           child: Container(
-                            width: 42, height: 42,
+                            width: 42,
+                            height: 42,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: const Color(0xFFF5ECD4),
@@ -3011,15 +3106,19 @@ class _MiniPlayerBar extends StatelessWidget {
                               playerState == PlayerState.playing
                                   ? Icons.pause_rounded
                                   : Icons.play_arrow_rounded,
-                              color: _oxblood, size: 22,
+                              color: _oxblood,
+                              size: 22,
                             ),
                           ),
                         ),
                         const SizedBox(width: 4),
                         IconButton(
                           onPressed: onNext,
-                          icon: const Icon(Icons.skip_next_rounded,
-                              color: Color(0xAAF5ECD4), size: 22),
+                          icon: const Icon(
+                            Icons.skip_next_rounded,
+                            color: Color(0xAAF5ECD4),
+                            size: 22,
+                          ),
                           visualDensity: VisualDensity.compact,
                         ),
                       ],
@@ -3217,7 +3316,10 @@ class _ExpandedPlayerOverlay extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Center(
-                                  child: _MeskelCrossIcon(size: 16, color: _gold),
+                                  child: _MeskelCrossIcon(
+                                    size: 16,
+                                    color: _gold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -3381,11 +3483,19 @@ class _ExpandedPlayerOverlay extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: onTrackActions,
-                          child: const Icon(Icons.add_rounded, color: _mutedText, size: 24),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: _mutedText,
+                            size: 24,
+                          ),
                         ),
                         GestureDetector(
                           onTap: onQueue,
-                          child: const Icon(Icons.queue_music_rounded, color: _mutedText, size: 24),
+                          child: const Icon(
+                            Icons.queue_music_rounded,
+                            color: _mutedText,
+                            size: 24,
+                          ),
                         ),
                       ],
                     ),
@@ -3425,9 +3535,7 @@ class _ControlChip extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: active ? _oxblood.withValues(alpha: 0.12) : _panelBackground,
-          border: Border.all(
-            color: active ? _oxblood : _outlineColor,
-          ),
+          border: Border.all(color: active ? _oxblood : _outlineColor),
         ),
         alignment: Alignment.center,
         child: Icon(icon, color: active ? _oxblood : _mutedText, size: 18),
@@ -3509,16 +3617,27 @@ class _SearchField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'Hymns, cantors, albums…',
         hintStyle: const TextStyle(color: _mutedText, fontSize: 14),
-        prefixIcon: const Icon(Icons.search_rounded, color: _mutedText, size: 20),
+        prefixIcon: const Icon(
+          Icons.search_rounded,
+          color: _mutedText,
+          size: 20,
+        ),
         suffixIcon: query.isEmpty
             ? null
             : IconButton(
-                icon: const Icon(Icons.close_rounded, color: _mutedText, size: 18),
+                icon: const Icon(
+                  Icons.close_rounded,
+                  color: _mutedText,
+                  size: 18,
+                ),
                 onPressed: () => onChanged(''),
               ),
         filled: true,
         fillColor: _cardBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 13,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(100),
           borderSide: BorderSide(color: _outlineColor),
@@ -3648,7 +3767,11 @@ class _TrackListScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: _inkSoft, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: _inkSoft,
+            size: 20,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Column(
@@ -3717,12 +3840,16 @@ class _TrackListScreen extends StatelessWidget {
                       child: Stack(
                         children: [
                           Positioned(
-                            right: -10, top: -8,
+                            right: -10,
+                            top: -8,
                             child: Opacity(
                               opacity: 0.15,
                               child: SizedBox(
-                                width: 110, height: 110,
-                                child: CustomPaint(painter: _StarCrossPainter(color: _gold)),
+                                width: 110,
+                                height: 110,
+                                child: CustomPaint(
+                                  painter: _StarCrossPainter(color: _gold),
+                                ),
                               ),
                             ),
                           ),
@@ -3731,7 +3858,10 @@ class _TrackListScreen extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  const _MeskelCrossIcon(size: 11, color: _gold),
+                                  const _MeskelCrossIcon(
+                                    size: 11,
+                                    color: _gold,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     'PERSONAL',
@@ -3768,18 +3898,26 @@ class _TrackListScreen extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: GestureDetector(
-                                      onTap: tracks.isNotEmpty ? () => onPlay(tracks.first) : null,
+                                      onTap: tracks.isNotEmpty
+                                          ? () => onPlay(tracks.first)
+                                          : null,
                                       child: Container(
                                         height: 42,
                                         decoration: BoxDecoration(
                                           color: _gold,
-                                          borderRadius: BorderRadius.circular(100),
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
                                         ),
                                         child: const Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.play_arrow_rounded,
-                                                color: Color(0xFF2B1D10), size: 20),
+                                            Icon(
+                                              Icons.play_arrow_rounded,
+                                              color: Color(0xFF2B1D10),
+                                              size: 20,
+                                            ),
                                             SizedBox(width: 6),
                                             Text(
                                               'Play All',
@@ -3796,13 +3934,20 @@ class _TrackListScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 10),
                                   Container(
-                                    width: 42, height: 42,
+                                    width: 42,
+                                    height: 42,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(color: _gold.withValues(alpha: 0.5), width: 1.5),
+                                      border: Border.all(
+                                        color: _gold.withValues(alpha: 0.5),
+                                        width: 1.5,
+                                      ),
                                     ),
-                                    child: Icon(Icons.shuffle_rounded,
-                                        color: _gold.withValues(alpha: 0.9), size: 18),
+                                    child: Icon(
+                                      Icons.shuffle_rounded,
+                                      color: _gold.withValues(alpha: 0.9),
+                                      size: 18,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -3815,91 +3960,104 @@ class _TrackListScreen extends StatelessWidget {
                 ),
                 // Track list
                 SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (ctx, i) {
-                      final track = tracks[i];
-                      final isCurrent = track.id == currentTrackId;
-                      final isLiked = likedTrackIds.contains(track.id);
-                      return InkWell(
-                        onTap: () => onPlay(track),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          child: Row(
-                            children: [
-                              // index number
-                              SizedBox(
-                                width: 28,
-                                child: Text(
-                                  (i + 1).toString().padLeft(2, '0'),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isCurrent ? _oxblood : _mutedText,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'monospace',
-                                  ),
-                                ),
-                              ),
-                              _TrackArt(seed: '${track.title}${track.artist}', size: 44, radius: 10),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      track.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: isCurrent ? _oxblood : _ink,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                    Text(
-                                      track.artist,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(color: _mutedText, fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '#${track.trackNumber}',
-                                style: const TextStyle(
-                                  color: _mutedText,
+                  delegate: SliverChildBuilderDelegate((ctx, i) {
+                    final track = tracks[i];
+                    final isCurrent = track.id == currentTrackId;
+                    final isLiked = likedTrackIds.contains(track.id);
+                    return InkWell(
+                      onTap: () => onPlay(track),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            // index number
+                            SizedBox(
+                              width: 28,
+                              child: Text(
+                                (i + 1).toString().padLeft(2, '0'),
+                                style: TextStyle(
                                   fontSize: 12,
+                                  color: isCurrent ? _oxblood : _mutedText,
+                                  fontWeight: FontWeight.w600,
                                   fontFamily: 'monospace',
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              GestureDetector(
-                                onTap: () => onLike(track),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: Icon(
-                                    isLiked ? Icons.favorite : Icons.favorite_border,
-                                    color: isLiked ? _oxblood : _mutedText,
-                                    size: 18,
+                            ),
+                            _TrackArt(
+                              seed: '${track.title}${track.artist}',
+                              size: 44,
+                              radius: 10,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    track.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: isCurrent ? _oxblood : _ink,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
+                                  Text(
+                                    track.artist,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: _mutedText,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '#${track.trackNumber}',
+                              style: const TextStyle(
+                                color: _mutedText,
+                                fontSize: 12,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () => onLike(track),
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: Icon(
+                                  isLiked
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isLiked ? _oxblood : _mutedText,
+                                  size: 18,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () => onMore(track),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(6),
-                                  child: Icon(Icons.more_vert_rounded, color: _mutedText, size: 18),
+                            ),
+                            GestureDetector(
+                              onTap: () => onMore(track),
+                              child: const Padding(
+                                padding: EdgeInsets.all(6),
+                                child: Icon(
+                                  Icons.more_vert_rounded,
+                                  color: _mutedText,
+                                  size: 18,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    childCount: tracks.length,
-                  ),
+                      ),
+                    );
+                  }, childCount: tracks.length),
                 ),
               ],
             ),
@@ -3944,7 +4102,11 @@ class _CantorDetailScreen extends StatelessWidget {
             scrolledUnderElevation: 0,
             pinned: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: _inkSoft, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: _inkSoft,
+                size: 20,
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             actions: [
@@ -4016,9 +4178,14 @@ class _CantorDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: tracks.isNotEmpty ? () => onPlayAll(tracks) : null,
+                        onTap: tracks.isNotEmpty
+                            ? () => onPlayAll(tracks)
+                            : null,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 28,
+                            vertical: 13,
+                          ),
                           decoration: BoxDecoration(
                             color: _oxblood,
                             borderRadius: BorderRadius.circular(100),
@@ -4033,7 +4200,11 @@ class _CantorDetailScreen extends StatelessWidget {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.play_arrow_rounded, color: _screenBackground, size: 18),
+                              Icon(
+                                Icons.play_arrow_rounded,
+                                color: _screenBackground,
+                                size: 18,
+                              ),
                               SizedBox(width: 6),
                               Text(
                                 'Play',
@@ -4049,7 +4220,10 @@ class _CantorDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 13,
+                        ),
                         decoration: BoxDecoration(
                           color: _panelBackground,
                           borderRadius: BorderRadius.circular(100),
@@ -4066,13 +4240,18 @@ class _CantorDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Container(
-                        width: 44, height: 44,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _panelBackground,
                           border: Border.all(color: _outlineColor),
                         ),
-                        child: const Icon(Icons.shuffle_rounded, color: _inkSoft, size: 18),
+                        child: const Icon(
+                          Icons.shuffle_rounded,
+                          color: _inkSoft,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
@@ -4092,81 +4271,92 @@ class _CantorDetailScreen extends StatelessWidget {
 
           // Track list
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (ctx, i) {
-                final track = tracks[i];
-                final isCurrent = track.id == currentTrackId;
-                return InkWell(
-                  onTap: () => onPlayTrack(track),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        // italic rank number
-                        SizedBox(
-                          width: 24,
-                          child: Text(
-                            '${i + 1}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              color: isCurrent ? _oxblood : _gold,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // track art
-                        _TrackArt(seed: '${track.title}${track.artist}', size: 46, radius: 10),
-                        const SizedBox(width: 14),
-                        // title + plays
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                track.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  fontStyle: FontStyle.italic,
-                                  color: isCurrent ? _oxblood : _ink,
-                                ),
-                              ),
-                              Text(
-                                '${track.trackNumber * 1200 ~/ 100 + 4}.${track.trackNumber}K plays',
-                                style: const TextStyle(fontSize: 11, color: _mutedText),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // duration placeholder (track number as proxy)
-                        Text(
-                          '${4 + (track.trackNumber % 3)}:${((track.trackNumber * 17) % 60).toString().padLeft(2, '0')}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: _mutedText,
-                            fontFamily: 'monospace',
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () => onMore(track, tracks),
-                          child: const Padding(
-                            padding: EdgeInsets.all(6),
-                            child: Icon(Icons.more_vert_rounded, color: _mutedText, size: 18),
-                          ),
-                        ),
-                      ],
-                    ),
+            delegate: SliverChildBuilderDelegate((ctx, i) {
+              final track = tracks[i];
+              final isCurrent = track.id == currentTrackId;
+              return InkWell(
+                onTap: () => onPlayTrack(track),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-                );
-              },
-              childCount: tracks.length,
-            ),
+                  child: Row(
+                    children: [
+                      // italic rank number
+                      SizedBox(
+                        width: 24,
+                        child: Text(
+                          '${i + 1}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontStyle: FontStyle.italic,
+                            color: isCurrent ? _oxblood : _gold,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // track art
+                      _TrackArt(
+                        seed: '${track.title}${track.artist}',
+                        size: 46,
+                        radius: 10,
+                      ),
+                      const SizedBox(width: 14),
+                      // title + plays
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              track.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.italic,
+                                color: isCurrent ? _oxblood : _ink,
+                              ),
+                            ),
+                            Text(
+                              '${track.trackNumber * 1200 ~/ 100 + 4}.${track.trackNumber}K plays',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: _mutedText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // duration placeholder (track number as proxy)
+                      Text(
+                        '${4 + (track.trackNumber % 3)}:${((track.trackNumber * 17) % 60).toString().padLeft(2, '0')}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: _mutedText,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: () => onMore(track, tracks),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.more_vert_rounded,
+                            color: _mutedText,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }, childCount: tracks.length),
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -4198,8 +4388,10 @@ class _PlaylistScreen extends StatefulWidget {
   final Set<String> likedTrackIds;
   final void Function(String name) onCreatePlaylist;
   final void Function(String name) onDeletePlaylist;
-  final void Function(String playlistName, String trackId) onRemoveTrackFromPlaylist;
-  final void Function(String playlistName, List<MezmurTrack> tracks) onPlayPlaylist;
+  final void Function(String playlistName, String trackId)
+  onRemoveTrackFromPlaylist;
+  final void Function(String playlistName, List<MezmurTrack> tracks)
+  onPlayPlaylist;
   final void Function(MezmurTrack track, List<MezmurTrack> queue) onPlayTrack;
   final void Function(MezmurTrack) onLike;
   final void Function(MezmurTrack, List<MezmurTrack>) onTrackMore;
@@ -4223,7 +4415,10 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _screenBackground,
-        title: const Text('New Playlist', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w800)),
+        title: const Text(
+          'New Playlist',
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w800),
+        ),
         content: TextField(
           autofocus: true,
           onChanged: (v) => name = v.trim(),
@@ -4231,7 +4426,9 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
           decoration: const InputDecoration(
             hintText: 'Playlist name',
             hintStyle: TextStyle(color: _mutedText),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: _accent)),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: _accent),
+            ),
           ),
         ),
         actions: [
@@ -4241,7 +4438,10 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Create', style: TextStyle(color: _accent, fontWeight: FontWeight.w700)),
+            child: const Text(
+              'Create',
+              style: TextStyle(color: _accent, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
@@ -4257,8 +4457,17 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _screenBackground,
-        title: Text('Delete "$playlistName"?', style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w800)),
-        content: const Text('This playlist will be permanently removed.', style: TextStyle(color: _mutedText)),
+        title: Text(
+          'Delete "$playlistName"?',
+          style: const TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        content: const Text(
+          'This playlist will be permanently removed.',
+          style: TextStyle(color: _mutedText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -4267,11 +4476,16 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              if (_openPlaylist == playlistName) setState(() => _openPlaylist = null);
+              if (_openPlaylist == playlistName) {
+                setState(() => _openPlaylist = null);
+              }
               widget.onDeletePlaylist(playlistName);
               setState(() {});
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
@@ -4294,12 +4508,19 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
         backgroundColor: _screenBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Library',
-          style: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         actions: [
           IconButton(
@@ -4314,16 +4535,30 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.library_music_rounded, color: _outlineColor, size: 64),
+                  const Icon(
+                    Icons.library_music_rounded,
+                    color: _outlineColor,
+                    size: 64,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'No playlists yet',
-                    style: TextStyle(color: _mutedText, fontSize: 16, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      color: _mutedText,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextButton.icon(
                     icon: const Icon(Icons.add_rounded, color: _accent),
-                    label: const Text('Create playlist', style: TextStyle(color: _accent, fontWeight: FontWeight.w700)),
+                    label: const Text(
+                      'Create playlist',
+                      style: TextStyle(
+                        color: _accent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     onPressed: _promptCreate,
                   ),
                 ],
@@ -4336,7 +4571,10 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
                 final name = names[i];
                 final count = (widget.playlists[name] ?? []).length;
                 return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   leading: Container(
                     width: 48,
                     height: 48,
@@ -4349,18 +4587,29 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.queue_music_rounded, color: Colors.white, size: 24),
+                    child: const Icon(
+                      Icons.queue_music_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                   title: Text(
                     name,
-                    style: const TextStyle(color: Colors.black87, fontSize: 15, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   subtitle: Text(
                     '$count ${count == 1 ? "track" : "tracks"}',
                     style: const TextStyle(color: _mutedText, fontSize: 12),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.more_vert_rounded, color: _mutedText),
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      color: _mutedText,
+                    ),
                     onPressed: () => _confirmDelete(name),
                   ),
                   onTap: () => setState(() => _openPlaylist = name),
@@ -4378,18 +4627,32 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
         backgroundColor: _screenBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+          ),
           onPressed: () => setState(() => _openPlaylist = null),
         ),
         title: Text(
           playlistName,
-          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         actions: [
           if (tracks.isNotEmpty)
             TextButton.icon(
-              icon: const Icon(Icons.play_arrow_rounded, color: _accent, size: 20),
-              label: const Text('Play All', style: TextStyle(color: _accent, fontWeight: FontWeight.w700)),
+              icon: const Icon(
+                Icons.play_arrow_rounded,
+                color: _accent,
+                size: 20,
+              ),
+              label: const Text(
+                'Play All',
+                style: TextStyle(color: _accent, fontWeight: FontWeight.w700),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 widget.onPlayPlaylist(playlistName, tracks);
@@ -4424,14 +4687,20 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 20),
                     color: Colors.red.shade100,
-                    child: const Icon(Icons.remove_circle_outline_rounded, color: Colors.red),
+                    child: const Icon(
+                      Icons.remove_circle_outline_rounded,
+                      color: Colors.red,
+                    ),
                   ),
                   onDismissed: (_) {
                     widget.onRemoveTrackFromPlaylist(playlistName, track.id);
                     setState(() {});
                   },
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     leading: Container(
                       width: 44,
                       height: 44,
@@ -4441,7 +4710,9 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
                       ),
                       alignment: Alignment.center,
                       child: Icon(
-                        isCurrent ? Icons.graphic_eq_rounded : Icons.music_note_rounded,
+                        isCurrent
+                            ? Icons.graphic_eq_rounded
+                            : Icons.music_note_rounded,
                         color: isCurrent ? Colors.white : _accent,
                         size: 20,
                       ),
@@ -4475,7 +4746,11 @@ class _PlaylistScreenState extends State<_PlaylistScreen> {
                           visualDensity: VisualDensity.compact,
                         ),
                         IconButton(
-                          icon: const Icon(Icons.more_vert_rounded, color: _mutedText, size: 20),
+                          icon: const Icon(
+                            Icons.more_vert_rounded,
+                            color: _mutedText,
+                            size: 20,
+                          ),
                           onPressed: () {
                             Navigator.of(context).pop();
                             widget.onTrackMore(track, tracks);

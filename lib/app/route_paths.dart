@@ -2,12 +2,15 @@ class RoutePaths {
   RoutePaths._();
 
   static const today = '/today';
+  static const onboarding = '/onboarding';
   static const bible = '/bible';
   static const prayers = '/prayers';
   static const prayersDaily = '/prayers/daily';
   static const prayersMezmur = '/prayers/mezmur';
   static const prayersReflection = '/prayers/reflection';
   static const prayersLightCandle = '/prayers/light-candle';
+  static const prayerDetail = '/prayers/:id';
+  static const legacyPrayerDetail = '/prayers/detail/:id';
   static const calendar = '/calendar';
   static const calendarFasting = '/calendar/fasting';
   static const calendarReadings = '/calendar/readings';
@@ -58,6 +61,8 @@ class RoutePaths {
 
   static String bookDetailPath(String id) => '/books/book/$id';
 
+  static String onboardingPath() => onboarding;
+
   static String bookReaderPath(String id) => '/books/reader/$id';
 
   static String dailyPrayersBooksPath() => dailyPrayersBooks;
@@ -78,7 +83,9 @@ class RoutePaths {
     return '$base?trackResume=1';
   }
 
-  static String prayerDetailPath(String id) => '/prayers/detail/$id';
+  static String prayerDetailPath(String id) => '/prayers/$id';
+
+  static String legacyPrayerDetailPath(String id) => '/prayers/detail/$id';
 
   static String dailyPrayerPath() => prayersDaily;
 

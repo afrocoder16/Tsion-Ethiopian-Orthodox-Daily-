@@ -5,23 +5,20 @@ import '../repos/fake/fake_streak_repository.dart';
 import '../repos/streak_repositories.dart';
 import 'repo_providers.dart';
 
-final streakRepositoryProvider = Provider<StreakRepository>(
-  (ref) {
-    final useDb = ref.watch(useDbReposProvider);
-    if (useDb) {
-      return DbStreakRepository(ref.watch(dbProvider));
-    }
-    return FakeStreakRepository();
-  },
-);
+final streakRepositoryProvider = Provider<StreakRepository>((ref) {
+  final useDb = ref.watch(useDbReposProvider);
+  if (useDb) {
+    return DbStreakRepository(ref.watch(dbProvider));
+  }
+  return FakeStreakRepository();
+});
 
-final streakScreenProvider =
-    FutureProvider.autoDispose<StreakScreenState>(
-  (ref) async {
-    try {
-      return await ref.watch(streakRepositoryProvider).fetchStreakScreen();
-    } catch (_) {
-      return FakeStreakRepository().fetchStreakScreen();
-    }
-  },
-);
+final streakScreenProvider = FutureProvider.autoDispose<StreakScreenState>((
+  ref,
+) async {
+  try {
+    return await ref.watch(streakRepositoryProvider).fetchStreakScreen();
+  } catch (_) {
+    return FakeStreakRepository().fetchStreakScreen();
+  }
+});

@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/actions/user_actions.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 import '../../../app/route_paths.dart';
 
 class ExploreScreen extends ConsumerWidget {
@@ -472,19 +474,31 @@ class _ContentCard extends StatelessWidget {
                   child: IconButton(
                     icon: const Icon(Icons.bookmark_border, size: 18),
                     onPressed: () async {
-                      await toggleSave(
-                        db: ref.read(dbProvider),
-                        id: item.routeId,
-                        title: item.title,
-                        kind: 'explore',
-                        createdAtIso: DateTime.now().toIso8601String(),
-                      );
-                      ref.invalidate(exploreScreenStateProvider);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text('Saved')));
-                      }
+                      await ref
+                          .read(signInGuardProvider)
+                          .run<void>(
+                            context,
+                            feature: SignInFeature.bookmarks,
+                            action: () async {
+                              final sync = await ref.read(
+                                userDataSyncServiceProvider.future,
+                              );
+                              await toggleSave(
+                                db: ref.read(dbProvider),
+                                id: item.routeId,
+                                title: item.title,
+                                kind: 'explore',
+                                createdAtIso: DateTime.now().toIso8601String(),
+                                sync: sync,
+                              );
+                              ref.invalidate(exploreScreenStateProvider);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Saved')),
+                                );
+                              }
+                            },
+                          );
                     },
                   ),
                 ),

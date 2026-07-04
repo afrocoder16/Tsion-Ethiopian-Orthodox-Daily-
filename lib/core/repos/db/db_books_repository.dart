@@ -1,5 +1,6 @@
 import '../../db/app_database.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
+import '../../strings/app_strings.dart';
 import '../guards/screen_state_guards.dart';
 import '../screen_repositories.dart';
 import '../screen_states.dart';
@@ -14,11 +15,12 @@ class DbBooksRepository implements BooksRepository {
     String? progressText;
     List<ui.BookItem> updatedContinueReading = <ui.BookItem>[];
     try {
-      final progressRows = await db.readingProgressDao.fetchRecentReadingProgress(
-        limit: 5,
-      );
+      final progressRows = await db.readingProgressDao
+          .fetchRecentReadingProgress(limit: 5);
       final filteredRows = _filterContinueReadingRows(progressRows);
-      progressText = filteredRows.isEmpty ? null : filteredRows.first.progressText;
+      progressText = filteredRows.isEmpty
+          ? null
+          : filteredRows.first.progressText;
       updatedContinueReading = filteredRows
           .map(
             (row) => ui.BookItem(
@@ -39,7 +41,7 @@ class DbBooksRepository implements BooksRepository {
         label: '7-day reading streak',
         compact: true,
       ),
-      searchBar: const ui.SearchBar(placeholder: 'Search by title'),
+      searchBar: const ui.SearchBar(placeholder: AppStrings.bibleSearchHint),
       filters: const [
         ui.BooksFilterOption(text: 'All', value: 'all'),
         ui.BooksFilterOption(text: 'Bible', value: 'bible'),

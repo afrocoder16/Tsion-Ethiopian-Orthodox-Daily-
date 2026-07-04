@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
 class ReflectionScreen extends ConsumerWidget {
@@ -11,14 +12,17 @@ class ReflectionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(prayersScreenStateProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: state.when(
-          data: (raw) =>
-              _ReflectionContent(view: PrayersAdapter(raw).reflectionJournal),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) =>
-              const Center(child: Text('Unable to load reflection')),
+    return SignInGate(
+      feature: SignInFeature.dailyReflection,
+      child: Scaffold(
+        body: SafeArea(
+          child: state.when(
+            data: (raw) =>
+                _ReflectionContent(view: PrayersAdapter(raw).reflectionJournal),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) =>
+                const Center(child: Text('Unable to load reflection')),
+          ),
         ),
       ),
     );

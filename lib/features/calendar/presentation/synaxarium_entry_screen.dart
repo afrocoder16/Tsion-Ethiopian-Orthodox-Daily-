@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/calendar_day_detail_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 
 class SynaxariumEntryScreen extends ConsumerStatefulWidget {
   const SynaxariumEntryScreen({super.key, required this.ethKey});
@@ -49,11 +51,34 @@ class _SynaxariumEntryScreenState extends ConsumerState<SynaxariumEntryScreen> {
           IconButton(
             tooltip: _isSaved ? 'Remove saved day' : 'Save day',
             onPressed: () async {
-              await ref.read(synaxariumRepositoryProvider).toggleBookmark(
-                    widget.ethKey,
+              await ref
+                  .read(signInGuardProvider)
+                  .run<void>(
+                    context,
+                    feature: SignInFeature.bookmarks,
+                    action: () async {
+                      final sync = await ref.read(
+                        userDataSyncServiceProvider.future,
+                      );
+                      await ref
+                          .read(synaxariumRepositoryProvider)
+                          .toggleBookmark(widget.ethKey);
+                      if (_isSaved) {
+                        await sync?.mirrorBookmarkDeleted(
+                          'synaxarium-${widget.ethKey}',
+                        );
+                      } else {
+                        await sync?.mirrorBookmarkSaved(
+                          id: 'synaxarium-${widget.ethKey}',
+                          title: widget.ethKey,
+                          kind: 'synaxarium',
+                          createdAtIso: DateTime.now().toIso8601String(),
+                        );
+                      }
+                      await _loadSaved();
+                      ref.invalidate(synaxariumBookmarksProvider(0));
+                    },
                   );
-              await _loadSaved();
-              ref.invalidate(synaxariumBookmarksProvider(0));
             },
             icon: Icon(
               _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
@@ -104,7 +129,10 @@ class _SynaxariumEntryScreenState extends ConsumerState<SynaxariumEntryScreen> {
                     const TextSpan(
                       text:
                           'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.\n\n',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     TextSpan(
                       text: body,
@@ -152,7 +180,8 @@ String _prepareSynaxariumText(String raw) {
 }
 
 String _bodyWithoutIntro(String text) {
-  const intro = 'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.';
+  const intro =
+      'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.';
   if (text.startsWith(intro)) {
     return text.substring(intro.length).trim();
   }

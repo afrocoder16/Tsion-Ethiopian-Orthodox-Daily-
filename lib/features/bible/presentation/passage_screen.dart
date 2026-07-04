@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/actions/user_actions.dart';
+import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/repos/book_flow_repositories.dart';
 import '../../../core/providers/book_flow_providers.dart';
 import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
+import '../../../core/providers/sync_providers.dart';
 
 class PassageScreen extends ConsumerWidget {
   const PassageScreen({
@@ -29,9 +31,8 @@ class PassageScreen extends ConsumerWidget {
         passage: passage,
         trackForContinueReading: trackForContinueReading,
       ),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, _) => Scaffold(
         body: Center(
           child: Column(
@@ -107,18 +108,30 @@ class _PassageContentState extends ConsumerState<_PassageContent> {
           _PassageAction(
             icon: Icons.bookmark_border,
             onTap: () async {
-              await toggleSave(
-                db: ref.read(dbProvider),
-                id: 'passage-${passage.bookId}-${passage.chapter}',
-                title: '${passage.bookTitle} ${passage.chapter}',
-                kind: 'bookmark',
-                createdAtIso: DateTime.now().toIso8601String(),
-              );
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Bookmarked')),
-                );
-              }
+              await ref
+                  .read(signInGuardProvider)
+                  .run<void>(
+                    context,
+                    feature: SignInFeature.bookmarks,
+                    action: () async {
+                      final sync = await ref.read(
+                        userDataSyncServiceProvider.future,
+                      );
+                      await toggleSave(
+                        db: ref.read(dbProvider),
+                        id: 'passage-${passage.bookId}-${passage.chapter}',
+                        title: '${passage.bookTitle} ${passage.chapter}',
+                        kind: 'bookmark',
+                        createdAtIso: DateTime.now().toIso8601String(),
+                        sync: sync,
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Bookmarked')),
+                        );
+                      }
+                    },
+                  );
             },
           ),
           _PassageAction(
@@ -177,7 +190,8 @@ class _VerseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () async {
-        final text = '${verse.number}. ${verse.text} ($bookTitle $chapter:${verse.number})';
+        final text =
+            '${verse.number}. ${verse.text} ($bookTitle $chapter:${verse.number})';
         await Clipboard.setData(ClipboardData(text: text));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

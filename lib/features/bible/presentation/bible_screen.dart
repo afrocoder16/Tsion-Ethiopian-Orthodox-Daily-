@@ -35,7 +35,10 @@ class _BooksContent extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _SearchBar(placeholder: adapter.searchPlaceholder),
+        _SearchBar(
+          placeholder: adapter.searchPlaceholder,
+          onTap: () => context.go(RoutePaths.bibleLibraryPath()),
+        ),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -188,28 +191,33 @@ class _InlineErrorCard extends StatelessWidget {
 }
 
 class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.placeholder});
+  const _SearchBar({required this.placeholder, required this.onTap});
 
   final String placeholder;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F3F3),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, size: 20, color: Colors.black45),
-          const SizedBox(width: 8),
-          Text(
-            placeholder,
-            style: const TextStyle(fontSize: 13, color: Colors.black45),
-          ),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.search, size: 20, color: Colors.black45),
+            const SizedBox(width: 8),
+            Text(
+              placeholder,
+              style: const TextStyle(fontSize: 13, color: Colors.black45),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -56,7 +56,11 @@ class FakeBibleLibraryRepository implements BibleLibraryRepository {
 
 class FakePassageRepository implements PassageRepository {
   @override
-  Future<PassageState> fetchPassage(String bookId, int chapter, {String lang = 'am'}) {
+  Future<PassageState> fetchPassage(
+    String bookId,
+    int chapter, {
+    String lang = 'am',
+  }) {
     final verses = List<PassageVerse>.generate(
       10,
       (index) => PassageVerse(
@@ -75,6 +79,17 @@ class FakePassageRepository implements PassageRepository {
   }
 }
 
+class FakeBibleSearchRepository implements BibleSearchRepository {
+  @override
+  Future<List<BibleSearchResult>> search(
+    String query, {
+    String lang = 'am',
+    int limit = 50,
+  }) {
+    return Future.value(const []);
+  }
+}
+
 String _titleFromId(String id) {
   return id
       .split('-')
@@ -90,7 +105,15 @@ _BookPreset _bookPreset(String id) {
         title: 'Wudase Mariyam',
         author: 'Daily Prayers',
         description: 'Daily praises and petitions to Saint Mary.',
-        toc: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        toc: [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday',
+        ],
       );
     case 'book-psalms':
       return const _BookPreset(
@@ -104,7 +127,12 @@ _BookPreset _bookPreset(String id) {
         title: 'Sene Gologota',
         author: 'Daily Prayers',
         description: 'Meditations and prayers on the Passion.',
-        toc: ['Opening Prayer', 'Meditation 1', 'Meditation 2', 'Closing Prayer'],
+        toc: [
+          'Opening Prayer',
+          'Meditation 1',
+          'Meditation 2',
+          'Closing Prayer',
+        ],
       );
     case 'book-seyfe-selase':
       return const _BookPreset(
@@ -138,7 +166,8 @@ _BookPreset _bookPreset(String id) {
   return _BookPreset(
     title: _titleFromId(id),
     author: 'Author Name',
-    description: 'A reflective book in progress. Continue reading where you left off.',
+    description:
+        'A reflective book in progress. Continue reading where you left off.',
     toc: const ['Introduction', 'Chapter 1', 'Chapter 2', 'Chapter 3'],
   );
 }

@@ -56,10 +56,7 @@ class BibleLibraryState {
 }
 
 class PassageVerse {
-  const PassageVerse({
-    required this.number,
-    required this.text,
-  });
+  const PassageVerse({required this.number, required this.text});
 
   final int number;
   final String text;
@@ -79,6 +76,24 @@ class PassageState {
   final List<PassageVerse> verses;
 }
 
+class BibleSearchResult {
+  const BibleSearchResult({
+    required this.bookId,
+    required this.bookTitle,
+    required this.chapter,
+    required this.verse,
+    required this.text,
+    required this.snippet,
+  });
+
+  final String bookId;
+  final String bookTitle;
+  final int chapter;
+  final int verse;
+  final String text;
+  final String snippet;
+}
+
 abstract class BookDetailRepository {
   Future<BookDetailState> fetchDetail(String id);
 }
@@ -92,5 +107,17 @@ abstract class BibleLibraryRepository {
 }
 
 abstract class PassageRepository {
-  Future<PassageState> fetchPassage(String bookId, int chapter, {String lang = 'am'});
+  Future<PassageState> fetchPassage(
+    String bookId,
+    int chapter, {
+    String lang = 'am',
+  });
+}
+
+abstract class BibleSearchRepository {
+  Future<List<BibleSearchResult>> search(
+    String query, {
+    String lang = 'am',
+    int limit = 50,
+  });
 }

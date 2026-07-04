@@ -19,9 +19,11 @@ class DbSynaxariumRepository implements SynaxariumRepository {
   final String entriesAssetPath;
 
   static const String _bookmarkMetaKey = 'synaxarium_bookmarks_v1';
-  static const String _snippetBookmarkMetaKey = 'synaxarium_snippet_bookmarks_v1';
+  static const String _snippetBookmarkMetaKey =
+      'synaxarium_snippet_bookmarks_v1';
   static const String _bookmarkPrefsKey = 'synaxarium_bookmarks_v1';
-  static const String _snippetBookmarkPrefsKey = 'synaxarium_snippet_bookmarks_v1';
+  static const String _snippetBookmarkPrefsKey =
+      'synaxarium_snippet_bookmarks_v1';
 
   Map<String, dynamic>? _indexRoot;
   Map<String, dynamic>? _entriesRoot;
@@ -155,24 +157,24 @@ class DbSynaxariumRepository implements SynaxariumRepository {
     try {
       final list = await _snippetBookmarkList();
       return list
-        .whereType<Map>()
-        .map((item) => item.map((k, v) => MapEntry('$k', v)))
-        .where((item) {
-          if (entryKey == null || entryKey.isEmpty) {
-            return true;
-          }
-          return '${item['entryKey'] ?? ''}' == entryKey;
-        })
-        .map(
-          (item) => SynaxariumSnippetBookmark(
-            id: '${item['id'] ?? ''}',
-            entryKey: '${item['entryKey'] ?? ''}',
-            text: '${item['text'] ?? ''}',
-            createdAtIso: '${item['createdAtIso'] ?? ''}',
-          ),
-        )
-        .where((item) => item.id.isNotEmpty && item.text.trim().isNotEmpty)
-        .toList()
+          .whereType<Map>()
+          .map((item) => item.map((k, v) => MapEntry('$k', v)))
+          .where((item) {
+            if (entryKey == null || entryKey.isEmpty) {
+              return true;
+            }
+            return '${item['entryKey'] ?? ''}' == entryKey;
+          })
+          .map(
+            (item) => SynaxariumSnippetBookmark(
+              id: '${item['id'] ?? ''}',
+              entryKey: '${item['entryKey'] ?? ''}',
+              text: '${item['text'] ?? ''}',
+              createdAtIso: '${item['createdAtIso'] ?? ''}',
+            ),
+          )
+          .where((item) => item.id.isNotEmpty && item.text.trim().isNotEmpty)
+          .toList()
         ..sort((a, b) => b.createdAtIso.compareTo(a.createdAtIso));
     } catch (_) {
       return const [];

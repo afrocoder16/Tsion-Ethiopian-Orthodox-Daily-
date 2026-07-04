@@ -103,5 +103,5 @@ final bibleFontSizeProvider = StateProvider<double>((ref) => 14.0);
 // Reading progress per book
 final readingProgressProvider =
     FutureProvider.family<ReadingProgressData?, String>((ref, bookId) {
-  return ref.read(dbProvider).readingProgressDao.getReadingProgress(bookId);
-});
+      return ref.read(dbProvider).readingProgressDao.getReadingProgress(bookId);
+    });

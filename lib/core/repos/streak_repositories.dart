@@ -27,10 +27,7 @@ class StreakPracticeItem {
 }
 
 class StreakSocialCard {
-  const StreakSocialCard({
-    required this.title,
-    required this.subtitle,
-  });
+  const StreakSocialCard({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;

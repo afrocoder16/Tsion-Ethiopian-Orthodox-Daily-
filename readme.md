@@ -8,7 +8,7 @@ Tsion helps believers keep the Church rhythm in their pocket: Verse of the Day, 
 
 In active development. Solo developer: midvora.com.
 
-Current branch of note: `codex/mezmur-library-player` (ready to merge into main).
+Current branch of note: `codex/mezmur-library-player` (Phase 1 implementation branch, review before merging).
 
 ## Platforms
 
@@ -19,11 +19,11 @@ iOS and Android, single Flutter codebase.
 - Flutter, Riverpod, go_router
 - Drift (SQLite) for local storage
 - Abushakir for Ethiopian calendar and Bahire Hasab
-- flutter_local_notifications for prayer reminders (Phase 1, in progress)
+- flutter_local_notifications, timezone, and flutter_timezone for prayer reminders
 - Firebase (auth, Firestore) for sign-in and cloud sync
 - audioplayers for Mezmur playback
 
-Content is public domain (see `documentation/PRODUCT.md` for details). Mezmur audio rights are an open question.
+Content sources and rights are tracked in `documentation/PRODUCT.md`. Mezmur audio rights, Synaxarium rights, and the exact Amharic Bible source are open launch questions.
 
 ## Documentation
 

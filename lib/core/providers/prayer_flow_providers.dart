@@ -6,20 +6,18 @@ import '../repos/db/db_prayer_detail_repository.dart';
 import '../repos/fake/fake_prayer_detail_repository.dart';
 import '../repos/prayer_flow_repositories.dart';
 
-final prayerDetailRepositoryProvider = Provider<PrayerDetailRepository>(
-  (ref) {
-    final useDb = ref.watch(useDbReposProvider);
-    if (useDb) {
-      return DbPrayerDetailRepository(ref.watch(dbProvider));
-    }
-    return FakePrayerDetailRepository();
-  },
-);
+final prayerDetailRepositoryProvider = Provider<PrayerDetailRepository>((ref) {
+  final useDb = ref.watch(useDbReposProvider);
+  if (useDb) {
+    return DbPrayerDetailRepository(ref.watch(dbProvider));
+  }
+  return FakePrayerDetailRepository();
+});
 
-final prayerDetailProvider =
-    FutureProvider.family.autoDispose<PrayerDetailState, String>(
-  (ref, id) => ref.watch(prayerDetailRepositoryProvider).fetchDetail(id),
-);
+final prayerDetailProvider = FutureProvider.family
+    .autoDispose<PrayerDetailState, String>(
+      (ref, id) => ref.watch(prayerDetailRepositoryProvider).fetchDetail(id),
+    );
 
 final recentPrayerIdProvider = FutureProvider.autoDispose<String>((ref) async {
   final db = ref.watch(dbProvider);

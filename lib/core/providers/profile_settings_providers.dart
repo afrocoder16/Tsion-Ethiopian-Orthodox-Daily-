@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../db/daos/prayer_dao.dart';
 import '../profile/profile_settings.dart';
 import 'calendar_preferences_provider.dart';
+import 'notification_providers.dart';
 import 'repo_providers.dart';
+import 'sync_providers.dart';
 
 final profileSettingsRepositoryProvider = Provider<ProfileSettingsRepository>(
   (ref) =>
@@ -139,10 +141,21 @@ class PrayerRemindersController
 
   Future<void> saveSlot(PrayerReminderSlot slot) async {
     await ref.read(profileSettingsRepositoryProvider).savePrayerReminder(slot);
-    final current = state.valueOrNull ?? const <PrayerReminderSlot>[];
-    final updated = current
-        .map((item) => item.slotId == slot.slotId ? slot : item)
-        .toList();
+    final sync = await ref.read(userDataSyncServiceProvider.future);
+    await sync?.mirrorPrayerScheduleSlot(
+      slotId: slot.slotId,
+      label: slot.label,
+      timeLocal: slot.timeLocal,
+      isEnabled: slot.isEnabled,
+    );
+    final updated = await ref
+        .read(profileSettingsRepositoryProvider)
+        .loadPrayerReminders();
+    final notificationService = ref.read(prayerNotificationServiceProvider);
+    if (slot.isEnabled) {
+      await notificationService.requestPermissions();
+    }
+    await notificationService.schedulePrayerReminders(updated);
     state = AsyncData(updated);
   }
 }

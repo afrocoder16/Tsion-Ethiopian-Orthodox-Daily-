@@ -58,9 +58,9 @@ These were decided after auditing the code and are the ground truth for scope. A
 
 ### Decision 4: Prayer notifications
 
-- Core MVP pillar. High priority for Phase 1.
-- The app currently saves reminder times but never fires them. This is the biggest specced gap.
-- Implementation: flutter_local_notifications plus timezone package, wired to the existing `prayer_schedule` table.
+- Core MVP pillar.
+- The app saves reminder times and schedules local notifications from the existing `prayer_schedule` table.
+- Implementation: flutter_local_notifications plus timezone and flutter_timezone, with explicit iOS and Android notification permission handling.
 
 ### Decision 5: Amharic interface localization
 
@@ -100,7 +100,7 @@ Routes: `/books/bible`, `/books/bible/:book/:chapter`, plus legacy `/bible/...`.
 - Book list, chapter navigation, verse display.
 - Deep link from Verse of the Day and Daily Readings opens the exact passage.
 - Continue reading from last position.
-- Full-text verse search (Phase 1 migration to SQLite + FTS5, both English and Amharic).
+- Full-text verse search through SQLite + FTS5, both English and Amharic.
 - Bookmarks require sign-in (see Section 6).
 
 Offline: yes. Sign-in required: only for bookmarks.
@@ -113,7 +113,7 @@ Route: `/prayers` and `/prayers/:id`.
 - Prayer detail with text (Amharic and English content) and completion button.
 - Prayer schedule editor: 4-time default, 7-time option, custom times allowed.
 - Completion tracking, feeds streak.
-- Reminders (local notifications) that actually fire when configured. Phase 1 build.
+- Reminders (local notifications) that fire when configured.
 - Related: Mezmur (audio), Kidase (worship service reference), Light a Candle, Daily Reflection, Fasting Guidance.
 
 Offline: yes for prayer text and schedule. Sign-in required for streak history, Light a Candle, Daily Reflection, and Mezmur playback.
@@ -250,7 +250,7 @@ When a signed-out user taps a gated feature, show a friendly prompt explaining w
 
 All content in the app is sourced as public domain or otherwise clearly rights-cleared, with the following notes:
 
-- **English Bible**: World English Bible (WEB) is the intended source. 77 of 81 books have real text as of the last audit. See `doc/english_bible_build_notes.md` in the repo for status.
+- **English Bible**: World English Bible (WEB) is the intended source. 77 of 81 books have real text as of the last audit.
 - **Amharic Bible**: public domain source. Which specific version needs to be documented once confirmed. New Amharic Standard Version is copyrighted and is not used.
 - **Synaxarium**: source PDFs are in the repo. Rights need to be confirmed in writing before release.
 - **Mezmur audio**: rights are unclear as of this document. This is an open question.
@@ -266,7 +266,7 @@ These are unresolved and must not be guessed at.
 
 1. **Mezmur audio rights**: what are the exact tracks and confirmed rights per track?
 2. **Sign-in methods**: is Apple Sign-In needed for iOS App Store approval? (Yes, if the app offers third-party sign-in like Google, Apple requires Apple Sign-In too. Confirm and add.)
-3. **Firestore usage today**: firebase_core, firebase_auth, cloud_firestore are all in pubspec. Is Firestore actively being used, or only auth?
+3. **Calendar review**: priest or scholar review of golden-date expectations before public launch.
 4. **Branding**: tagline, final color palette, logo. Current theme uses Colors.deepPurple as a placeholder.
 5. **License**: repo has no LICENSE file. Decide before publishing publicly.
 6. **App Store metadata**: name, subtitle, screenshots, description, category.
@@ -283,16 +283,15 @@ These are unresolved and must not be guessed at.
 
 In priority order:
 
-1. **Calendar engine tests**. Golden-date tests for known Easter, Nineveh, Timket, Genna, Wed-Fri fast status across at least 2 years. Non-negotiable.
-2. **Prayer notifications**. flutter_local_notifications + timezone. Wire to prayer_schedule. Handle permissions.
-3. **Bible SQLite migration**. Move both English and Amharic verses into Drift, add FTS5 tables, implement search across the whole Bible in both languages. Keep everything else as JSON.
-4. **Sign-in gating**. Implement the gating rules from Section 6 consistently across features. Sign-in prompt component.
-5. **Firestore sync**. Bookmarks, streak history, personal prayer list sync between device and cloud. Handle offline queue.
-6. **Merge `codex/mezmur-library-player` to main** and clean up the second (unused) `core/calendar_engine/` directory.
-7. **CLAUDE.md and the four docs live in the repo** so context is not lost between sessions.
-8. **Content sourcing for Explore** as it becomes available.
-9. **Onboarding flow**: first-launch prayer schedule preset choice, notification permission, sign-in prompt (optional).
-10. **Settings hub**: consolidate settings scattered under Profile.
+1. **Completed**: Calendar engine tests for known Easter, Nineveh, Timket, Genna, Meskel, Wed-Fri fast status, and Ethiopian year boundaries.
+2. **Completed**: Prayer notifications with flutter_local_notifications, timezone, flutter_timezone, schedule edits, permissions, and tap deep links.
+3. **Completed**: Bible SQLite migration and FTS5 search for English and Amharic.
+4. **Completed**: Sign-in gating rules from Section 6 through a shared guard and prompt.
+5. **Completed**: Firestore sync service and rules for bookmarks, streak history, prayer completions, prayer schedule, and personal prayer list data.
+6. **Completed**: Cleanup of the unused legacy calendar stub and documentation folder spelling.
+7. **Completed**: Onboarding flow with prayer schedule presets, notification permission, optional sign-in prompt, and completion meta.
+8. **In progress**: Content sourcing for Explore as it becomes available.
+9. **Remaining**: Settings hub to consolidate settings scattered under Profile.
 
 ### Phase 2
 

@@ -14,11 +14,11 @@ If code in the repo does not match this document, either the code should be corr
 | UI framework | Flutter | Single codebase, iOS and Android |
 | State management | Riverpod (flutter_riverpod) | v2 series. Riverpod 3 upgrade is a future task. |
 | Routing | go_router | v14 series |
-| Local database | Drift (SQLite) | User state today. Bible content lands here in Phase 1. |
-| Full-text search | SQLite FTS5 | For Bible verses, Phase 1 |
+| Local database | Drift (SQLite) | User state and seeded Bible content |
+| Full-text search | SQLite FTS5 | For Bible verses |
 | Ethiopian calendar | abushakir | Bahire Hasab and Ethiopian date math |
 | Audio | audioplayers | Mezmur and Hear Today's Word |
-| Local notifications | flutter_local_notifications | Phase 1 build, not yet installed |
+| Local notifications | flutter_local_notifications | Prayer reminders |
 | Auth | firebase_auth | Email + password, Google Sign-In, Apple Sign-In pending |
 | Cloud sync | cloud_firestore | For signed-in user data (bookmarks, streak, personal prayer list) |
 | Sign-in providers | google_sign_in, firebase_auth | Apple Sign-In pending |
@@ -27,7 +27,7 @@ If code in the repo does not match this document, either the code should be corr
 
 - flutter_riverpod is on v2. v3 is available. Upgrade is planned but not urgent.
 - sqlite3_flutter_libs: the latest version at the time of audit was marked end-of-life. Watch for a replacement.
-- No timezone package installed yet. It is required by flutter_local_notifications and will be added in Phase 1.
+- timezone and flutter_timezone are installed for local prayer reminder scheduling.
 - No `intl` / `flutter_localizations` / ARB tooling yet. Added when localization scaffolding is set up.
 
 ### Required Flutter versions
@@ -68,10 +68,9 @@ main.dart -> ProviderScope -> TsionApp -> MaterialApp.router
                               v
    5. DATA SOURCES
         Drift/SQLite      JSON assets      CalendarEngine
-        (user state       (content         (abushakir math)
-         and Bible         except Bible)
-         verses in
-         Phase 1)
+         (user state       (content         (abushakir math)
+          and Bible         except Bible)
+          verses)
                               |
                               v
    6. ADAPTER -> UI                   lib/core/adapters/screen_state_adapters.dart
@@ -130,7 +129,7 @@ Understand this or you will make wrong changes.
 
 | Source | Holds | Examples |
 |---|---|---|
-| Drift / SQLite | User state and (Phase 1) Bible content | saved_items, reading_progress, streak_events, prayer_schedule, prayer_completions, and (Phase 1) `bible_books` + `bible_verses` + `bible_verses_fts` |
+| Drift / SQLite | User state and Bible content | saved_items, reading_progress, streak_events, prayer_schedule, prayer_completions, personal_prayers, `bible_books`, `bible_verses`, and `bible_verses_fts` |
 | JSON assets (via `rootBundle`) | Content except Bible | Synaxarium (2.7 MB), readings plans, mezmur metadata, daily verses, saints index, FAQ |
 | CalendarEngine | Computed truth | Ethiopian dates, fasts, feasts, Bahire Hasab, via abushakir |
 
@@ -140,9 +139,9 @@ Understand this or you will make wrong changes.
 - **Never store user state in JSON assets.** User state lives in Drift.
 - **A repository's job is to join these sources into a screen state.**
 
-### First-launch content pack (Phase 1)
+### First-launch content pack
 
-Because Bible verses move into Drift in Phase 1, we need a seed-on-first-launch step:
+Bible verses are seeded into Drift on first launch:
 
 - On first launch, if `bible_verses` is empty, run a one-time seed job that reads the bundled JSON (Amharic and English) and inserts it into Drift.
 - Populate the FTS5 virtual table from the same source in the same transaction.
@@ -154,33 +153,31 @@ The seed should not block the UI. Show a "preparing your library" state on first
 
 ---
 
-## 4. Drift schema (current + Phase 1)
+## 4. Drift schema
 
-`schemaVersion` is currently 4. Phase 1 bumps it to 5.
+`schemaVersion` is currently 5.
 
-### Existing tables (v4)
+### Tables
 
 - `meta` (key-value)
 - `saved_items` (bookmarks)
 - `reading_progress` (continue reading)
-- `streak_tasks` (3 required task defs today, will expand to 3 required + 3 bonus)
+- `streak_tasks` (3 required tasks plus bonus task definitions)
 - `streak_events` (per-day completion)
 - `prayer_schedule` (time slots)
 - `prayer_completions` (per-day per-slot completion events)
-
-### New tables in v5 (Phase 1)
-
+- `personal_prayers` (signed-in personal prayer list entries)
 - `bible_books` (id, canon_id, testament, order_index, name_en, name_am, abbrev_en, abbrev_am)
 - `bible_verses` (book_id, chapter, verse, text_en, text_am, PRIMARY KEY(book_id, chapter, verse))
 - `bible_verses_fts` (FTS5 virtual, mirrors `bible_verses`, columns: text_en, text_am, book_id UNINDEXED, chapter UNINDEXED, verse UNINDEXED)
 
 ### Streaks table update in v5
 
-`streak_tasks` needs an `is_bonus` column (default 0) so we can mark the 3 optional tasks (Daily Saint, Feasts and Fasts, Daily Tip) as bonus.
+`streak_tasks` has an `is_bonus` column (default 0) so we can mark the 3 optional tasks (Daily Saint, Feasts and Fasts, Daily Tip) as bonus.
 
 ### Migration notes
 
-- Migration 4 -> 5 creates the new Bible tables and marks the seed as pending.
+- Migration 4 -> 5 creates the Bible tables, the personal prayer sync table, and marks the Bible seed as pending.
 - On next launch after upgrade, the seed job runs (see Section 3).
 - Do not drop existing user data. Never.
 
@@ -197,8 +194,7 @@ lib/
     actions/       ...
     adapters/      screen_state_adapters.dart
     auth/          firebase auth wrappers
-    calendar/      calendar_engine.dart (~670 lines, the real engine)
-    calendar_engine/  (TO REMOVE: legacy stub, only 1 line file left)
+    calendar/      calendar_engine.dart plus models and observance store
     content/       ...
     db/            drift tables and DAOs and generated .g.dart
     firebase/      init helpers
@@ -211,6 +207,9 @@ lib/
       db/          real repositories
       fake/        fake repositories (UI/test mode)
       guards/      ...
+    notifications/ ...
+    onboarding/    ...
+    sync/          ...
     streak/        ...
     theme/         app_theme.dart (deepPurple is placeholder)
   features/
@@ -222,7 +221,7 @@ lib/
     streak/        presentation
     today/         application, data, presentation
 test/
-  widget_test.dart (only smoke test today)
+  auth/, bible/, calendar/, notifications/, onboarding/, sync/, widget_test.dart
 assets/
   content/         all JSON
   audio/           mezmur and Hear Today's Word
@@ -237,16 +236,19 @@ Each feature under `lib/features/<feature>/` has three subfolders:
 - `data/`: feature-specific data code (asset-only Bible flow lives here, not core/repos)
 - `presentation/`: screens and widgets
 
-This pattern is followed consistently at about 85 percent. Two exceptions to clean up:
+This pattern is followed consistently at about 85 percent. One exception to keep in mind:
 
-1. `core/calendar/` and `core/calendar_engine/` both exist. The engine lives in `core/calendar/`. The `core/calendar_engine/` folder is legacy and should be removed.
-2. `core/repos/` has parallel `db/` and `fake/` trees for every repo. This is intentional (per the repo switch pattern), not smell.
+1. `core/repos/` has parallel `db/` and `fake/` trees for every repo. This is intentional (per the repo switch pattern), not smell.
 
 ---
 
 ## 6. The calendar engine
 
 Location: `lib/core/calendar/calendar_engine.dart` (about 670 lines).
+
+Related files:
+- `lib/core/calendar/calendar_engine_models.dart` holds the date, observance, feast, fast, and Bahire Hasab data models returned by the engine.
+- `lib/core/calendar/calendar_observance_store.dart` provides a small cache around daily and monthly engine lookups.
 
 Uses `abushakir`: `EtDatetime`, `EthDate`, `BahireHasab`.
 
@@ -265,9 +267,9 @@ Uses `abushakir`: `EtDatetime`, `EthDate`, `BahireHasab`.
 
 There are hardcoded offsets like `_offsetEaster = 69` and a Geez-month-name to month-number reverse lookup. These are exactly the kind of logic that needs tests.
 
-### Testing requirement (Phase 1, non-negotiable)
+### Testing requirement
 
-Golden-date tests must exist and pass in CI before shipping. Minimum coverage:
+Golden-date tests exist and must pass in CI before shipping. Current coverage:
 
 - Easter for at least 2 known Ethiopian years
 - Nineveh, Timket, Genna, Meskel for at least 2 years
@@ -322,7 +324,7 @@ Signed-in user data that syncs to Firestore:
 - Prayer completion events (feeds streak)
 - Prayer schedule settings
 
-Sync pattern: local Drift is the source of truth on device. On write, mirror to Firestore. On startup and when connectivity returns, pull remote changes and merge. Last-writer-wins for simple fields, with per-item timestamps.
+Sync pattern: local Drift is the source of truth on device. On write, mirror to Firestore. On startup, flush the local retry queue, pull remote changes, and merge. Firestore handles its own offline write persistence; the local retry queue covers write failures and retries on the next startup. Last-writer-wins for simple fields, with per-item timestamps.
 
 ### Offline behavior
 
@@ -330,26 +332,29 @@ Sync pattern: local Drift is the source of truth on device. On write, mirror to 
 - Writes queue locally and sync when back online.
 - The signed-out user experience is fully offline by design (no writes, no sync).
 
-### Firestore data model (sketch, to be finalized)
+### Firestore data model
 
-- Collection `users/{uid}/bookmarks/{itemId}` -> `{ ref, savedAt }`
-- Collection `users/{uid}/streaks/{yyyyMMdd}` -> `{ tasks: {daily_verse: true, prayer: true, readings: false, ...}, updatedAt }`
-- Collection `users/{uid}/prayerList/{id}` -> `{ name, intention, createdAt, dueAt? }`
-- Collection `users/{uid}/settings` (single doc) -> prayer schedule etc.
+- Collection `users/{uid}/bookmarks/{itemId}` -> `{ id, title, kind, createdAtIso, updatedAtIso, body?, deleted }`
+- Collection `users/{uid}/streaks/{eventId}` -> `{ id, dateYmd, taskId, completedAtIso, updatedAtIso, deleted }`
+- Collection `users/{uid}/prayerCompletions/{completionId}` -> `{ id, dateYmd, slotId, completedAtIso, updatedAtIso, deleted }`
+- Collection `users/{uid}/prayerSchedule/{slotId}` -> `{ id, slotId, label, timeLocal, isEnabled, updatedAtIso }`
+- Collection `users/{uid}/prayerList/{id}` -> `{ id, name, intention, createdAtIso, updatedAtIso, dueAtIso?, deleted }`
 
-To be pinned down when Firestore work starts in Phase 1.
+Security rules live in `firestore.rules` for manual deployment.
 
 ---
 
-## 9. Notifications (Phase 1 build)
+## 9. Notifications
 
-Not yet installed. When built:
+Prayer notifications are implemented with local scheduling:
 
-- Package: `flutter_local_notifications` + `timezone`.
-- Initialize the timezone database on startup.
+- Package: `flutter_local_notifications` + `timezone` + `flutter_timezone`.
+- Initialize the timezone database and local timezone on startup.
 - Read `prayer_schedule` and schedule a repeating daily notification per enabled slot.
 - Reschedule on any edit to `prayer_schedule`.
 - Handle permission requests explicitly on iOS and Android 13+.
+- Android uses `USE_EXACT_ALARM`, boot receivers, core library desugaring, and `AndroidScheduleMode.exactAllowWhileIdle`.
+- iOS sets the UNUserNotificationCenter delegate and requests alert, badge, and sound permissions.
 - Consider a "quiet hours" setting (mentioned in old planning docs) as a nice-to-have.
 
 ### Tapping a notification
@@ -360,22 +365,22 @@ Deep link to `/prayers/:id` for that slot. Reuse `RoutePaths`.
 
 ## 10. Testing
 
-Current state: 1 smoke test (`test/widget_test.dart`). Effectively zero coverage.
+Current state: Phase 1 has focused coverage across calendar, notifications, Bible migration and FTS, sign-in gating, sync, onboarding, and the app smoke test.
 
 MVP testing floor:
 
-- Calendar engine golden-date tests (Phase 1, non-negotiable).
+- Calendar engine golden-date tests.
 - Reading plan reference parser tests (handles LXX Psalm remapping, chapter/verse ranges, festal hiatus).
 - Streak logic tests (does not double-count, handles timezone edges).
 - Drift migration tests (v4 -> v5, especially the Bible seed).
 
-`flutter analyze` must be clean before merging. Current warnings are two unused elements in mezmur_screen.dart to be removed.
+`flutter analyze` and `flutter test` must be clean before merging.
 
 ---
 
 ## 11. Known technical risks
 
-1. Calendar engine has zero validation tests today. Highest single risk.
+1. Calendar expectations are covered by golden tests, but current approved sources are not the official Ethiopian Orthodox Tewahedo Church synod. Priest or scholar review is required before public launch.
 2. `sqlite3_flutter_libs` latest is marked end-of-life. Track a replacement.
 3. Riverpod v2 to v3 upgrade is deferred but coming.
 4. No localization scaffolding despite bilingual mandate.
@@ -387,12 +392,10 @@ MVP testing floor:
 
 ## 12. Deviations from the code as of the last audit
 
-Fix these when you can:
+Known deviations to track:
 
-- Two calendar directories: keep `core/calendar/`, remove `core/calendar_engine/`.
-- Stale comment in `services_provider.dart`: "Placeholders ONLY. No DB, no Abushakir, no notifications in v1.1." Both Abushakir and DB are in use now.
 - `app_theme.dart`: `seedColor: Colors.deepPurple` marked as placeholder.
-- Working branch `codex/mezmur-library-player` needs to be merged to main.
+- Working branch `codex/mezmur-library-player` needs review before merge to main.
 
 ---
 

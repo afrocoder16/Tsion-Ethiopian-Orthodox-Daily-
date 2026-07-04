@@ -6,9 +6,7 @@ import '../../calendar/calendar_engine_models.dart';
 import '../saints_repository.dart';
 
 class DbSaintsRepository implements SaintsRepository {
-  DbSaintsRepository({
-    this.assetPath = 'assets/data/synaxarium_index.json',
-  });
+  DbSaintsRepository({this.assetPath = 'assets/data/synaxarium_index.json'});
 
   final String assetPath;
   Map<String, dynamic>? _indexRoot;

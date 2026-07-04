@@ -11,16 +11,14 @@ class MetaDao extends DatabaseAccessor<AppDatabase> with _$MetaDaoMixin {
 
   Future<void> upsertMeta(String key, String value) {
     return into(meta).insertOnConflictUpdate(
-      MetaCompanion(
-        key: Value(key),
-        value: Value(value),
-      ),
+      MetaCompanion(key: Value(key), value: Value(value)),
     );
   }
 
   Future<String?> readMeta(String key) async {
-    final row = await (select(meta)..where((tbl) => tbl.key.equals(key)))
-        .getSingleOrNull();
+    final row = await (select(
+      meta,
+    )..where((tbl) => tbl.key.equals(key))).getSingleOrNull();
     return row?.value;
   }
 }

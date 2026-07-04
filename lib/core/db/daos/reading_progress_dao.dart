@@ -27,8 +27,9 @@ class ReadingProgressDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<ReadingProgressData?> getReadingProgress(String bookId) {
-    return (select(readingProgress)..where((tbl) => tbl.bookId.equals(bookId)))
-        .getSingleOrNull();
+    return (select(
+      readingProgress,
+    )..where((tbl) => tbl.bookId.equals(bookId))).getSingleOrNull();
   }
 
   Future<List<ReadingProgressData>> fetchRecentReadingProgress({
@@ -36,10 +37,8 @@ class ReadingProgressDao extends DatabaseAccessor<AppDatabase>
   }) {
     final query = select(readingProgress)
       ..orderBy([
-        (tbl) => OrderingTerm(
-              expression: tbl.updatedAtIso,
-              mode: OrderingMode.desc,
-            ),
+        (tbl) =>
+            OrderingTerm(expression: tbl.updatedAtIso, mode: OrderingMode.desc),
       ])
       ..limit(limit);
     return query.get();

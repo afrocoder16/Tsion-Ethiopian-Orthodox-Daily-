@@ -7,7 +7,7 @@ final exploreDetailRepositoryProvider = Provider<ExploreDetailRepository>(
   (ref) => FakeExploreDetailRepository(),
 );
 
-final exploreDetailProvider =
-    FutureProvider.family.autoDispose<ExploreDetailState, String>(
-  (ref, id) => ref.watch(exploreDetailRepositoryProvider).fetchDetail(id),
-);
+final exploreDetailProvider = FutureProvider.family
+    .autoDispose<ExploreDetailState, String>(
+      (ref, id) => ref.watch(exploreDetailRepositoryProvider).fetchDetail(id),
+    );

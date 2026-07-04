@@ -1,4 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Placeholders ONLY. No DB, no Abushakir, no notifications in v1.1.
+// Reserved for app-wide service providers that do not fit a feature repository.
 final placeholderServicesProvider = Provider<Object>((ref) => Object());
