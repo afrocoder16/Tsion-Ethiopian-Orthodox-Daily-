@@ -37,11 +37,13 @@ Start there for any change.
 
 ## Current status snapshot (update this section as you work)
 
-**Last audit**: 2026-07-06.
+**Last audit**: 2026-07-06 (Phase 1 claim audit + full architecture audit).
 
-**Branch**: `codex/mezmur-library-player` (Phase 1 implementation in progress, do not merge to main until reviewed). `codex/iphone-test-run-report` (a doc-only handoff report from the Mac iPhone test run, see `TEST-ONCE-README.md`) has been merged into this branch.
+**Branch**: `main`. Phase 1 was reviewed and merged to main on 2026-07-06 (fast-forward from `codex/mezmur-library-player`; the doc-only `codex/iphone-test-run-report` handoff branch was folded in first, see `TEST-ONCE-README.md`). Phase 2 work happens on new feature branches off main.
 
-**Builds**: yes, cleanly. `flutter analyze` is clean and the Phase 1 test suite (24 tests) is green as of the latest run. The content assets referenced by `pubspec.yaml` (Bible am/en JSON, readings, daily verse) are now tracked in git, so fresh clones build; previously `.gitignore` excluded all of `/assets/` and the iPhone test run on the Mac failed on missing assets. iOS: `ios/Podfile` added and deployment target raised to 15.0 (Firebase requires it). iOS signing on the test Mac uses team D8ZVP9436N, bundle id com.samson.tsionOrthodoxDaily — those signing values live only on the Mac, do not wipe them there.
+**Builds**: yes, cleanly. `flutter analyze` is clean and the Phase 1 test suite (24 tests) is green as of the latest run. The content assets referenced by `pubspec.yaml` (Bible am/en JSON, readings, daily verse) are tracked in git, so fresh clones build; previously `.gitignore` excluded all of `/assets/` and the iPhone test run on the Mac failed on missing assets. iOS: `ios/Podfile` added and deployment target raised to 15.0 (Firebase requires it). iOS signing on the test Mac uses team D8ZVP9436N, bundle id com.samson.tsionOrthodoxDaily — those signing values live only on the Mac, do not wipe them there. A real-device iOS run has not completed yet; that is the next validation step.
+
+**Architecture audit outcomes (2026-07-06)**: Ethiopian month names/aliases live in `core/calendar/ethiopian_months.dart` (single source; calendar, synaxarium, and saints repos delegate to it — celebrations kept a stricter local matcher on purpose). `mezmur_screen.dart` is split into part files (`_art`, `_sections`, `_player`, `_subscreens`). Known debt, in priority order: audio player lives in mezmur widget state (extract a controller before any background-audio work), ~430 hardcoded colors and ~120 hardcoded strings in feature screens (Rules 9 and 1), big JSON parses run on the UI thread (wrap in `compute()`), `_ethMonthAmharic` still returns English names (content decision), `screen_state_adapters.dart` is one 45-class file.
 
 **What is done**:
 
