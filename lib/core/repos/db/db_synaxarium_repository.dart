@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../calendar/calendar_engine_models.dart';
+import '../../calendar/ethiopian_months.dart';
 import '../../db/app_database.dart';
 import '../synaxarium_repository.dart';
 
@@ -335,51 +336,10 @@ class DbSynaxariumRepository implements SynaxariumRepository {
     return (monthOrder, day);
   }
 
-  int? _monthOrder(String month) {
-    const order = {
-      'Meskerem': 1,
-      'Tekemt': 2,
-      'Tikimt': 2,
-      'Hedar': 3,
-      'Hidar': 3,
-      'Tahisas': 4,
-      'Tahsas': 4,
-      'Tir': 5,
-      'Ter': 5,
-      'Yekatit': 6,
-      'Megabit': 7,
-      'Miyazia': 8,
-      'Miyazya': 8,
-      'Ginbot': 9,
-      'Senne': 10,
-      'Sene': 10,
-      'Hamle': 11,
-      'Nehasse': 12,
-      'Nehase': 12,
-      'Pagumen': 13,
-      'Pagume': 13,
-    };
-    return order[month];
-  }
+  int? _monthOrder(String month) => EthiopianMonths.monthOrderOf(month);
 
-  List<String> _monthCandidates(int month) {
-    const candidates = <int, List<String>>{
-      1: ['Meskerem'],
-      2: ['Tekemt', 'Tikimt'],
-      3: ['Hedar', 'Hidar'],
-      4: ['Tahisas', 'Tahsas'],
-      5: ['Tir', 'Ter'],
-      6: ['Yekatit'],
-      7: ['Megabit'],
-      8: ['Miyazia', 'Miyazya'],
-      9: ['Ginbot'],
-      10: ['Senne', 'Sene'],
-      11: ['Hamle'],
-      12: ['Nehasse', 'Nehase'],
-      13: ['Pagumen', 'Pagume'],
-    };
-    return candidates[month] ?? const [];
-  }
+  List<String> _monthCandidates(int month) =>
+      EthiopianMonths.aliasesFor(month);
 }
 
 String? _trimOrNull(String value) {

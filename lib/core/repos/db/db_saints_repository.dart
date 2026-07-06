@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../../calendar/calendar_engine_models.dart';
+import '../../calendar/ethiopian_months.dart';
 import '../saints_repository.dart';
 
 class DbSaintsRepository implements SaintsRepository {
@@ -54,24 +55,8 @@ class DbSaintsRepository implements SaintsRepository {
     return (decoded['index'] as Map<String, dynamic>? ?? const {});
   }
 
-  List<String> _monthCandidates(int month) {
-    const candidates = <int, List<String>>{
-      1: ['Meskerem'],
-      2: ['Tekemt', 'Tikimt'],
-      3: ['Hedar', 'Hidar'],
-      4: ['Tahisas', 'Tahsas'],
-      5: ['Tir', 'Ter'],
-      6: ['Yekatit'],
-      7: ['Megabit'],
-      8: ['Miyazia', 'Miyazya'],
-      9: ['Ginbot'],
-      10: ['Senne', 'Sene'],
-      11: ['Hamle'],
-      12: ['Nehasse', 'Nehase'],
-      13: ['Pagumen', 'Pagume'],
-    };
-    return candidates[month] ?? const [];
-  }
+  List<String> _monthCandidates(int month) =>
+      EthiopianMonths.aliasesFor(month);
 }
 
 String? _trimOrNull(String value) {

@@ -84,17 +84,18 @@ final exploreRepositoryProvider = Provider<ExploreRepository>((ref) {
   return DbExploreRepository(ref.watch(dbProvider));
 });
 
-// Saved items stream providers
+// Saved items stream providers. These watch (not read) dbProvider so the
+// streams rebuild against the new database if it is ever invalidated.
 final savedItemsStreamProvider = StreamProvider<List<SavedItem>>((ref) {
-  return ref.read(dbProvider).savedItemsDao.watchSavedItems();
+  return ref.watch(dbProvider).savedItemsDao.watchSavedItems();
 });
 
 final verseBookmarksProvider = StreamProvider<List<SavedItem>>((ref) {
-  return ref.read(dbProvider).savedItemsDao.watchByKind(kKindVerseBookmark);
+  return ref.watch(dbProvider).savedItemsDao.watchByKind(kKindVerseBookmark);
 });
 
 final verseLikesProvider = StreamProvider<List<SavedItem>>((ref) {
-  return ref.read(dbProvider).savedItemsDao.watchByKind(kKindVerseLike);
+  return ref.watch(dbProvider).savedItemsDao.watchByKind(kKindVerseLike);
 });
 
 // Bible font size preference (in-memory; survives hot reload, resets on app restart)
@@ -103,5 +104,8 @@ final bibleFontSizeProvider = StateProvider<double>((ref) => 14.0);
 // Reading progress per book
 final readingProgressProvider =
     FutureProvider.family<ReadingProgressData?, String>((ref, bookId) {
-      return ref.read(dbProvider).readingProgressDao.getReadingProgress(bookId);
+      return ref
+          .watch(dbProvider)
+          .readingProgressDao
+          .getReadingProgress(bookId);
     });

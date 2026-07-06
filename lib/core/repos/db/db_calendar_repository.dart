@@ -1,6 +1,7 @@
 import '../../calendar/calendar_engine.dart';
 import '../../calendar/calendar_engine_models.dart';
 import '../../calendar/calendar_observance_store.dart';
+import '../../calendar/ethiopian_months.dart';
 import '../../db/app_database.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
 import '../../readings/daily_content_repository.dart';
@@ -504,40 +505,8 @@ String _formatEthDay(EthDate ethDate) {
   return '${_ethMonthName(ethDate.month)} ${ethDate.day}';
 }
 
-String _ethMonthName(int month) {
-  const names = [
-    'Meskerem',
-    'Tikimt',
-    'Hedar',
-    'Tahsas',
-    'Tir',
-    'Yekatit',
-    'Megabit',
-    'Miyazya',
-    'Ginbot',
-    'Sene',
-    'Hamle',
-    'Nehase',
-    'Pagume',
-  ];
-  return names[(month - 1).clamp(0, 12).toInt()];
-}
+String _ethMonthName(int month) => EthiopianMonths.englishName(month);
 
-String _ethMonthAmharic(int month) {
-  const names = [
-    'Meskerem',
-    'Tikimt',
-    'Hedar',
-    'Tahsas',
-    'Tir',
-    'Yekatit',
-    'Megabit',
-    'Miyazya',
-    'Ginbot',
-    'Sene',
-    'Hamle',
-    'Nehase',
-    'Pagume',
-  ];
-  return names[(month - 1).clamp(0, 12).toInt()];
-}
+// Still returns the English transliteration; real Amharic month names are a
+// content decision pending with the founder.
+String _ethMonthAmharic(int month) => EthiopianMonths.englishName(month);
