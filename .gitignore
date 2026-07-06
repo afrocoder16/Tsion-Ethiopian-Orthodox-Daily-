@@ -48,5 +48,12 @@ app.*.map.json
 readings_data_issues.txt
 /doc/
 
-# Local asset libraries and generated media stay out of Git by default.
-/assets/
+# Local asset libraries and generated media stay out of Git by default,
+# except the content bundles referenced by pubspec.yaml (the app cannot
+# build from a fresh clone without them).
+/assets/*
+!/assets/data/
+!/assets/80-weahadu-main/
+/assets/80-weahadu-main/*
+!/assets/80-weahadu-main/data/
+!/assets/synaxarium_pdfs/

@@ -1,0 +1,964 @@
+{
+  "schema_version": "1.0",
+  "source_name": "Readings for the Month of July",
+  "year_type": "leap_year",
+  "rows": [
+    {
+      "eth_month": 10,
+      "eth_day": 24,
+      "gregorian_display": "10/24",
+      "morning": [
+        "Mic 6",
+        "Act 24",
+        "Luk 13"
+      ],
+      "qidase": {
+        "pauline": "Rom 9 : 24 - f",
+        "catholic": "1Jn 1 : 4 - f",
+        "acts": "Act 14 : 1 - 7",
+        "psalm": "Ps 104 : 21",
+        "gospel": "Jn 12 : 20 - 27"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Mic 7",
+        "Act 25",
+        "Luk 14"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "1 / 10/24",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 25,
+      "gregorian_display": "10/25",
+      "morning": [],
+      "qidase": {
+        "pauline": "Heb 6 : 7 - 13",
+        "catholic": "Jd 1 : 1 - 7",
+        "acts": "Act 14 : 16 - f",
+        "psalm": "Ps 132 : 1",
+        "gospel": "Jhn 14 : 18 - 27"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Nah 1",
+        "Act 26",
+        "Luk 15"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "2 / 10/25",
+        "qa_status": "extracted_from_pdf_text"
+      },
+      "morning_status": "festal_hiatus"
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 26,
+      "gregorian_display": "10/26",
+      "morning": [
+        "Nah 2",
+        "Act 27",
+        "Lk 16"
+      ],
+      "qidase": {
+        "pauline": "Heb 4 : 1 - 14",
+        "catholic": "2Pt 1 : 19 - f",
+        "acts": "Act 7 : 35 - 44",
+        "psalm": "Ps 117 : 19",
+        "gospel": "Mat 13 : 36-44"
+      },
+      "anaphora": {
+        "source_number": 13,
+        "resolved_name": "St. Jacob of Serough's"
+      },
+      "evening": [
+        "Nah 3",
+        "Act 28",
+        "Luk 17"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "3 / 10/26",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 27,
+      "gregorian_display": "10/27",
+      "morning": [
+        "Hab 1",
+        "Rom 1",
+        "Luk 18"
+      ],
+      "qidase": {
+        "pauline": "1Cr 12 : 38-f",
+        "catholic": "1Jn2 : 27 - 9",
+        "acts": "Act 9 : 10 - 20",
+        "psalm": "Ps 7:12-13",
+        "gospel": "Luk 16 : 19 - f"
+      },
+      "anaphora": {
+        "source_number": 10,
+        "resolved_name": "St. John Chrysostom's"
+      },
+      "evening": [
+        "Hab 2",
+        "Rom 2",
+        "Luk 19"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "4 / 10/27",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 28,
+      "gregorian_display": "10/28",
+      "morning": [
+        "Hab 3",
+        "Rom 3",
+        "Luk 20"
+      ],
+      "qidase": {
+        "pauline": "Tts 1 : 7 - f",
+        "catholic": "1Pt 5 : 1 - 7",
+        "acts": "Act 7 : 1 - 9",
+        "psalm": "Ps 67 : 1",
+        "gospel": "Mat 3 : 23 - 32"
+      },
+      "anaphora": {
+        "source_number": 7,
+        "resolved_name": "St. Basil's"
+      },
+      "evening": [
+        "Zep 1",
+        "Rom 4",
+        "Luk 21"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "5 / 10/28",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 29,
+      "gregorian_display": "10/29",
+      "morning": [
+        "Zep 2",
+        "Rom 5",
+        "Luk 22: 1-30"
+      ],
+      "qidase": {
+        "pauline": "1Tm 3 : 13 - f",
+        "catholic": "1Jn 4 : 9 - 18",
+        "acts": "Ac 9 : 20 - 23",
+        "psalm": "Ps 111:9",
+        "gospel": "Mat 16 : 24 - f"
+      },
+      "anaphora": {
+        "source_number": 7,
+        "resolved_name": "St. Basil's"
+      },
+      "evening": [
+        "Zep 3",
+        "Rom 6",
+        "Luk 22:31-71"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "6 / 10/29",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 10,
+      "eth_day": 30,
+      "gregorian_display": "10/30",
+      "morning": [],
+      "qidase": {
+        "pauline": "Rom 7 : 14 - f",
+        "catholic": "1Pt 3 : 7 - 10",
+        "acts": "Act 19 : 1 - 11",
+        "psalm": "Ps 86 : 2",
+        "gospel": "Luk 1: 57 - f"
+      },
+      "anaphora": {
+        "source_number": 3,
+        "resolved_name": "St. John, Son of Thunder's"
+      },
+      "evening": [
+        "Hag 1",
+        "Rom 7",
+        "Luk 23"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "7 / 10/30",
+        "qa_status": "extracted_from_pdf_text"
+      },
+      "morning_status": "festal_hiatus"
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 1,
+      "gregorian_display": "11/1",
+      "morning": [
+        "Hag 2",
+        "Rom 8:1-16",
+        "Luk 24"
+      ],
+      "qidase": {
+        "pauline": "1Tm 5 : 1 - 18",
+        "catholic": "1Pt 3 : 1 - 7",
+        "acts": "Act 9 : 46 - f",
+        "psalm": "Ps 77 : 15",
+        "gospel": "Jhn 20 : 19 - f"
+      },
+      "anaphora": {
+        "source_number": 9,
+        "resolved_name": "St. Epiphanius'"
+      },
+      "evening": [
+        "Zec 1",
+        "Rom 8:18-39",
+        "Jhn 1"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "8 / 11/1",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 2,
+      "gregorian_display": "11/2",
+      "morning": [
+        "Zec 2, 3; Rom 9;",
+        "Jhn 2; Ps 18:4",
+        "Mrk 13 : 24 - 33"
+      ],
+      "qidase": {
+        "pauline": "1Cr 9 : 1 - 13",
+        "catholic": "Jud 1 : 17 - f",
+        "acts": "Act 5 : 16 - 33",
+        "psalm": "Ps 98 : 6",
+        "gospel": "Mat 19 : 16 - f"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Zec 4",
+        "Rom 10",
+        "Jhn 3"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "9 / 11/2",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 3,
+      "gregorian_display": "11/3",
+      "morning": [
+        "Zec 5",
+        "Rom 11",
+        "Jhn 4"
+      ],
+      "qidase": {
+        "pauline": "Tts 3 : 8 - f",
+        "catholic": "1Pt 3: 15 - f",
+        "acts": "Act 20 : 28 - 31",
+        "psalm": "Ps 89:14-15",
+        "gospel": "Mat 18 : 15 -21"
+      },
+      "anaphora": {
+        "source_number": 11,
+        "resolved_name": "St. Cyril's"
+      },
+      "evening": [
+        "Zec 6",
+        "Rom 12",
+        "Jhn 5"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "10 / 11/3",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 4,
+      "gregorian_display": "11/4",
+      "morning": [
+        "Zec 7",
+        "Rom 13",
+        "Jhn 6"
+      ],
+      "qidase": {
+        "pauline": "Heb 11 : 32 - f",
+        "catholic": "2Pt 1 : 19 - f",
+        "acts": "Act 10 : 37 - f",
+        "psalm": "Ps 90 : 5-6",
+        "gospel": "Mt 21 : 33 - f"
+      },
+      "anaphora": {
+        "source_number": 3,
+        "resolved_name": "St. John, Son of Thunder's"
+      },
+      "evening": [
+        "Zec 8",
+        "Rom 14",
+        "Jhn 7"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "11 / 11/4",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 5,
+      "gregorian_display": "11/5",
+      "morning": [],
+      "qidase": {
+        "pauline": "1Ts 4 : 13 - f",
+        "catholic": "2Pt 1 : 1 - 12",
+        "acts": "Act 23 : 10 - 16",
+        "psalm": "Ps 138:17-18",
+        "gospel": "Jhn 21 : 15 - 20"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Zec 9",
+        "Rom 15",
+        "Jhn 8"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "12 / 11/5",
+        "qa_status": "extracted_from_pdf_text"
+      },
+      "morning_status": "festal_hiatus"
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 6,
+      "gregorian_display": "11/6",
+      "morning": [
+        "Zec 10",
+        "Rom 16",
+        "Jhn 9"
+      ],
+      "qidase": {
+        "pauline": "1Cr 15: 33-45",
+        "catholic": "1Jn 2 : 20 - f",
+        "acts": "Act 16 : 14 -18",
+        "psalm": "Ps 114: 8",
+        "gospel": "Mat 24 : 15 - 37"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Zec 11",
+        "1Cr 1",
+        "Jhn 10"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "13 / 11/6",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 7,
+      "gregorian_display": "11/7",
+      "morning": [
+        "Zec 12",
+        "1Cr 2; Jhn 11",
+        "Ps 32 : 5-6",
+        "Jhn 1 : 1 - 6"
+      ],
+      "qidase": {
+        "pauline": "Rom 9 : 1 - 6",
+        "catholic": "1Jn 4 : 11 - f",
+        "acts": "Act 11 : 11 - 19",
+        "psalm": "Ps 26 : 8-9",
+        "gospel": "Jhn 8 : 51 - f"
+      },
+      "anaphora": {
+        "source_number": 12,
+        "resolved_name": "St. Dioscorus'"
+      },
+      "evening": [
+        "Zec 13",
+        "1Cr 3",
+        "Jhn 12"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "14 / 11/7",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 8,
+      "gregorian_display": "11/8",
+      "morning": [
+        "Zec 14",
+        "1Cr 4",
+        "Jhn 13"
+      ],
+      "qidase": {
+        "pauline": "Eph 6 : 10 - 19",
+        "catholic": "1Pt 3 : 10 - 15",
+        "acts": "Act 26 : 12 - 19",
+        "psalm": "Ps 115 : 6-7",
+        "gospel": "Mrk 4 : 1 - 24"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Mal 1",
+        "1Cr 5",
+        "Jhn 14"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "15 / 11/8",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 9,
+      "gregorian_display": "11/9",
+      "morning": [
+        "Mal 2",
+        "1Cr 6",
+        "Jhn 15"
+      ],
+      "qidase": {
+        "pauline": "1Tm 3 : 1 - 11",
+        "catholic": "1Pt 5 : 1 - f",
+        "acts": "Act 20 : 28 - 31",
+        "psalm": "Ps 63 : 6",
+        "gospel": "Luk 13 : 18 - 23"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Mal 3",
+        "1Cr 7",
+        "Jhn 16"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "16 / 11/9",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 10,
+      "gregorian_display": "11/10",
+      "morning": [
+        "Mal 4",
+        "1Cr 8",
+        "Jhn 17"
+      ],
+      "qidase": {
+        "matins_gospel": "Luk 24 : 13 - 34",
+        "matins_psalm": "Ps 50 : 6-7",
+        "pauline": "1Cr 1 : 10 - f",
+        "catholic": "Jud 1 : 17 - 20",
+        "acts": "Act 8 : 14 - 18",
+        "psalm": "Ps 18 : 3",
+        "gospel": "Jhn 1 : 44 - f"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Tob 1",
+        "1Cr 9",
+        "Jhn 18"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "17 / 11/10",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 11,
+      "gregorian_display": "11/11",
+      "morning": [
+        "Tob 2",
+        "1Cr 10:1-13",
+        "Jhn 19"
+      ],
+      "qidase": {
+        "pauline": "1Tm 2 : 1 - 9",
+        "catholic": "1Pt 4 : 12 - 17",
+        "acts": "Act 14 : 20- f",
+        "psalm": "Ps 32 : 1, 2",
+        "gospel": "Luk 6 : 20 - 27"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Tob 3",
+        "1Cr 10:14-33",
+        "Jhn 20"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "18 / 11/11",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 12,
+      "gregorian_display": "11/12",
+      "morning": [
+        "Tob 4",
+        "1Cr 11: 1- 16",
+        "Jhn 21"
+      ],
+      "qidase": {
+        "matins_gospel": "Mat 24 : 15 - 37",
+        "matins_psalm": "Ps 33:7, 8",
+        "pauline": "Rm 9 : 16 - 30",
+        "catholic": "Jd 1 : 6 - 14",
+        "acts": "Act 10 : 3 - 9",
+        "psalm": "Ps 32:16, 17",
+        "gospel": "Luk 18 - 1 - 9"
+      },
+      "anaphora": {
+        "source_number": 11,
+        "resolved_name": "St. Cyril's"
+      },
+      "evening": [
+        "Tob 5, 6",
+        "1Cr 11:17-34",
+        "Mat 1"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "19 / 11/12",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 13,
+      "gregorian_display": "11/13",
+      "morning": [
+        "Tob 7",
+        "1Cr 12",
+        "Mat 2"
+      ],
+      "qidase": {
+        "pauline": "Rom 8 : 18 - 35",
+        "catholic": "1Pt 1 : 13 - f",
+        "acts": "Act 19 : 11 - 21",
+        "psalm": "Ps 1: 2,- 3",
+        "gospel": "Mat 10 : 32 - f"
+      },
+      "anaphora": {
+        "source_number": 9,
+        "resolved_name": "St. Epiphanius'"
+      },
+      "evening": [
+        "Tob 8",
+        "1Cr 13",
+        "Mat 3"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "20 / 11/13",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 14,
+      "gregorian_display": "11/14",
+      "morning": [
+        "Tob 9",
+        "1Cr 14:1-25",
+        "Mat 4"
+      ],
+      "qidase": {
+        "pauline": "1Ts 4 : 1 - 13",
+        "catholic": "1Pt 5 : 6 - f",
+        "acts": "Act 14 : 19 - f",
+        "psalm": "Ps 43 : 22, 23",
+        "gospel": "Mat 13 : 1 - 10"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Tob 10",
+        "1Cr 14:26-40",
+        "Mat 5"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "21 / 11/14",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 15,
+      "gregorian_display": "11/15",
+      "morning": [
+        "Tob 11",
+        "1Cr 15",
+        "Mat 6"
+      ],
+      "qidase": {
+        "pauline": "Rom 1 : 18 - 27",
+        "catholic": "Jam 5 : 12 - 17",
+        "acts": "Act 9 : 22 - 30",
+        "psalm": "Ps 88: 6, 7",
+        "gospel": "Mat 4 : 17 - 21"
+      },
+      "anaphora": {
+        "source_number": 6,
+        "resolved_name": "St. Athanasius'"
+      },
+      "evening": [
+        "Tob 12",
+        "1Cr 16",
+        "Mat 7, 8"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "22 / 11/15",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 16,
+      "gregorian_display": "11/16",
+      "morning": [],
+      "qidase": {
+        "pauline": "Pl 4 : 8 - 15",
+        "catholic": "Jam 2 : 1 - 10",
+        "acts": "Act 14 : 21 - f",
+        "psalm": "Ps 68:8, 9",
+        "gospel": "Mrk 8 : 34 - f"
+      },
+      "anaphora": {
+        "source_number": 5,
+        "resolved_name": "Of the 318 Fathers at 1st Nicaea"
+      },
+      "evening": [
+        "Tob 13, 14",
+        "2Cr 1",
+        "Mat 9"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "23 / 11/16",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 17,
+      "gregorian_display": "11/17",
+      "morning": [
+        "Jdt 1",
+        "2Cr 2",
+        "Mat 10"
+      ],
+      "qidase": {
+        "pauline": "Rm 2 : 1 - 12",
+        "catholic": "1Pt 2 : 1 - 11",
+        "acts": "Ac 26 : 11 - 19",
+        "psalm": "Ps 138: 7, 8",
+        "gospel": "Mt 12 : 38 - 43"
+      },
+      "anaphora": {
+        "source_number": 3,
+        "resolved_name": "St. John, Son of Thunder's"
+      },
+      "evening": [
+        "Jdt 2",
+        "2Cr 3",
+        "Mat 11"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "24 / 11/17",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 18,
+      "gregorian_display": "11/18",
+      "morning": [
+        "Jdt 3, 4; 2Cr 4",
+        "Mat12: 1-37",
+        "Ps 18:3",
+        "Mt 13 : 52 - f"
+      ],
+      "qidase": {
+        "pauline": "1Cr 15 : 1 - 13",
+        "catholic": "Jm 1 : 1 - 13",
+        "acts": "Ac 15 : 13 - 22",
+        "psalm": "Ps 25:4, 5",
+        "gospel": "Mk 6 : 1 - 14"
+      },
+      "anaphora": {
+        "source_number": 1,
+        "resolved_name": "Apostles'"
+      },
+      "evening": [
+        "Jdt 5",
+        "2Cr 5",
+        "Mat 12:38-50"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "25 / 11/18",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 19,
+      "gregorian_display": "11/19",
+      "morning": [
+        "Jdt 6; 2Cr 6",
+        "Mat 13: 1-30",
+        "Ps 25:12",
+        "Mt 18 : 1 - 12"
+      ],
+      "qidase": {
+        "pauline": "Hb 11 : 33 - f",
+        "catholic": "1Pt 4 : 12 - f",
+        "acts": "Ac 23 : 10 - 15",
+        "psalm": "Ps 96: 7",
+        "gospel": "Mt 11 : 25 - f"
+      },
+      "anaphora": {
+        "source_number": 11,
+        "resolved_name": "St. Cyril's"
+      },
+      "evening": [
+        "Jdt 7",
+        "2Cr 7",
+        "Mat 13:31-58"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "26 / 11/19",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 20,
+      "gregorian_display": "11/20",
+      "morning": [
+        "Jdt 8",
+        "2Cr 8",
+        "Mat 14"
+      ],
+      "qidase": {
+        "pauline": "2Cr 4 : 7 - f",
+        "catholic": "1Pt 4 : 12 - f",
+        "acts": "Ac 24 : 17 - 22",
+        "psalm": "Ps 18: 7, 8",
+        "gospel": "Jhn 6 : 35 - 48"
+      },
+      "anaphora": {
+        "source_number": 4,
+        "resolved_name": "St. Mary's"
+      },
+      "evening": [
+        "Jdt 9",
+        "2Cr 9",
+        "Mat 15:1-20"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "27 / 11/20",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 21,
+      "gregorian_display": "11/21",
+      "morning": [
+        "Jdt 10; 2Cr 10",
+        "Mat 15:21-39",
+        "Ps 44: 9",
+        "Lk 1 : 39 - 57"
+      ],
+      "qidase": {
+        "pauline": "Ep 6 : 10 - 19",
+        "catholic": "1Jn 5 : 1 - 7",
+        "acts": "Ac 8 : 26 - f",
+        "psalm": "Ps 40: 1, 2",
+        "gospel": "Mt 19 : 1 - 16"
+      },
+      "anaphora": {
+        "source_number": 4,
+        "resolved_name": "St. Mary's"
+      },
+      "evening": [
+        "Jdt 11",
+        "2Cr 11:1-15",
+        "Mat 16"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "28 / 11/21",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 22,
+      "gregorian_display": "11/22",
+      "morning": [
+        "Jdt 12",
+        "2Cr 11:16-33",
+        "Mat 17"
+      ],
+      "qidase": {
+        "pauline": "2Cr 12 : 1 - 11",
+        "catholic": "1Pt 1 : 6 - 10",
+        "acts": "Ac 5 : 26 - 34",
+        "psalm": "Ps 15:4, 5",
+        "gospel": "Mk 13 : 14 - 21"
+      },
+      "anaphora": {
+        "source_number": 7,
+        "resolved_name": "St. Basil's"
+      },
+      "evening": [
+        "Jdt 13",
+        "2Cr12",
+        "Mat 18"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "29 / 11/22",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 23,
+      "gregorian_display": "11/23",
+      "morning": [
+        "Jdt 14; 2Cr 13",
+        "Mat 19:1-15",
+        "Ps 90: 13, 14",
+        "Jn 12 : 23 - 30"
+      ],
+      "qidase": {
+        "pauline": "2Cr 9 : 5 - f",
+        "catholic": "Jm 2 : 14 - 20",
+        "acts": "Ac 16 : 13 - 16",
+        "psalm": "Ps 102:9, 10",
+        "gospel": "Jn 19 : 31 - 38"
+      },
+      "anaphora": {
+        "source_number": 10,
+        "resolved_name": "St. John Chrysostom's"
+      },
+      "evening": [
+        "Jdt 15",
+        "Gal. 1",
+        "Mat 19:16-30"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "30 / 11/23",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    },
+    {
+      "eth_month": 11,
+      "eth_day": 24,
+      "gregorian_display": "11/24",
+      "morning": [
+        "Jdt 15",
+        "Gal 2",
+        "Mat 20:1-19"
+      ],
+      "qidase": {
+        "pauline": "2Cr 7 : 8 - 11",
+        "catholic": "Ps 54:13",
+        "acts": "1Pt 5 : 1 - 6",
+        "psalm": "Mt 19 : 17 - 22",
+        "gospel": "Ac 16 : 35 - f"
+      },
+      "anaphora": {
+        "source_number": 12,
+        "resolved_name": "St. Dioscorus'"
+      },
+      "evening": [
+        "TWS 5",
+        "Gal 3:1-14",
+        "Mat 20:20-34"
+      ],
+      "source_meta": {
+        "document": "july.pdf",
+        "row_label": "31 / 11/24",
+        "qa_status": "extracted_from_pdf_text"
+      }
+    }
+  ]
+}

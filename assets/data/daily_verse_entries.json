@@ -1,0 +1,113 @@
+[
+  {
+    "id": "dv-001",
+    "title": "Verse of the Day",
+    "reference": "John 11:25",
+    "body": "Jesus said to her, \"I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.\"",
+    "book_id": "john",
+    "chapter": 11,
+    "verse": 25
+  },
+  {
+    "id": "dv-002",
+    "title": "Verse of the Day",
+    "reference": "Psalm 27:1",
+    "body": "The Lord is my light and my salvation; whom shall I fear? The Lord is the strength of my life; of whom shall I be afraid?",
+    "book_id": "psalms",
+    "chapter": 27,
+    "verse": 1
+  },
+  {
+    "id": "dv-003",
+    "title": "Verse of the Day",
+    "reference": "Matthew 11:28",
+    "body": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+    "book_id": "matthew",
+    "chapter": 11,
+    "verse": 28
+  },
+  {
+    "id": "dv-004",
+    "title": "Verse of the Day",
+    "reference": "Romans 8:38-39",
+    "body": "For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers, nor things present, nor things to come, nor height, nor depth, nor any other creature, shall be able to separate us from the love of God.",
+    "book_id": "romans",
+    "chapter": 8,
+    "verse": 38,
+    "verse_end": 39
+  },
+  {
+    "id": "dv-005",
+    "title": "Verse of the Day",
+    "reference": "Philippians 4:6-7",
+    "body": "Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+    "book_id": "philippians",
+    "chapter": 4,
+    "verse": 6,
+    "verse_end": 7
+  },
+  {
+    "id": "dv-006",
+    "title": "Verse of the Day",
+    "reference": "Isaiah 41:10",
+    "body": "Fear not, for I am with you; be not dismayed, for I am your God. I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+    "book_id": "isaiah",
+    "chapter": 41,
+    "verse": 10
+  },
+  {
+    "id": "dv-007",
+    "title": "Verse of the Day",
+    "reference": "Psalm 46:10",
+    "body": "Be still, and know that I am God.",
+    "book_id": "psalms",
+    "chapter": 46,
+    "verse": 10
+  },
+  {
+    "id": "dv-008",
+    "title": "Verse of the Day",
+    "reference": "Galatians 2:20",
+    "body": "I have been crucified with Christ. It is no longer I who live, but Christ who lives in me.",
+    "book_id": "galatians",
+    "chapter": 2,
+    "verse": 20
+  },
+  {
+    "id": "dv-009",
+    "title": "Verse of the Day",
+    "reference": "Matthew 5:14",
+    "body": "You are the light of the world. A city set on a hill cannot be hidden.",
+    "book_id": "matthew",
+    "chapter": 5,
+    "verse": 14
+  },
+  {
+    "id": "dv-010",
+    "title": "Verse of the Day",
+    "reference": "John 14:27",
+    "body": "Peace I leave with you; my peace I give to you. Let not your hearts be troubled, neither let them be afraid.",
+    "book_id": "john",
+    "chapter": 14,
+    "verse": 27
+  },
+  {
+    "id": "dv-011",
+    "title": "Verse of the Day",
+    "reference": "Hebrews 13:8",
+    "body": "Jesus Christ is the same yesterday and today and forever.",
+    "book_id": "hebrews",
+    "chapter": 13,
+    "verse": 8
+  },
+  {
+    "id": "dv-012",
+    "title": "Verse of the Day",
+    "reference": "Psalm 121:1-2",
+    "body": "I lift up my eyes to the hills. From where does my help come? My help comes from the Lord, who made heaven and earth.",
+    "book_id": "psalms",
+    "chapter": 121,
+    "verse": 1,
+    "verse_end": 2
+  }
+]

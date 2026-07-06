@@ -37,11 +37,11 @@ Start there for any change.
 
 ## Current status snapshot (update this section as you work)
 
-**Last audit**: 2026-07-04.
+**Last audit**: 2026-07-06.
 
-**Branch**: `codex/mezmur-library-player` (Phase 1 implementation in progress, do not merge to main until reviewed).
+**Branch**: `codex/mezmur-library-player` (Phase 1 implementation in progress, do not merge to main until reviewed). `codex/iphone-test-run-report` (a doc-only handoff report from the Mac iPhone test run, see `TEST-ONCE-README.md`) has been merged into this branch.
 
-**Builds**: yes, cleanly. `flutter analyze` is clean and the Phase 1 test suite is green as of the latest run.
+**Builds**: yes, cleanly. `flutter analyze` is clean and the Phase 1 test suite (24 tests) is green as of the latest run. The content assets referenced by `pubspec.yaml` (Bible am/en JSON, readings, daily verse) are now tracked in git, so fresh clones build; previously `.gitignore` excluded all of `/assets/` and the iPhone test run on the Mac failed on missing assets. iOS: `ios/Podfile` added and deployment target raised to 15.0 (Firebase requires it). iOS signing on the test Mac uses team D8ZVP9436N, bundle id com.samson.tsionOrthodoxDaily — those signing values live only on the Mac, do not wipe them there.
 
 **What is done**:
 

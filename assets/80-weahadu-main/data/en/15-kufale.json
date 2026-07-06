@@ -1,0 +1,5218 @@
+{
+  "book_number": 15,
+  "book_name_am": "መጽሐፈ ኩፋሌ",
+  "book_short_name_am": "ኩፋ",
+  "book_name_en": "Jubilees",
+  "book_short_name_en": "Jubil",
+  "testament": "old",
+  "chapters": [
+    {
+      "chapter": 1,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 2,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 3,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 4,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 5,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 6,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 7,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 8,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 9,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 10,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 11,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 12,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 51,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 52,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 53,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 54,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 55,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 56,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 13,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 14,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 51,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 52,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 53,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 54,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 55,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 15,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 16,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 17,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 18,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 19,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 51,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 52,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 53,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 54,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 55,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 56,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 57,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 58,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 59,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 20,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 51,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 52,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 53,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 54,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 55,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 56,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 57,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 58,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 59,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 60,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 61,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 62,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 63,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 64,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 65,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 66,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 21,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 22,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 23,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 51,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 52,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 53,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 54,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 55,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 56,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 57,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 58,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 59,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 24,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 25,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 49,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 50,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 26,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 39,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 40,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 41,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 42,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 43,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 44,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 45,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 46,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 47,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 48,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 27,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 28,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 32,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 33,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 34,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 35,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 36,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 37,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 38,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 29,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 30,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 31,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 31,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 32,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 33,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 21,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 22,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 23,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 24,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 25,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 26,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 27,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 28,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 29,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 30,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 34,
+      "sections": [
+        {
+          "title": "",
+          "verses": [
+            {
+              "verse": 1,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 2,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 3,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 4,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 5,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 6,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 7,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 8,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 9,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 10,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 11,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 12,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 13,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 14,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 15,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 16,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 17,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 18,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 19,
+              "text": "[English text not available]"
+            },
+            {
+              "verse": 20,
+              "text": "[English text not available]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
