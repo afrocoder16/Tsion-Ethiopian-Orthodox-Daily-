@@ -38,11 +38,19 @@ class StreakDao extends DatabaseAccessor<AppDatabase> with _$StreakDaoMixin {
     required String taskId,
     required String completedAtIso,
   }) {
-    return into(streakEvents).insertOnConflictUpdate(
+    // The real uniqueness constraint is (date_ymd, task_id), not the id
+    // primary key, so the upsert must target those columns explicitly or
+    // SQLite raises UNIQUE constraint failed on the second completion of
+    // the same task on the same day.
+    return into(streakEvents).insert(
       StreakEventsCompanion(
         dateYmd: Value(dateYmd),
         taskId: Value(taskId),
         completedAtIso: Value(completedAtIso),
+      ),
+      onConflict: DoUpdate(
+        (_) => StreakEventsCompanion(completedAtIso: Value(completedAtIso)),
+        target: [streakEvents.dateYmd, streakEvents.taskId],
       ),
     );
   }

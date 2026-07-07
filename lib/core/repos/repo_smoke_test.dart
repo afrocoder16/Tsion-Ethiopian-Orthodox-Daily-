@@ -48,10 +48,7 @@ Future<void> runRepoSmokeTest() async {
   checkId('today.audioCard', todayState.audioCard.id);
   checkRequired('today.audioCard.title', todayState.audioCard.title);
   checkRequired('today.audioCard.subtitle', todayState.audioCard.subtitle);
-  checkRequired(
-    'today.audioCard.durationText',
-    todayState.audioCard.durationText,
-  );
+  // durationText is empty until real audio exists; not required.
   checkRequired('today.memoryCue.text', todayState.memoryCue.text);
   checkSectionHeader(
     'today.orthodoxDailyHeader',

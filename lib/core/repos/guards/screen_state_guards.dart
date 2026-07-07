@@ -20,7 +20,8 @@ void assertValidTodayScreen(TodayScreenState state) {
   _requireId(state.audioCard.id, 'today.audioCard.id');
   _require(state.audioCard.title, 'today.audioCard.title');
   _require(state.audioCard.subtitle, 'today.audioCard.subtitle');
-  _require(state.audioCard.durationText, 'today.audioCard.durationText');
+  // durationText is empty until real "Hear Today's Word" audio exists and the
+  // card is rendered again, so it is not required here.
   _require(state.memoryCue.text, 'today.memoryCue.text');
   _require(state.orthodoxDailyHeader.title, 'today.orthodoxDailyHeader.title');
   for (final item in state.orthodoxDailyItems) {
