@@ -19,6 +19,9 @@ class SynaxariumEntryScreen extends ConsumerStatefulWidget {
 class _SynaxariumEntryScreenState extends ConsumerState<SynaxariumEntryScreen> {
   bool _isSaved = false;
   bool _loaded = false;
+  // Matches the Bible reader default; falls back to English automatically
+  // for days the Amharic bundle does not cover.
+  String _lang = 'am';
 
   @override
   void didChangeDependencies() {
@@ -88,7 +91,10 @@ class _SynaxariumEntryScreenState extends ConsumerState<SynaxariumEntryScreen> {
             tooltip: 'Copy reading',
             onPressed: entryState.maybeWhen(
               data: (entry) {
-                final text = _prepareSynaxariumText(entry?.text ?? '');
+                final amharic = entry?.textAm;
+                final text = _lang == 'am' && amharic != null
+                    ? amharic
+                    : _prepareSynaxariumText(entry?.text ?? '');
                 if (text.isEmpty) {
                   return null;
                 }
@@ -112,35 +118,55 @@ class _SynaxariumEntryScreenState extends ConsumerState<SynaxariumEntryScreen> {
           if (entry == null) {
             return const Center(child: Text('Entry not found'));
           }
+          final hasAmharic = entry.textAm != null;
+          final showAmharic = hasAmharic && _lang == 'am';
           final text = _prepareSynaxariumText(entry.text);
           final body = _bodyWithoutIntro(text);
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (hasAmharic) ...[
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(value: 'am', label: Text('አማርኛ')),
+                    ButtonSegment(value: 'en', label: Text('English')),
+                  ],
+                  selected: {_lang},
+                  onSelectionChanged: (selection) =>
+                      setState(() => _lang = selection.first),
+                ),
+                const SizedBox(height: 12),
+              ],
               if (entry.saints.isNotEmpty)
                 Text(
                   entry.saints.join(', '),
                   style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
               const SizedBox(height: 12),
-              SelectableText.rich(
-                TextSpan(
-                  children: [
-                    const TextSpan(
-                      text:
-                          'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.\n\n',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
+              if (showAmharic)
+                SelectableText(
+                  entry.textAm ?? '',
+                  style: const TextStyle(fontSize: 15, height: 1.7),
+                )
+              else
+                SelectableText.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text:
+                            'IN THE NAME OF THE FATHER AND THE SON AND THE HOLY SPIRIT, ONE GOD. AMEN.\n\n',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: body,
-                      style: const TextStyle(fontSize: 15, height: 1.7),
-                    ),
-                  ],
+                      TextSpan(
+                        text: body,
+                        style: const TextStyle(fontSize: 15, height: 1.7),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           );
         },

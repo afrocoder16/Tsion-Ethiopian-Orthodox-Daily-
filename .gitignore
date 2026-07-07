@@ -57,3 +57,6 @@ readings_data_issues.txt
 /assets/80-weahadu-main/*
 !/assets/80-weahadu-main/data/
 !/assets/synaxarium_pdfs/
+!/assets/synaxariums/
+/assets/synaxariums/*
+!/assets/synaxariums/amharic/

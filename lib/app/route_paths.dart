@@ -95,9 +95,6 @@ class RoutePaths {
 
   static String lightCandlePath() => prayersLightCandle;
 
-  static String calendarDayLinkPath(String dateKey, String type) =>
-      '/calendar/day/$dateKey/link/$type';
-
   static String exploreItemPath(String id) => '/explore/item/$id';
 
   static String explorePathPath(String id) => '/explore/path/$id';

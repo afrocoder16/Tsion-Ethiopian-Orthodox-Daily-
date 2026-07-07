@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "id": "book-psalms",
+  "title": "Psalms",
+  "author": "Daily Prayers",
+  "description": "A selection of psalms for daily devotion, drawn from the Psalter. Chapter numbers follow the Septuagint (Ethiopian) numbering.",
+  "language": "en",
+  "notes": "Generated from the bundled 80-weahadu English Psalter. Add more psalms or an Amharic edition by extending chapters.",
+  "chapters": [
+    {
+      "label": "Psalm 1 - The Two Ways",
+      "passages": [
+        "Blessed is the man who does not walk in the counsel of the wicked, or set foot on the path of sinners, or sit in the seat of mockers.",
+        "But his delight is in the Law of the LORD, and on His law he meditates day and night.",
+        "He is like a tree planted by streams of water, yielding its fruit in season, whose leaf does not wither, and who prospers in all he does.",
+        "Not so the wicked! For they are like chaff driven off by the wind.",
+        "Therefore the wicked will not stand in the judgment, nor sinners in the assembly of the righteous.",
+        "For the LORD guards the path of the righteous, but the way of the wicked will perish."
+      ]
+    },
+    {
+      "label": "Psalm 22 - The Lord Is My Shepherd",
+      "passages": [
+        "The LORD is my shepherd; I shall not want.",
+        "He makes me lie down in green pastures; He leads me beside quiet waters.",
+        "He restores my soul; He guides me in the paths of righteousness for the sake of His name.",
+        "Even though I walk through the valley of the shadow of death, I will fear no evil, for You are with me; Your rod and Your staff, they comfort me.",
+        "You prepare a table before me in the presence of my enemies. You anoint my head with oil; my cup overflows.",
+        "Surely goodness and mercy will follow me all the days of my life, and I will dwell in the house of the LORD forever."
+      ]
+    },
+    {
+      "label": "Psalm 50 - Have Mercy on Me, O God",
+      "passages": [
+        "Have mercy on me, O God, according to Your loving devotion; according to Your great compassion, blot out my transgressions.",
+        "Wash me clean of my iniquity and cleanse me from my sin.",
+        "For I know my transgressions, and my sin is always before me.",
+        "Against You, You only, have I sinned and done what is evil in Your sight, so that You may be proved right when You speak and blameless when You judge.",
+        "Surely I was brought forth in iniquity; I was sinful when my mother conceived me.",
+        "Surely You desire truth in the inmost being; You teach me wisdom in the inmost place.",
+        "Purify me with hyssop, and I will be clean; wash me, and I will be whiter than snow.",
+        "Let me hear joy and gladness; let the bones You have crushed rejoice.",
+        "Hide Your face from my sins and blot out all my iniquities.",
+        "Create in me a clean heart, O God, and renew a right spirit within me.",
+        "Cast me not away from Your presence; take not Your Holy Spirit from me.",
+        "Restore to me the joy of Your salvation, and sustain me with a willing spirit.",
+        "Then I will teach transgressors Your ways, and sinners will return to You.",
+        "Deliver me from bloodguilt, O God, the God of my salvation, and my tongue will sing of Your righteousness.",
+        "O Lord, open my lips, and my mouth will declare Your praise.",
+        "For You do not delight in sacrifice, or I would bring it; You take no pleasure in burnt offerings.",
+        "The sacrifices of God are a broken spirit; a broken and a contrite heart, O God, You will not despise.",
+        "In Your good pleasure, cause Zion to prosper; build up the walls of Jerusalem.",
+        "Then You will delight in righteous sacrifices, in whole burnt offerings; then bulls will be offered on Your altar."
+      ]
+    },
+    {
+      "label": "Psalm 90 - He Who Dwells in the Shelter of the Most High",
+      "passages": [
+        "He who dwells in the shelter of the Most High will abide in the shadow of the Almighty.",
+        "I will say to the LORD, “You are my refuge and my fortress, my God, in whom I trust.”",
+        "Surely He will deliver you from the snare of the fowler, and from the deadly plague.",
+        "He will cover you with His feathers; under His wings you will find refuge; His faithfulness is a shield and rampart.",
+        "You will not fear the terror of the night, nor the arrow that flies by day,",
+        "nor the pestilence that stalks in the darkness, nor the calamity that destroys at noon.",
+        "Though a thousand may fall at your side, and ten thousand at your right hand, no harm will come near you.",
+        "You will only see it with your eyes and witness the punishment of the wicked.",
+        "Because you have made the LORD your dwelling— my refuge, the Most High—",
+        "no evil will befall you, no plague will approach your tent.",
+        "For He will command His angels concerning you to guard you in all your ways.",
+        "They will lift you up in their hands, so that you will not strike your foot against a stone.",
+        "You will tread on the lion and cobra; you will trample the young lion and serpent.",
+        "“Because he loves Me, I will deliver him; because he knows My name, I will protect him.",
+        "When he calls out to Me, I will answer him; I will be with him in trouble. I will deliver him and honor him.",
+        "With long life I will satisfy him and show him My salvation.”"
+      ]
+    },
+    {
+      "label": "Psalm 102 - Bless the Lord, O My Soul",
+      "passages": [
+        "Bless the LORD, O my soul; all that is within me, bless His holy name.",
+        "Bless the LORD, O my soul, and do not forget all His kind deeds—",
+        "He who forgives all your iniquities and heals all your diseases,",
+        "who redeems your life from the Pit and crowns you with loving devotion and compassion,",
+        "who satisfies you with good things, so that your youth is renewed like the eagle’s.",
+        "The LORD executes righteousness and justice for all the oppressed.",
+        "He made known His ways to Moses, His deeds to the people of Israel.",
+        "The LORD is compassionate and gracious, slow to anger, abounding in loving devotion.",
+        "He will not always accuse us, nor harbor His anger forever.",
+        "He has not dealt with us according to our sins or repaid us according to our iniquities.",
+        "For as high as the heavens are above the earth, so great is His loving devotion for those who fear Him.",
+        "As far as the east is from the west, so far has He removed our transgressions from us.",
+        "As a father has compassion on his children, so the LORD has compassion on those who fear Him.",
+        "For He knows our frame; He is mindful that we are dust.",
+        "As for man, his days are like grass— he blooms like a flower of the field;",
+        "when the wind passes over, it vanishes, and its place remembers it no more.",
+        "But from everlasting to everlasting the loving devotion of the LORD extends to those who fear Him, and His righteousness to their children’s children—",
+        "to those who keep His covenant and remember to obey His precepts.",
+        "The LORD has established His throne in heaven, and His kingdom rules over all.",
+        "Bless the LORD, all His angels mighty in strength who carry out His word, who hearken to the voice of His command.",
+        "Bless the LORD, all His hosts, you servants who do His will.",
+        "Bless the LORD, all His works in all places of His dominion.   Bless the LORD, O my soul!"
+      ]
+    },
+    {
+      "label": "Psalm 133 - Come, Bless the Lord",
+      "passages": [
+        "Come, bless the LORD, all you servants of the LORD who serve by night in the house of the LORD!",
+        "Lift up your hands to the sanctuary and bless the LORD!",
+        "May the LORD, the Maker of heaven and earth, bless you from Zion."
+      ]
+    },
+    {
+      "label": "Psalm 150 - Praise God in His Sanctuary",
+      "passages": [
+        "Hallelujah!   Praise God in His sanctuary. Praise Him in His mighty heavens.",
+        "Praise Him for His mighty acts; praise Him for His excellent greatness.",
+        "Praise Him with the sound of the horn; praise Him with the harp and lyre.",
+        "Praise Him with tambourine and dancing; praise Him with strings and flute.",
+        "Praise Him with clashing cymbals; praise Him with resounding cymbals.",
+        "Let everything that has breath praise the LORD!   Hallelujah!"
+      ]
+    }
+  ]
+}

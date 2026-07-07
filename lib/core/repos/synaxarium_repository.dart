@@ -26,6 +26,7 @@ class SynaxariumEntry {
     required this.text,
     required this.sourceFile,
     required this.needsReview,
+    this.textAm,
   });
 
   final String key;
@@ -36,6 +37,10 @@ class SynaxariumEntry {
   final String text;
   final String sourceFile;
   final bool needsReview;
+
+  /// Amharic edition of the entry when the bundled Amharic Synaxarium covers
+  /// this day; null otherwise.
+  final String? textAm;
 }
 
 class SynaxariumBookmarkItem {

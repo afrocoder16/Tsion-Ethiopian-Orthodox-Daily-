@@ -148,14 +148,6 @@ class _PassageContentState extends ConsumerState<_PassageContent> {
               }
             },
           ),
-          _PassageAction(
-            icon: Icons.share,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share not implemented')),
-              );
-            },
-          ),
           const SizedBox(width: 6),
         ],
       ),

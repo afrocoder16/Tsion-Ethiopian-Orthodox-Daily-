@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'explore_detail_screen.dart';
+
+/// Community entry bodies live in the Explore content pack, keyed by the
+/// title slug the Explore tiles route with.
 class CommunityEntryScreen extends StatelessWidget {
   const CommunityEntryScreen({super.key, required this.entryId});
 
@@ -7,15 +11,6 @@ class CommunityEntryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Community')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-          'Placeholder for community entry: $entryId.',
-          style: const TextStyle(fontSize: 14, height: 1.5),
-        ),
-      ),
-    );
+    return ExploreDetailScreen(itemId: entryId);
   }
 }

@@ -44,36 +44,47 @@ class _ExploreContent extends StatelessWidget {
           icons: adapter.topBarIcons,
         ),
         const SizedBox(height: 18),
-        _SectionTitle(view: adapter.studyHeader),
-        const SizedBox(height: 12),
-        _HorizontalCards(
-          items: adapter.studyItems,
-          onTap: (item) => context.go(RoutePaths.exploreItemPath(item.routeId)),
-        ),
-        const SizedBox(height: 18),
-        _SectionTitle(view: adapter.guidedHeader),
-        const SizedBox(height: 10),
-        _SmallTileRow(
-          items: adapter.guidedPaths,
-          onTap: (item) => context.go(RoutePaths.explorePathPath(item.routeId)),
-        ),
-        const SizedBox(height: 18),
-        _SectionTitle(view: adapter.communityHeader),
-        const SizedBox(height: 10),
-        _SmallTileRow(
-          items: adapter.communityItems,
-          onTap: (item) =>
-              context.go(RoutePaths.exploreCommunityPath(item.routeId)),
-        ),
-        const SizedBox(height: 18),
-        _SectionTitle(view: adapter.categoriesHeader),
-        const SizedBox(height: 10),
-        _CategoryChips(items: adapter.categories),
-        const SizedBox(height: 18),
-        _SectionTitle(view: adapter.contentHeader),
-        const SizedBox(height: 10),
-        _ContentGrid(items: adapter.contentItems),
-        const SizedBox(height: 18),
+        // Sections are generated from the content pack; empty sections hide.
+        if (adapter.studyItems.isNotEmpty) ...[
+          _SectionTitle(view: adapter.studyHeader),
+          const SizedBox(height: 12),
+          _HorizontalCards(
+            items: adapter.studyItems,
+            onTap: (item) =>
+                context.go(RoutePaths.exploreItemPath(item.routeId)),
+          ),
+          const SizedBox(height: 18),
+        ],
+        if (adapter.guidedPaths.isNotEmpty) ...[
+          _SectionTitle(view: adapter.guidedHeader),
+          const SizedBox(height: 10),
+          _SmallTileRow(
+            items: adapter.guidedPaths,
+            onTap: (item) =>
+                context.go(RoutePaths.explorePathPath(item.routeId)),
+          ),
+          const SizedBox(height: 18),
+        ],
+        if (adapter.communityItems.isNotEmpty) ...[
+          _SectionTitle(view: adapter.communityHeader),
+          const SizedBox(height: 10),
+          _SmallTileRow(
+            items: adapter.communityItems,
+            onTap: (item) =>
+                context.go(RoutePaths.exploreCommunityPath(item.routeId)),
+          ),
+          const SizedBox(height: 18),
+        ],
+        if (adapter.contentItems.isNotEmpty) ...[
+          _SectionTitle(view: adapter.categoriesHeader),
+          const SizedBox(height: 10),
+          _CategoryChips(items: adapter.categories),
+          const SizedBox(height: 18),
+          _SectionTitle(view: adapter.contentHeader),
+          const SizedBox(height: 10),
+          _ContentGrid(items: adapter.contentItems),
+          const SizedBox(height: 18),
+        ],
         _SectionTitle(view: adapter.savedHeader),
         const SizedBox(height: 10),
         _SavedContainer(

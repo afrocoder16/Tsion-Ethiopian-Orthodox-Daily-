@@ -116,11 +116,7 @@ class _StreakContent extends ConsumerWidget {
           ),
           const SizedBox(height: 18),
           _WeekProgress(adapter: adapter),
-          const SizedBox(height: 16),
-          _SocialCard(
-            title: adapter.socialTitle,
-            subtitle: adapter.socialSubtitle,
-          ),
+          // The social invite card returns when the sharing feature exists.
           const SizedBox(height: 22),
           _PracticeHeader(
             title: adapter.practiceTitle,
@@ -381,66 +377,6 @@ class _WeekChip extends StatelessWidget {
           color: day.isToday || day.isComplete
               ? const Color(0xFF6E5428)
               : Colors.black87,
-        ),
-      ),
-    );
-  }
-}
-
-class _SocialCard extends StatelessWidget {
-  const _SocialCard({required this.title, required this.subtitle});
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Coming soon')));
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF7F7F7),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE0E0E0)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE6E1D7),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(Icons.groups, size: 20),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 11, color: Colors.black54),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.black38),
-          ],
         ),
       ),
     );

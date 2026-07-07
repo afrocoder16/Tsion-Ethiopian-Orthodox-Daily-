@@ -40,18 +40,13 @@ class DbPrayersRepository implements PrayersRepository {
         actionLabel: 'Midday Prayer',
       ),
       mezmurHeader: const ui.SectionHeader(title: 'MEZMUR AND HYMEN'),
+      // Kidase returns to this list once its content and screen exist.
       mezmurItems: const [
         ui.DevotionalItem(
           id: 'devotional-mezmur',
           title: 'Mezmur',
           subtitle: 'Ethiopian Orthodox mezmurs, like a sacred playlist',
           iconKey: 'audio',
-        ),
-        ui.DevotionalItem(
-          id: 'devotional-kidase',
-          title: 'Kidase',
-          subtitle: 'Orthodox Tewahedo daily worship service',
-          iconKey: 'play',
         ),
       ],
       devotionalHeader: const ui.SectionHeader(title: 'DEVOTIONAL ACTIONS'),

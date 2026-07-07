@@ -73,16 +73,52 @@ class DbSynaxariumRepository implements SynaxariumRepository {
         .map((value) => '$value'.trim())
         .where((value) => value.isNotEmpty)
         .toList();
+    final day = int.tryParse('${item['day']}') ?? (_parseEthKey(key)?.$2 ?? 1);
     return SynaxariumEntry(
       key: key,
       month: '${item['month'] ?? ''}',
-      day: int.tryParse('${item['day']}') ?? (_parseEthKey(key)?.$2 ?? 1),
+      day: day,
       primarySaint: _trimOrNull('${item['primary_saint'] ?? ''}'),
       saints: saints,
       text: '${item['text'] ?? ''}',
       sourceFile: '${item['source_file'] ?? ''}',
       needsReview: item['needs_review'] == true,
+      textAm: await _loadAmharicText('${item['month'] ?? ''}', day),
     );
+  }
+
+  /// The bundled Amharic Synaxarium is one file per Ethiopian day of year
+  /// (1 = Meskerem 1 ... 366 = Pagume 6), each a list of entries with a
+  /// title and story.
+  Future<String?> _loadAmharicText(String monthName, int day) async {
+    final monthOrder = EthiopianMonths.monthOrderOf(monthName);
+    if (monthOrder == null || day < 1) {
+      return null;
+    }
+    final dayOfYear = (monthOrder - 1) * 30 + day;
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/synaxariums/amharic/$dayOfYear.json',
+      );
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      final sections = <String>[];
+      for (final item in decoded) {
+        final map = item as Map<String, dynamic>;
+        final title = '${map['title'] ?? ''}'.trim();
+        final story = '${map['story'] ?? ''}'.trim();
+        if (story.isEmpty) {
+          continue;
+        }
+        sections.add(title.isEmpty ? story : '$title\n\n$story');
+      }
+      if (sections.isEmpty) {
+        return null;
+      }
+      return sections.join('\n\n\n');
+    } catch (_) {
+      // Day not covered by the Amharic bundle.
+      return null;
+    }
   }
 
   @override

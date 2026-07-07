@@ -9,7 +9,7 @@ import '../repos/prayer_flow_repositories.dart';
 final prayerDetailRepositoryProvider = Provider<PrayerDetailRepository>((ref) {
   final useDb = ref.watch(useDbReposProvider);
   if (useDb) {
-    return DbPrayerDetailRepository(ref.watch(dbProvider));
+    return DbPrayerDetailRepository();
   }
   return FakePrayerDetailRepository();
 });

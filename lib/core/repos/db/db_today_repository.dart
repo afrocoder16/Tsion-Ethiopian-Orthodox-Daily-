@@ -64,16 +64,15 @@ class DbTodayRepository implements TodayRepository {
         isPreviewTruncated: dailyVerse.isPreviewTruncated,
         ctaLabel: dailyVerse.isPreviewTruncated ? 'Read full passage' : null,
       ),
-      verseStats: const [
-        ui.VerseActionStat(iconKey: 'info', label: '124'),
-        ui.VerseActionStat(iconKey: 'bookmark', label: '38'),
-        ui.VerseActionStat(iconKey: 'share', label: '12'),
-      ],
+      // Engagement stats return when real counts exist; empty list hides them.
+      verseStats: const [],
+      // Kept for the state contract; the Today screen does not render the
+      // audio card until real daily audio recordings exist.
       audioCard: const ui.AudioCard(
         id: 'today-audio-reading',
         title: 'Hear Today\'s Word',
         subtitle: 'Today\'s Reading',
-        durationText: '9:24 min',
+        durationText: '',
       ),
       memoryCue: ui.MemoryCue(text: streakText),
       orthodoxDailyHeader: const ui.SectionHeader(
@@ -101,16 +100,6 @@ class DbTodayRepository implements TodayRepository {
           title: 'Today\'s Saint',
           subtitle: 'Life and remembrance',
         ),
-        ui.TodayCarouselItem(
-          id: 'today-carousel-daily-tip',
-          title: 'Daily Tip',
-          subtitle: 'Small step for today',
-        ),
-        ui.TodayCarouselItem(
-          id: 'today-carousel-ask',
-          title: 'Ask a Question',
-          subtitle: 'Learn the faith',
-        ),
       ],
       studyWorshipHeader: const ui.SectionHeader(title: 'STUDY & WORSHIP'),
       studyWorshipItems: const [
@@ -123,11 +112,6 @@ class DbTodayRepository implements TodayRepository {
           id: 'today-carousel-light-candle',
           title: 'Light a Candle',
           subtitle: 'Pray for me',
-        ),
-        ui.TodayCarouselItem(
-          id: 'today-carousel-find-church',
-          title: 'Find Your Church',
-          subtitle: 'Nearby parishes',
         ),
       ],
     );

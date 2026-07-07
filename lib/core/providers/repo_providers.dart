@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../actions/user_actions.dart';
+import '../content/book_content_store.dart';
+import '../content/explore_content_store.dart';
 import '../db/app_database.dart';
 import '../db/database_executor.dart';
 import '../calendar/calendar_engine.dart';
@@ -47,12 +49,19 @@ final todayRepositoryProvider = Provider<TodayRepository>((ref) {
   );
 });
 
+final bookContentStoreProvider = Provider<BookContentStore>(
+  (ref) => BookContentStore(),
+);
+
 final booksRepositoryProvider = Provider<BooksRepository>((ref) {
   final useDb = ref.watch(useDbReposProvider);
   if (!useDb) {
     return FakeBooksRepository();
   }
-  return DbBooksRepository(ref.watch(dbProvider));
+  return DbBooksRepository(
+    ref.watch(dbProvider),
+    ref.watch(bookContentStoreProvider),
+  );
 });
 
 final prayersRepositoryProvider = Provider<PrayersRepository>((ref) {
@@ -76,12 +85,19 @@ final calendarRepositoryProvider = Provider<CalendarRepository>((ref) {
   );
 });
 
+final exploreContentStoreProvider = Provider<ExploreContentStore>(
+  (ref) => ExploreContentStore(),
+);
+
 final exploreRepositoryProvider = Provider<ExploreRepository>((ref) {
   final useDb = ref.watch(useDbReposProvider);
   if (!useDb) {
     return FakeExploreRepository();
   }
-  return DbExploreRepository(ref.watch(dbProvider));
+  return DbExploreRepository(
+    ref.watch(dbProvider),
+    ref.watch(exploreContentStoreProvider),
+  );
 });
 
 // Saved items stream providers. These watch (not read) dbProvider so the

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../content/book_content_store.dart';
 import '../repos/bible/bible_content_seeder.dart';
 import '../repos/book_flow_repositories.dart';
 import '../repos/db/db_book_flow_repository.dart';
@@ -34,7 +35,10 @@ class BibleLangNotifier extends StateNotifier<String> {
 final bookDetailRepositoryProvider = Provider<BookDetailRepository>((ref) {
   final useDb = ref.watch(useDbReposProvider);
   if (useDb) {
-    return DbBookDetailRepository(ref.watch(dbProvider));
+    return DbBookDetailRepository(
+      ref.watch(dbProvider),
+      ref.watch(bookContentStoreProvider),
+    );
   }
   return FakeBookDetailRepository();
 });
@@ -42,7 +46,10 @@ final bookDetailRepositoryProvider = Provider<BookDetailRepository>((ref) {
 final readerRepositoryProvider = Provider<ReaderRepository>((ref) {
   final useDb = ref.watch(useDbReposProvider);
   if (useDb) {
-    return DbReaderRepository(ref.watch(dbProvider));
+    return DbReaderRepository(
+      ref.watch(dbProvider),
+      ref.watch(bookContentStoreProvider),
+    );
   }
   return FakeReaderRepository();
 });
@@ -82,6 +89,16 @@ final bibleSeedFutureProvider = FutureProvider<BibleSeedResult>((ref) {
   }
   return ref.watch(bibleContentSeederProvider).seedIfNeeded();
 });
+
+/// Content-backed books shown on the Daily Prayers collection screen.
+final dailyPrayerBooksProvider = FutureProvider.autoDispose<List<BookContent>>(
+  (ref) async {
+    final books = await ref.watch(bookContentStoreProvider).listBooks();
+    return books
+        .where((book) => dailyPrayerBookIds.contains(book.id))
+        .toList(growable: false);
+  },
+);
 
 final bookDetailProvider = FutureProvider.family
     .autoDispose<BookDetailState, String>(

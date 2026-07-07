@@ -79,6 +79,9 @@ flutter:
 
   assets:
     - assets/data/daily_verse_entries.json
+    - assets/data/prayers.json
+    - assets/data/explore_content.json
+    - assets/data/books/
     - assets/data/mezmur_library.json
     - assets/data/readings/
     - assets/data/saints_index.json
@@ -88,6 +91,7 @@ flutter:
     - assets/data/synaxarium_index.json
     - assets/80-weahadu-main/data/am/
     - assets/80-weahadu-main/data/en/
+    - assets/synaxariums/amharic/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

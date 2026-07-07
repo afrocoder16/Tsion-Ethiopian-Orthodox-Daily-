@@ -22,7 +22,6 @@ import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/calendar/calendar_day_detail_screen.dart';
 import '../features/calendar/presentation/daily_readings_screen.dart';
 import '../features/calendar/presentation/fasting_guidance_screen.dart';
-import '../features/calendar/presentation/calendar_link_placeholder_screen.dart';
 import '../features/calendar/presentation/synaxarium_screen.dart';
 import '../features/calendar/presentation/synaxarium_bookmarks_screen.dart';
 import '../features/calendar/presentation/synaxarium_entry_screen.dart';
@@ -113,19 +112,6 @@ GoRouter buildRouter() {
                   final date = state.pathParameters['date'] ?? 'Today';
                   return CalendarDayDetailScreen(dateKey: date);
                 },
-                routes: [
-                  GoRoute(
-                    path: 'link/:type',
-                    builder: (context, state) {
-                      final date = state.pathParameters['date'] ?? 'Today';
-                      final type = state.pathParameters['type'] ?? 'link';
-                      return CalendarLinkPlaceholderScreen(
-                        dateKey: date,
-                        linkType: type,
-                      );
-                    },
-                  ),
-                ],
               ),
               GoRoute(
                 path: 'synaxarium/bookmarks',

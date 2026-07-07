@@ -1,4 +1,6 @@
+import '../../content/book_content_store.dart';
 import '../../db/app_database.dart';
+import '../../db/daos/streak_dao.dart';
 import '../../models/ui_contract/ui_contract_models.dart' as ui;
 import '../../strings/app_strings.dart';
 import '../guards/screen_state_guards.dart';
@@ -6,9 +8,10 @@ import '../screen_repositories.dart';
 import '../screen_states.dart';
 
 class DbBooksRepository implements BooksRepository {
-  DbBooksRepository(this.db);
+  DbBooksRepository(this.db, this.bookStore);
 
   final AppDatabase db;
+  final BookContentStore bookStore;
 
   @override
   Future<BooksScreenState> fetchBooksScreen() async {
@@ -36,9 +39,40 @@ class DbBooksRepository implements BooksRepository {
       updatedContinueReading = <ui.BookItem>[];
     }
 
+    // Shelves are content-driven: a book appears only when its content pack
+    // file exists, so nothing routes to stub text.
+    final contentBooks = await bookStore.listBooks();
+    final bibleShelf = <ui.BookItem>[
+      const ui.BookItem(id: 'book-bible', title: 'Bible'),
+      const ui.BookItem(id: 'book-daily-prayers', title: 'Daily Prayers'),
+      for (final book in contentBooks)
+        if (book.id == 'book-andemta-commentary')
+          ui.BookItem(id: book.id, title: book.title),
+    ];
+    final orthodoxBooks = <ui.BookItem>[
+      for (final book in contentBooks)
+        if (!dailyPrayerBookIds.contains(book.id) &&
+            book.id != 'book-andemta-commentary')
+          ui.BookItem(id: book.id, title: book.title),
+    ];
+
+    var completedToday = 0;
+    var totalTasks = 0;
+    try {
+      final status = await StreakDao(
+        db,
+      ).getStreakStatusForDate(_formatYmd(DateTime.now()));
+      totalTasks = status.length;
+      completedToday = status.where((item) => item.completed).length;
+    } catch (_) {
+      // Older local DBs may not have streak tables yet.
+    }
+
     final state = BooksScreenState(
-      readingStreakBadge: const ui.ReadingStreakBadge(
-        label: '7-day reading streak',
+      readingStreakBadge: ui.ReadingStreakBadge(
+        label: totalTasks == 0
+            ? 'Start your daily streak'
+            : '$completedToday of $totalTasks tasks today',
         compact: true,
       ),
       searchBar: const ui.SearchBar(placeholder: AppStrings.bibleSearchHint),
@@ -86,23 +120,9 @@ class DbBooksRepository implements BooksRepository {
       ),
       saintsShelf: const [],
       libraryHeader: const ui.SectionHeader(title: 'LIBRARY'),
-      bibleShelf: const [
-        ui.BookItem(id: 'book-bible', title: 'Bible'),
-        ui.BookItem(id: 'book-andemta-commentary', title: 'Andemta Commentary'),
-        ui.BookItem(id: 'book-daily-prayers', title: 'Daily Prayers'),
-      ],
+      bibleShelf: bibleShelf,
       orthodoxBooksHeader: const ui.SectionHeader(title: 'ORTHODOX BOOKS'),
-      orthodoxBooks: const [
-        ui.BookItem(id: 'book-divine-liturgy', title: 'The Divine Liturgy'),
-        ui.BookItem(id: 'book-ladder', title: 'The Ladder'),
-        ui.BookItem(id: 'book-on-prayer', title: 'On Prayer'),
-        ui.BookItem(
-          id: 'book-desert-fathers',
-          title: 'Sayings of the Desert Fathers',
-        ),
-        ui.BookItem(id: 'book-philokalia', title: 'The Philokalia'),
-        ui.BookItem(id: 'book-lives-saints', title: 'Lives of the Saints'),
-      ],
+      orthodoxBooks: orthodoxBooks,
     );
     assert(() {
       assertValidBooksScreen(state);
@@ -135,6 +155,13 @@ List<ReadingProgressData> _filterContinueReadingRows(
 bool _isBibleProgressId(String id) {
   final trimmed = id.trim();
   return trimmed.isNotEmpty && !trimmed.startsWith('book-');
+}
+
+String _formatYmd(DateTime dateTime) {
+  final year = dateTime.year.toString().padLeft(4, '0');
+  final month = dateTime.month.toString().padLeft(2, '0');
+  final day = dateTime.day.toString().padLeft(2, '0');
+  return '$year-$month-$day';
 }
 
 String _displayTitleForBookId(String id) {

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "notes": "Explore tiles are generated from these entries: only entries listed here appear in the app. kind is one of study | path | community | content. For path and community entries the id must be the slug of the tile title (lowercase, hyphenated), because those tiles route by title slug. Add founder-sourced lessons here as they are ready.",
+  "entries": [
+    {
+      "id": "content-learning-hours",
+      "kind": "content",
+      "title": "Learning the Hours",
+      "subtitle": "Praying at fixed times through the day",
+      "category": "Prayer & Worship",
+      "body": "From the earliest days of the Church, Christians have prayed at fixed hours of the day. The Psalmist says, \"Seven times a day I praise You for Your righteous judgments\" (Psalm 118), and the Ethiopian Orthodox Tewahedo Church has kept this rhythm of prayer through the Books of the Hours.\n\nPraying at set times is not about ritual for its own sake. It trains the heart to return to God throughout the day — in the morning before work begins, at midday in the middle of labor, in the afternoon as the day turns, and at night before sleep. Each hour also remembers a moment in the story of our salvation: the morning recalls the Resurrection, the third hour the coming of the Holy Spirit, the sixth hour the Crucifixion, and the ninth hour the death of our Lord on the Cross.\n\nThis app can help you keep the hours. In the Prayers tab you will find prayers for morning, midday, afternoon, and night, along with the Trisagion, Psalm 50, and the Prayer of St. Ephrem. From your prayer schedule you can choose a four-time or seven-time rhythm, and the app will remind you at each hour you choose.\n\nStart small. Even two faithful prayer times a day, kept with attention, are better than seven kept in haste. As the habit grows, add more hours and let the day itself become a ladder of prayer."
+    },
+    {
+      "id": "content-gospel-readings",
+      "kind": "content",
+      "title": "The Gospel Readings",
+      "subtitle": "How the Church reads Scripture through the year",
+      "category": "Life in Christ",
+      "body": "The Ethiopian Orthodox Tewahedo Church appoints Scripture readings for every day of the year. These daily readings join the whole Church together: wherever you are, you are reading the same word of God as the faithful gathered for the Liturgy.\n\nEach day's readings follow the shape of the Church's worship. There are morning readings, the readings of the Qidase (the Divine Liturgy) — a psalm and Gospel for matins, a reading from the letters of St. Paul, a reading from the universal epistles, a reading from the Acts of the Apostles, and the psalm and Gospel of the day — and evening readings to close the day.\n\nIn this app, open Daily Readings from the Today screen or the Calendar to see the appointed passages for any day. Tap a reference to read the full passage from the Bible in Amharic or English.\n\nA simple way to begin: read the day's Gospel each morning. The Gospel is the heart of the daily readings, and hearing it daily — even a few verses — slowly forms the mind of Christ in us."
+    }
+  ]
+}

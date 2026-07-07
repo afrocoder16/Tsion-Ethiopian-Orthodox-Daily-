@@ -137,7 +137,8 @@ class _TodayContent extends ConsumerWidget {
           onTap: () => context.push(RoutePaths.streakDailyVerse),
         ),
         const SizedBox(height: 16),
-        _AudioCard(view: adapter.audioCard),
+        // The Hear Today's Word audio card returns here once real daily
+        // recordings exist and the AudioCard model carries an audio source.
         const SizedBox(height: 12),
         streakState.when(
           data: (state) => _DailyDevotionCard(
@@ -226,9 +227,22 @@ void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
     context.go(RoutePaths.calendarReadingsPath());
     return;
   }
-  ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text('${item.title} is not wired yet')));
+  if (item.id == 'today-carousel-midday-prayer') {
+    context.go(RoutePaths.prayerDetailPath('prayer-midday'));
+    return;
+  }
+  if (item.id == 'today-carousel-todays-saint') {
+    context.go(RoutePaths.calendarSynaxariumPath(_todayYmd()));
+    return;
+  }
+  // Every carousel item the repositories emit is routed above.
+}
+
+String _todayYmd() {
+  final now = DateTime.now();
+  final month = now.month.toString().padLeft(2, '0');
+  final day = now.day.toString().padLeft(2, '0');
+  return '${now.year}-$month-$day';
 }
 
 class _TodayLoading extends StatelessWidget {
@@ -423,65 +437,6 @@ class _VerseCard extends StatelessWidget {
   }
 }
 
-
-class _AudioCard extends StatelessWidget {
-  const _AudioCard({required this.view});
-
-  final AudioCardView view;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4E6E1),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  view.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  view.subtitle,
-                  style: const TextStyle(fontSize: 13, color: Colors.black54),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  view.durationText,
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-              ],
-            ),
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              const Icon(Icons.play_circle_fill, size: 28),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _DailyDevotionCard extends StatelessWidget {
   const _DailyDevotionCard({required this.adapter, required this.onTap});

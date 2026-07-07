@@ -49,6 +49,11 @@ class AppStrings {
   static const onboardingNotificationNote =
       'We will ask notification permission so reminders can fire on time.';
 
+  static const dailyPrayerBooksTitle = 'Daily Prayers';
+  static const dailyPrayerBooksEmpty = 'Prayer books are being prepared.';
+  static const dailyPrayerBooksError = 'Unable to load prayer books';
+  static const exploreDetailError = 'Unable to load detail';
+
   static String prayerReminderBody(String label) {
     return 'It is time for $label prayer.';
   }

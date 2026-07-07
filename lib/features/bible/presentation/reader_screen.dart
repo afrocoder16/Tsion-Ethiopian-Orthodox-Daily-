@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/actions/user_actions.dart';
@@ -35,8 +36,6 @@ class _ReaderContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controls = [
-      _Control(Icons.text_fields),
-      _Control(Icons.brightness_6_outlined),
       _Control(
         Icons.bookmark_border,
         onTap: () async {
@@ -66,13 +65,16 @@ class _ReaderContent extends ConsumerWidget {
               );
         },
       ),
-      _Control(Icons.edit_outlined),
       _Control(
-        Icons.share_outlined,
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Share not implemented')),
-          );
+        Icons.copy_outlined,
+        onTap: () async {
+          final text = '${reader.bookTitle}\n\n${reader.content.join('\n\n')}';
+          await Clipboard.setData(ClipboardData(text: text));
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Copied to clipboard')),
+            );
+          }
         },
       ),
     ];

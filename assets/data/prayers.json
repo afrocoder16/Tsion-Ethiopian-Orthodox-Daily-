@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "notes": "Prayer bodies are classic public-domain Orthodox texts seeded for review by the founder. body_am fields are filled only where a verified Amharic source exists in this repo (Psalm 50 comes from the bundled Amharic Psalter, which uses shortened half-verses). Replace or refine any body with the preferred Ethiopian Orthodox (Tewahedo) wording before launch.",
+  "prayers": [
+    {
+      "id": "prayer-morning",
+      "title": "Morning Prayer",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "Stand quietly before God. Breathe slowly, and let the cares of the day wait.",
+      "body_en": "In the name of the Father, and of the Son, and of the Holy Spirit, one God. Amen.\n\nO Lord, grant that I may meet the coming day in peace. Help me in all things to rely upon Your holy will. In every hour of the day reveal Your will to me. Bless my dealings with all who surround me. Teach me to treat all that comes to me throughout the day with peace of soul, and with the firm conviction that Your will governs all.\n\nIn all my deeds and words guide my thoughts and feelings. In unforeseen events let me not forget that all are sent by You. Teach me to act firmly and wisely, without embittering or embarrassing others. Give me strength to bear the fatigue of the coming day with all that it shall bring. Direct my will, teach me to pray, and pray Yourself in me. Amen.",
+      "body_am": ""
+    },
+    {
+      "id": "prayer-midday",
+      "title": "Midday Prayer",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "Pause in the middle of your work. Turn your heart to God for a moment of quiet.",
+      "body_en": "O God, You are my God; earnestly I seek You in the middle of this day. Renew my strength, guard my words, and keep my heart at peace in every task before me.\n\nOur Father, who art in heaven, hallowed be Thy name. Thy kingdom come, Thy will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. For Thine is the kingdom, and the power, and the glory, forever. Amen.",
+      "body_am": ""
+    },
+    {
+      "id": "prayer-afternoon",
+      "title": "Afternoon Prayer",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "As the day turns toward evening, be still and remember the Lord's mercy.",
+      "body_en": "O Lord Jesus Christ, Son of God, at this hour You stretched out Your hands upon the Cross for the life of the world. Have mercy on me, a sinner.\n\nKeep me steadfast until the evening. Forgive what I have done amiss this day, in word, in deed, and in thought. Strengthen me for the work that remains, and let my heart not wander from You. Glory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.",
+      "body_am": ""
+    },
+    {
+      "id": "prayer-night",
+      "title": "Night Prayer",
+      "stillness_title": "Closing stillness",
+      "stillness_body": "Before sleep, set down the weight of the day and place it in God's hands.",
+      "body_en": "O eternal God, King of all creation, You have counted me worthy to reach this hour. Forgive me the sins I have committed this day in deed, word, and thought. Cleanse, O Lord, my humble soul from every stain of flesh and spirit.\n\nGrant me, O Lord, to pass through the sleep of this night in peace, that rising from my lowly bed I may please Your most holy name all the days of my life, and conquer the enemies, bodily and bodiless, that war against me.\n\nInto Your hands, O Lord, I commend my spirit. Bless me, have mercy on me, and grant me life eternal. Amen.",
+      "body_am": ""
+    },
+    {
+      "id": "trisagion-prayers",
+      "title": "Trisagion Prayers",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "These ancient prayers open the Church's worship. Pray them slowly and with attention.",
+      "body_en": "Holy God, Holy Mighty, Holy Immortal, have mercy on us.\nHoly God, Holy Mighty, Holy Immortal, have mercy on us.\nHoly God, Holy Mighty, Holy Immortal, have mercy on us.\n\nGlory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.\n\nAll-holy Trinity, have mercy on us. Lord, cleanse us from our sins. Master, pardon our transgressions. Holy One, visit and heal our infirmities, for Your name's sake.\n\nLord, have mercy. Lord, have mercy. Lord, have mercy.\n\nGlory to the Father, and to the Son, and to the Holy Spirit, now and ever and unto ages of ages. Amen.\n\nOur Father, who art in heaven, hallowed be Thy name. Thy kingdom come, Thy will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. For Thine is the kingdom, and the power, and the glory, forever. Amen.",
+      "body_am": ""
+    },
+    {
+      "id": "psalm-50",
+      "title": "Psalm 50",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "The psalm of repentance. Pray it as your own confession before God.",
+      "body_en": "Have mercy on me, O God, according to Your loving devotion; according to Your great compassion, blot out my transgressions.\n\nWash me clean of my iniquity and cleanse me from my sin.\n\nFor I know my transgressions, and my sin is always before me.\n\nAgainst You, You only, have I sinned and done what is evil in Your sight, so that You may be proved right when You speak and blameless when You judge.\n\nSurely I was brought forth in iniquity; I was sinful when my mother conceived me.\n\nSurely You desire truth in the inmost being; You teach me wisdom in the inmost place.\n\nPurify me with hyssop, and I will be clean; wash me, and I will be whiter than snow.\n\nLet me hear joy and gladness; let the bones You have crushed rejoice.\n\nHide Your face from my sins and blot out all my iniquities.\n\nCreate in me a clean heart, O God, and renew a right spirit within me.\n\nCast me not away from Your presence; take not Your Holy Spirit from me.\n\nRestore to me the joy of Your salvation, and sustain me with a willing spirit.\n\nThen I will teach transgressors Your ways, and sinners will return to You.\n\nDeliver me from bloodguilt, O God, the God of my salvation, and my tongue will sing of Your righteousness.\n\nO Lord, open my lips, and my mouth will declare Your praise.\n\nFor You do not delight in sacrifice, or I would bring it; You take no pleasure in burnt offerings.\n\nThe sacrifices of God are a broken spirit; a broken and a contrite heart, O God, You will not despise.\n\nIn Your good pleasure, cause Zion to prosper; build up the walls of Jerusalem.\n\nThen You will delight in righteous sacrifices, in whole burnt offerings; then bulls will be offered on Your altar.",
+      "body_am": "አቤቱ፥ እንደ ቸርነትህ መጠን ማረኝ፤\n\nከበደሌ ፈጽሞ እጠበኝ፥\n\nእኔ በደሌን አውቃለሁና፥\n\nአንተን ብቻ በደልሁ፥\n\nእነሆ፥ በኀጢአት ተፀነስሁ፥\n\nእነሆ፥ እውነትን ወደድህ፤\n\nበሂሶጵ እርጨኝ፥ እነጻማለሁ፤\n\nሐሤትንና ደስታን አሰማኝ፥\n\nከኀጢአቴ ፊትህን መልስ፥\n\nአቤቱ፥ ንጹሕ ልብን ፍጠርልኝ፥\n\nከፊትህ አትጣለኝ፥\n\nደስታንና ማዳንህን ስጠኝ፥\n\nመንገድህን ለኃጥኣን አስተምራቸው ዘንድ፥\n\nየመድኀኒቴ አምላክ እግዚአብሔር ሆይ፥\n\nአቤቱ፥ ከንፈሮችን ክፈት፥\n\nመሥዋዕትን ብትወድድስ በሰጠሁህ ነበር፤\n\nየእግዚአብሔር መሥዋዕት የዋህ መንፈስ ነው፥\n\nአቤቱ፥ በውዴታህ ጽዮንን አሰማምራት፤\n\nየጽድቁን መሥዋዕት፥"
+    },
+    {
+      "id": "prayer-of-st-ephrem",
+      "title": "Prayer of St. Ephrem",
+      "stillness_title": "Opening stillness",
+      "stillness_body": "The great prayer of the fast. Pray it slowly, with a bow at each petition if you are able.",
+      "body_en": "O Lord and Master of my life, take from me the spirit of sloth, despair, lust of power, and idle talk.\n\nBut give rather the spirit of chastity, humility, patience, and love to Your servant.\n\nYes, O Lord and King, grant me to see my own sins and not to judge my brother, for blessed are You unto ages of ages. Amen.\n\nO God, cleanse me a sinner. (Twelve times, with a bow at each.)\n\nO Lord and Master of my life, take from me the spirit of sloth, despair, lust of power, and idle talk. But give rather the spirit of chastity, humility, patience, and love to Your servant. Yes, O Lord and King, grant me to see my own sins and not to judge my brother, for blessed are You unto ages of ages. Amen.",
+      "body_am": ""
+    }
+  ]
+}

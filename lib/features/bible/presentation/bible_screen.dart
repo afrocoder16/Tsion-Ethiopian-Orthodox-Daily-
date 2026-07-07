@@ -76,15 +76,8 @@ class _BooksContent extends StatelessWidget {
             context.go(RoutePaths.bookReaderPath(item.routeId));
           },
         ),
-        const SizedBox(height: 22),
-        _SectionHeader(view: adapter.saintsHeader),
-        const SizedBox(height: 12),
-        _PatronSaintCard(
-          view: adapter.patronSaint,
-          onTap: () => context.push(
-            RoutePaths.patronSaintPath(adapter.patronSaint.name),
-          ),
-        ),
+        // The patron saint card returns once real saint selection exists;
+        // the previous card showed fixed sample data.
         const SizedBox(height: 22),
         _SectionGroupTitle(title: adapter.libraryHeader.title),
         const SizedBox(height: 12),
@@ -105,20 +98,23 @@ class _BooksContent extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 28),
-        const _SoftDivider(),
-        const SizedBox(height: 24),
-        _SectionGroupTitle(title: adapter.orthodoxBooksHeader.title),
-        const SizedBox(height: 12),
-        _SectionBlock(
-          isMuted: !adapter.isAllSelected,
-          child: _BooksGrid(
-            items: adapter.orthodoxBooks,
-            onTap: (item) {
-              context.go(RoutePaths.bookDetailPath(item.routeId));
-            },
+        // Shelf is content-driven; it hides until book content packs exist.
+        if (adapter.orthodoxBooks.isNotEmpty) ...[
+          const SizedBox(height: 28),
+          const _SoftDivider(),
+          const SizedBox(height: 24),
+          _SectionGroupTitle(title: adapter.orthodoxBooksHeader.title),
+          const SizedBox(height: 12),
+          _SectionBlock(
+            isMuted: !adapter.isAllSelected,
+            child: _BooksGrid(
+              items: adapter.orthodoxBooks,
+              onTap: (item) {
+                context.go(RoutePaths.bookDetailPath(item.routeId));
+              },
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -529,42 +525,6 @@ class _SectionGroupTitle extends StatelessWidget {
         fontWeight: FontWeight.w700,
         letterSpacing: 1.2,
         color: Colors.black54,
-      ),
-    );
-  }
-}
-
-class _PatronSaintCard extends StatelessWidget {
-  const _PatronSaintCard({required this.view, this.onTap});
-
-  final PatronSaintView view;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEDE7DD),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              view.label,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              view.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-            ),
-          ],
-        ),
       ),
     );
   }
