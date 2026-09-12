@@ -3,18 +3,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
+import '../../../core/adapters/calendar_day_detail_adapter.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
+import '../../../core/providers/calendar_day_detail_providers.dart';
 import '../../../core/providers/calendar_preferences_provider.dart';
 import '../../../core/providers/screen_state_providers.dart';
+import '../../../core/strings/app_strings.dart';
 
 class CalendarScreen extends ConsumerWidget {
-  const CalendarScreen({super.key});
+  const CalendarScreen({super.key, this.initialDateKey});
+
+  final String? initialDateKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenState = ref.watch(calendarScreenStateProvider);
     final body = screenState.when(
-      data: (state) => _CalendarContent(adapter: CalendarAdapter(state)),
+      data: (state) => _CalendarContent(
+        adapter: CalendarAdapter(state),
+        initialDateKey: initialDateKey,
+      ),
       loading: () => const _CalendarLoading(),
       error: (error, _) => _InlineErrorCard(
         message: 'Unable to load calendar.',
@@ -25,40 +33,75 @@ class CalendarScreen extends ConsumerWidget {
   }
 }
 
-class _CalendarContent extends ConsumerWidget {
-  const _CalendarContent({required this.adapter});
+class _CalendarContent extends ConsumerStatefulWidget {
+  const _CalendarContent({required this.adapter, this.initialDateKey});
 
   final CalendarAdapter adapter;
+  final String? initialDateKey;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_CalendarContent> createState() => _CalendarContentState();
+}
+
+class _CalendarContentState extends ConsumerState<_CalendarContent> {
+  late String _selectedDateKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDateKey = _validDateKey(widget.initialDateKey) ?? _todayYmd();
+  }
+
+  @override
+  void didUpdateWidget(covariant _CalendarContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final nextDateKey = _validDateKey(widget.initialDateKey);
+    if (nextDateKey != null && nextDateKey != _selectedDateKey) {
+      _selectedDateKey = nextDateKey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final mode = ref.watch(calendarDisplayModeProvider);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _TopBar(
-          title: adapter.topBarTitle,
-          subtitle: adapter.topBarSubtitle,
-          icons: adapter.topBarIcons,
+          title: widget.adapter.topBarTitle,
+          subtitle: widget.adapter.topBarSubtitle,
+          icons: widget.adapter.topBarIcons,
         ),
         const SizedBox(height: 14),
         _MonthCalendarScroller(
-          months: adapter.monthGrids,
-          years: adapter.availableYears,
+          months: widget.adapter.monthGrids,
+          years: widget.adapter.availableYears,
           mode: mode,
+          selectedDateKey: _selectedDateKey,
           onModeChanged: (nextMode) =>
               ref.read(calendarDisplayModeProvider.notifier).setMode(nextMode),
-          onDayTap: (dateKey) =>
-              context.push(RoutePaths.calendarDayPath(dateKey)),
+          onDayTap: (dateKey) {
+            setState(() => _selectedDateKey = dateKey);
+          },
+          onMonthChanged: (month) {
+            final selected =
+                DateTime.tryParse(_selectedDateKey) ?? DateTime.now();
+            final lastDay = DateTime(
+              month.gregorianYear,
+              month.gregorianMonth + 1,
+              0,
+            ).day;
+            final nextDay = selected.day > lastDay ? lastDay : selected.day;
+            final nextDateKey = _dateYmd(
+              DateTime(month.gregorianYear, month.gregorianMonth, nextDay),
+            );
+            if (nextDateKey != _selectedDateKey) {
+              setState(() => _selectedDateKey = nextDateKey);
+            }
+          },
         ),
-        const SizedBox(height: 12),
-        _SaintPreviewCard(
-          view: adapter.saintPreview,
-          onReadSaint: () =>
-              context.push(RoutePaths.calendarSynaxariumPath(_todayYmd())),
-        ),
-        const SizedBox(height: 12),
-        _SpiritualTrackerCard(view: adapter.spiritualTracker),
+        const SizedBox(height: 18),
+        _SelectedDayDetails(dateKey: _selectedDateKey),
       ],
     );
   }
@@ -71,8 +114,11 @@ class _CalendarMonthGrid extends StatelessWidget {
     required this.onPickYear,
     required this.onGoToToday,
     required this.mode,
+    required this.selectedDateKey,
     required this.onModeChanged,
     required this.onDayTap,
+    this.onPreviousMonth,
+    this.onNextMonth,
   });
 
   final CalendarMonthGridView view;
@@ -80,11 +126,15 @@ class _CalendarMonthGrid extends StatelessWidget {
   final ValueChanged<int> onPickYear;
   final VoidCallback onGoToToday;
   final CalendarDisplayMode mode;
+  final String selectedDateKey;
   final ValueChanged<CalendarDisplayMode> onModeChanged;
   final ValueChanged<String> onDayTap;
+  final VoidCallback? onPreviousMonth;
+  final VoidCallback? onNextMonth;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isEthiopian = mode == CalendarDisplayMode.ethiopian;
     final monthTitle = isEthiopian
         ? '${view.ethiopianMonthLabel} ${view.ethiopianYear}'
@@ -103,16 +153,30 @@ class _CalendarMonthGrid extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   monthTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 21,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
+              _MonthArrowButton(
+                icon: Icons.chevron_left,
+                tooltip: AppStrings.calendarPreviousMonth,
+                onPressed: onPreviousMonth,
+              ),
+              const SizedBox(width: 2),
+              _MonthArrowButton(
+                icon: Icons.chevron_right,
+                tooltip: AppStrings.calendarNextMonth,
+                onPressed: onNextMonth,
+              ),
+              const SizedBox(width: 6),
               ToggleButtons(
                 isSelected: [
                   mode == CalendarDisplayMode.ethiopian,
@@ -126,13 +190,13 @@ class _CalendarMonthGrid extends StatelessWidget {
                   );
                 },
                 borderRadius: BorderRadius.circular(8),
-                constraints: const BoxConstraints(minHeight: 28, minWidth: 42),
+                constraints: const BoxConstraints(minHeight: 28, minWidth: 38),
                 children: const [
                   Text('ETH', style: TextStyle(fontSize: 10)),
                   Text('GR', style: TextStyle(fontSize: 10)),
                 ],
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
             ],
           ),
           const SizedBox(height: 4),
@@ -192,74 +256,91 @@ class _CalendarMonthGrid extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           ...view.weeks.map(
-            (week) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              child: Row(
-                children: week
-                    .map(
-                      (cell) => Expanded(
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => onDayTap(cell.dateKey),
-                          child: Container(
-                            height: view.weeks.length > 5 ? 60 : 68,
-                            margin: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
+            (week) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: week
+                      .map(
+                        (cell) => Expanded(
+                          child: Semantics(
+                            button: true,
+                            selected: cell.dateKey == selectedDateKey,
+                            label: cell.dateKey,
+                            child: InkWell(
                               borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: cell.isToday
-                                        ? Border.all(
-                                            color: Colors.green,
-                                            width: 2,
-                                          )
-                                        : null,
-                                  ),
-                                  child: Text(
-                                    '${isEthiopian ? cell.ethiopianDay : cell.gregorianDay}',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w700,
-                                      color: cell.isCurrentMonth
-                                          ? Colors.black87
-                                          : Colors.black38,
-                                    ),
-                                  ),
+                              onTap: () => onDayTap(cell.dateKey),
+                              child: Container(
+                                margin: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${isEthiopian ? cell.gregorianDay : cell.ethiopianDay}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: cell.isCurrentMonth
-                                        ? Colors.black54
-                                        : Colors.black38,
-                                  ),
-                                ),
-                                if (cell.hasDot)
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 2),
-                                    child: Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: Colors.green,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 34,
+                                      height: 34,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: cell.dateKey == selectedDateKey
+                                            ? colorScheme.primaryContainer
+                                            : null,
+                                        border: cell.dateKey == selectedDateKey
+                                            ? Border.all(
+                                                color: colorScheme.primary,
+                                                width: 2,
+                                              )
+                                            : cell.isToday
+                                            ? Border.all(
+                                                color: Colors.green,
+                                                width: 2,
+                                              )
+                                            : null,
+                                      ),
+                                      child: Text(
+                                        '${isEthiopian ? cell.ethiopianDay : cell.gregorianDay}',
+                                        style: TextStyle(
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.w700,
+                                          color: cell.isCurrentMonth
+                                              ? Colors.black87
+                                              : Colors.black38,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                              ],
+                                    const SizedBox(height: 1),
+                                    Text(
+                                      '${isEthiopian ? cell.gregorianDay : cell.ethiopianDay}',
+                                      style: TextStyle(
+                                        fontSize: 10.5,
+                                        height: 1,
+                                        color: cell.isCurrentMonth
+                                            ? Colors.black54
+                                            : Colors.black38,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                      child: cell.hasDot
+                                          ? const Icon(
+                                              Icons.circle,
+                                              size: 6,
+                                              color: Colors.green,
+                                            )
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ),
@@ -270,20 +351,50 @@ class _CalendarMonthGrid extends StatelessWidget {
   }
 }
 
+class _MonthArrowButton extends StatelessWidget {
+  const _MonthArrowButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 30,
+      child: IconButton.filledTonal(
+        onPressed: onPressed,
+        tooltip: tooltip,
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        icon: Icon(icon, size: 19),
+      ),
+    );
+  }
+}
+
 class _MonthCalendarScroller extends StatefulWidget {
   const _MonthCalendarScroller({
     required this.months,
     required this.years,
     required this.mode,
+    required this.selectedDateKey,
     required this.onModeChanged,
     required this.onDayTap,
+    required this.onMonthChanged,
   });
 
   final List<CalendarMonthGridView> months;
   final List<int> years;
   final CalendarDisplayMode mode;
+  final String selectedDateKey;
   final ValueChanged<CalendarDisplayMode> onModeChanged;
   final ValueChanged<String> onDayTap;
+  final ValueChanged<CalendarMonthGridView> onMonthChanged;
 
   @override
   State<_MonthCalendarScroller> createState() => _MonthCalendarScrollerState();
@@ -292,6 +403,7 @@ class _MonthCalendarScroller extends StatefulWidget {
 class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
   late final PageController _pageController;
   late final int _todayIndex;
+  late int _currentIndex;
 
   @override
   void initState() {
@@ -302,8 +414,43 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
           item.gregorianYear == now.year && item.gregorianMonth == now.month,
     );
     _todayIndex = index >= 0 ? index : (widget.months.length ~/ 2);
-    final initialIndex = _todayIndex;
+    final selectedDate = DateTime.tryParse(widget.selectedDateKey);
+    final selectedIndex = selectedDate == null
+        ? -1
+        : widget.months.indexWhere(
+            (item) =>
+                item.gregorianYear == selectedDate.year &&
+                item.gregorianMonth == selectedDate.month,
+          );
+    final initialIndex = selectedIndex >= 0 ? selectedIndex : _todayIndex;
+    _currentIndex = initialIndex;
     _pageController = PageController(initialPage: initialIndex);
+  }
+
+  @override
+  void didUpdateWidget(covariant _MonthCalendarScroller oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedDateKey == widget.selectedDateKey) {
+      return;
+    }
+    final selectedDate = DateTime.tryParse(widget.selectedDateKey);
+    if (selectedDate == null) {
+      return;
+    }
+    final targetIndex = widget.months.indexWhere(
+      (item) =>
+          item.gregorianYear == selectedDate.year &&
+          item.gregorianMonth == selectedDate.month,
+    );
+    if (targetIndex == -1) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_pageController.hasClients) {
+        return;
+      }
+      _animateToMonth(targetIndex);
+    });
   }
 
   @override
@@ -313,10 +460,24 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
   }
 
   void _jumpToYear(int year) {
+    final visibleMonth = widget.months[_currentIndex].gregorianMonth;
     final targetIndex = widget.months.indexWhere(
-      (item) => item.gregorianYear == year,
+      (item) =>
+          item.gregorianYear == year && item.gregorianMonth == visibleMonth,
     );
-    if (targetIndex == -1) {
+    final fallbackIndex = targetIndex >= 0
+        ? targetIndex
+        : widget.months.indexWhere((item) => item.gregorianYear == year);
+    if (fallbackIndex == -1) {
+      return;
+    }
+    _animateToMonth(fallbackIndex);
+  }
+
+  void _animateToMonth(int targetIndex) {
+    if (targetIndex < 0 ||
+        targetIndex >= widget.months.length ||
+        targetIndex == _currentIndex) {
       return;
     }
     _pageController.animateToPage(
@@ -327,11 +488,8 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
   }
 
   void _jumpToToday() {
-    _pageController.animateToPage(
-      _todayIndex,
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOut,
-    );
+    _animateToMonth(_todayIndex);
+    widget.onDayTap(_todayYmd());
   }
 
   @override
@@ -340,7 +498,12 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
       height: 560,
       child: PageView.builder(
         controller: _pageController,
-        scrollDirection: Axis.vertical,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (index) {
+          setState(() => _currentIndex = index);
+          widget.onMonthChanged(widget.months[index]);
+        },
         itemCount: widget.months.length,
         itemBuilder: (context, index) {
           final month = widget.months[index];
@@ -350,8 +513,15 @@ class _MonthCalendarScrollerState extends State<_MonthCalendarScroller> {
             onPickYear: _jumpToYear,
             onGoToToday: _jumpToToday,
             mode: widget.mode,
+            selectedDateKey: widget.selectedDateKey,
             onModeChanged: widget.onModeChanged,
             onDayTap: widget.onDayTap,
+            onPreviousMonth: index > 0
+                ? () => _animateToMonth(index - 1)
+                : null,
+            onNextMonth: index < widget.months.length - 1
+                ? () => _animateToMonth(index + 1)
+                : null,
           );
         },
       ),
@@ -410,11 +580,23 @@ String _gregorianMonthLabel(int month) {
 }
 
 String _todayYmd() {
-  final now = DateTime.now();
-  final y = now.year.toString().padLeft(4, '0');
-  final m = now.month.toString().padLeft(2, '0');
-  final d = now.day.toString().padLeft(2, '0');
+  return _dateYmd(DateTime.now());
+}
+
+String _dateYmd(DateTime date) {
+  final y = date.year.toString().padLeft(4, '0');
+  final m = date.month.toString().padLeft(2, '0');
+  final d = date.day.toString().padLeft(2, '0');
   return '$y-$m-$d';
+}
+
+String? _validDateKey(String? value) {
+  if (value == null ||
+      !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value) ||
+      DateTime.tryParse(value) == null) {
+    return null;
+  }
+  return value;
 }
 
 class _TopBar extends StatelessWidget {
@@ -453,7 +635,7 @@ class _TopBar extends StatelessWidget {
         ),
         const Spacer(),
         ...icons
-            .where((icon) => icon == Icons.person)
+            .where((icon) => icon == Icons.settings_outlined)
             .map((icon) => _IconButton(icon: icon)),
       ],
     );
@@ -467,8 +649,8 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onTap = icon == Icons.person
-        ? () => context.push(RoutePaths.profilePath())
+    final onTap = icon == Icons.settings_outlined
+        ? () => context.push(RoutePaths.settingsPath())
         : null;
     return Padding(
       padding: const EdgeInsets.only(left: 8),
@@ -488,169 +670,232 @@ class _IconButton extends StatelessWidget {
   }
 }
 
-class _SaintPreviewCard extends StatelessWidget {
-  const _SaintPreviewCard({required this.view, required this.onReadSaint});
+class _SelectedDayDetails extends ConsumerWidget {
+  const _SelectedDayDetails({required this.dateKey});
 
-  final SaintPreviewView view;
-  final VoidCallback onReadSaint;
+  final String dateKey;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailState = ref.watch(calendarDayDetailProvider(dateKey));
+    return detailState.when(
+      data: (detail) => _SelectedDayContent(
+        adapter: CalendarDayDetailAdapter(detail),
+        dateKey: dateKey,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      loading: () => const Column(
         children: [
-          const Text(
-            'Saint of the Day',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            view.name,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            view.summary,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          const SizedBox(height: 10),
-          FilledButton(
-            onPressed: view.isAvailable ? onReadSaint : null,
-            child: Text(view.ctaLabel),
-          ),
+          _SkeletonBox(height: 94),
+          SizedBox(height: 12),
+          _SkeletonBox(height: 88),
+          SizedBox(height: 12),
+          _SkeletonBox(height: 116),
         ],
+      ),
+      error: (error, _) => _InlineErrorCard(
+        message: AppStrings.calendarUnableToLoadSelectedDay,
+        onRetry: () => ref.invalidate(calendarDayDetailProvider(dateKey)),
       ),
     );
   }
 }
 
-class _SpiritualTrackerCard extends StatefulWidget {
-  const _SpiritualTrackerCard({required this.view});
+class _SelectedDayContent extends StatelessWidget {
+  const _SelectedDayContent({required this.adapter, required this.dateKey});
 
-  final SpiritualTrackerView view;
-
-  @override
-  State<_SpiritualTrackerCard> createState() => _SpiritualTrackerCardState();
-}
-
-class _SpiritualTrackerCardState extends State<_SpiritualTrackerCard> {
-  late final Map<String, bool> _checked = {
-    for (final item in widget.view.habits) item.id: item.isDone,
-  };
-  final List<_TrackerHabitItem> _customHabits = [];
-
-  Future<void> _addHabit() async {
-    final controller = TextEditingController();
-    final value = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add tracker item'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'Type a habit'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-    if (value == null || value.isEmpty) {
-      return;
-    }
-    final id = 'custom-${DateTime.now().microsecondsSinceEpoch}';
-    setState(() {
-      _customHabits.add(
-        _TrackerHabitItem(id: id, label: value, isOptional: false),
-      );
-      _checked[id] = false;
-    });
-  }
+  final CalendarDayDetailAdapter adapter;
+  final String dateKey;
 
   @override
   Widget build(BuildContext context) {
-    final habits = <_TrackerHabitItem>[
-      ...widget.view.habits.map(
-        (item) => _TrackerHabitItem(
-          id: item.id,
-          label: item.label,
-          isOptional: item.isOptional,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _DateOverviewCard(adapter: adapter),
+        const SizedBox(height: 18),
+        const _SectionTitle(text: AppStrings.calendarEvangelist),
+        const SizedBox(height: 10),
+        _InfoCard(
+          eyebrow: AppStrings.calendarEvangelist,
+          title: adapter.evangelist,
         ),
-      ),
-      ..._customHabits,
-    ];
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Spiritual Tracker',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                ),
-              ),
-              IconButton(
-                onPressed: _addHabit,
-                icon: const Icon(Icons.add_circle_outline),
-                tooltip: 'Add tracker item',
-              ),
-            ],
+        const SizedBox(height: 18),
+        const _SectionTitle(text: AppStrings.calendarCelebrations),
+        const SizedBox(height: 10),
+        if (adapter.celebrations.isEmpty)
+          const _EmptyCard(text: AppStrings.calendarNoCelebrations)
+        else
+          ...adapter.celebrations.map(
+            (item) => _InfoCard(title: item.title, subtitle: item.subtitle),
           ),
-          const SizedBox(height: 8),
-          ...habits.map(
-            (habit) => CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              value: _checked[habit.id] ?? false,
-              dense: true,
-              title: Text(
-                habit.isOptional ? '${habit.label} (optional)' : habit.label,
-                style: const TextStyle(fontSize: 13),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _checked[habit.id] = value ?? false;
-                });
-              },
+        const SizedBox(height: 18),
+        const _SectionTitle(text: AppStrings.calendarSaintsOfDay),
+        const SizedBox(height: 10),
+        if (adapter.saints.isEmpty)
+          const _EmptyCard(text: AppStrings.calendarNoSaints)
+        else
+          ...adapter.saints.map(
+            (item) => _InfoCard(
+              title: item.name,
+              subtitle: item.snippet,
+              actionLabel: AppStrings.calendarReadSynaxarium,
+              onTap: () =>
+                  context.push(RoutePaths.calendarSynaxariumPath(dateKey)),
             ),
           ),
+      ],
+    );
+  }
+}
+
+class _DateOverviewCard extends StatelessWidget {
+  const _DateOverviewCard({required this.adapter});
+
+  final CalendarDayDetailAdapter adapter;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.calendarSelectedDay,
+            style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            adapter.ethiopianDate,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '${adapter.gregorianDate}  |  ${adapter.weekday}',
+            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+          ),
         ],
       ),
     );
   }
 }
 
-class _TrackerHabitItem {
-  const _TrackerHabitItem({
-    required this.id,
-    required this.label,
-    required this.isOptional,
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({
+    required this.title,
+    this.eyebrow,
+    this.subtitle,
+    this.actionLabel,
+    this.onTap,
   });
 
-  final String id;
-  final String label;
-  final bool isOptional;
+  final String title;
+  final String? eyebrow;
+  final String? subtitle;
+  final String? actionLabel;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (eyebrow != null) ...[
+            Text(
+              eyebrow!,
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 6),
+          ],
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          if (subtitle != null && subtitle!.trim().isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              subtitle!,
+              style: TextStyle(
+                fontSize: 13,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+          if (actionLabel != null && onTap != null) ...[
+            const SizedBox(height: 10),
+            InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    actionLabel!,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(
+                    Icons.chevron_right,
+                    size: 16,
+                    color: colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyCard extends StatelessWidget {
+  const _EmptyCard({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return _InfoCard(title: text);
+  }
 }
 
 class _CalendarLoading extends StatelessWidget {

@@ -4,7 +4,7 @@ Read this file first when working in the Tsion Orthodox app repository. It is th
 
 ## Project in brief
 
-Tsion is an offline-first Ethiopian Orthodox daily companion built with Flutter for Android and iOS. Its core reading experience includes Today, an Amharic and English Bible, prayer texts, Ethiopian calendar data, Daily Readings, Synaxarium entries, Explore articles, and a three-task streak flow. Accounts are optional, but Firebase is deliberately unconfigured in this checkout, so account-backed features cannot currently complete.
+Tsion is an offline-first Ethiopian Orthodox daily companion built with Flutter for Android and iOS. Its core reading experience includes Today, an Amharic and English Bible, prayer texts, Ethiopian calendar data, Daily Readings, Synaxarium entries, Explore articles, and a three-task streak flow. Firebase is deliberately unconfigured, so account UI is hidden and personal features use local device storage.
 
 Developer: solo, midvora.com.
 
@@ -46,7 +46,7 @@ Latest local verification:
 - `flutter analyze`: clean.
 - `flutter test`: see `documentation/STATUS.md` for the final pass count.
 - `flutter build apk --debug`: succeeds and writes `build/app/outputs/flutter-apk/app-debug.apk`.
-- Android emulator walk: startup, Today, Bible search and passage, Prayers, Wudase weekday sections, Calendar, Synaxarium, and Daily Readings passage links exercised.
+- Android emulator walk: startup, Today, Bible search and passage, Prayers, Wudase weekday sections, inline Calendar date selection, Synaxarium, and Daily Readings passage links exercised.
 - `flutter doctor -v`: Android toolchain healthy; Visual Studio is missing only for Windows desktop development.
 
 Content snapshot:
@@ -68,11 +68,12 @@ The controlling switch is `FeatureFlags.mezmurEnabled` in `lib/core/config/featu
 
 - Offline Bible seeding, reading, bilingual FTS5 search, deep links, and continue-reading state.
 - Seven standard prayer texts plus the Wudase Mariam section reader.
-- Ethiopian calendar month and day views, feasts, fasts, and Synaxarium access.
+- Ethiopian calendar month grid with inline selected-date details, feasts, fasts, saints, and Synaxarium access.
 - Daily Reading references that open Bible passages when the source resolves to a structured book and chapter.
 - Onboarding with four-time, seven-time, and custom prayer schedules.
 - Local three-task streak tracking.
-- Firebase auth and Firestore sync code paths fail safely while configuration is absent.
+- Account routes redirect to local Settings while Firebase is disabled. Auth and Firestore code remains available but is not user-facing.
+- Settings, reminders, bookmarks, reading progress, streaks, and personal actions work locally without a sign-in prompt.
 - Leaf routes preserve their origin through `push`; direct deep links and custom back buttons use explicit fallbacks.
 
 ## Known incomplete or blocked work
@@ -81,7 +82,7 @@ The controlling switch is `FeatureFlags.mezmurEnabled` in `lib/core/config/featu
 - Proofread Wudase Mariam and the 24 flagged Synaxarium entries against approved sources.
 - Replace Android and iOS example application IDs, configure Firebase, and add Android release signing.
 - Decide whether Apple Sign-In is required for the iOS release.
-- Make settings available through a deliberate unified flow. They are currently under the sign-in-gated Profile path.
+- Re-enable accounts only after Firebase configuration and account-product decisions are complete.
 - Add a real saints directory and search experience.
 - Expand Explore beyond its two articles.
 - Replace the sample patron-saint profile and persist its reminder.
@@ -94,7 +95,7 @@ The controlling switch is `FeatureFlags.mezmurEnabled` in `lib/core/config/featu
 1. Correct and validate Daily Readings data.
 2. Review Wudase Mariam and flagged Synaxarium source content.
 3. Decide production IDs, configure Firebase, and configure release signing.
-4. Design a unified, accessible settings flow.
+4. Configure and verify account migration from local-only mode when accounts are ready.
 5. Add saints-directory and Explore content.
 6. Complete Android and iOS physical-device QA.
 
@@ -122,8 +123,9 @@ Do not jump ahead when a change depends on a founder decision.
 - Bible assets must remain tracked because first-launch seeding reads them into Drift.
 - The calendar engine in `lib/core/calendar/` is the authoritative Ethiopian-date implementation.
 - Streaks are a hub. Daily Verse, Prayer, and Readings write streak events.
-- Profile and auth are a self-contained feature island and do not use the repository switch.
+- Settings are available at `/settings`; Profile and auth remain a self-contained, disabled feature island.
 - Firebase initialization is intentionally safe when `DefaultFirebaseOptions.isConfigured` is false.
+- `FeatureFlags.accountFeaturesEnabled` controls account UI, route access, and sign-in gating. It is false until Firebase is configured.
 - Riverpod is version 2. Do not upgrade it casually.
 - `sqlite3_flutter_libs` is end-of-life; plan its replacement before changing it.
 - Android exact prayer alarms use `USE_EXACT_ALARM` and `AndroidScheduleMode.exactAllowWhileIdle`.

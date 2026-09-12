@@ -21,7 +21,6 @@ import '../features/prayers/presentation/daily_prayer_screen.dart';
 import '../features/prayers/presentation/reflection_screen.dart';
 import '../features/prayers/presentation/light_candle_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
-import '../features/calendar/calendar_day_detail_screen.dart';
 import '../features/calendar/presentation/daily_readings_screen.dart';
 import '../features/calendar/presentation/fasting_guidance_screen.dart';
 import '../features/calendar/presentation/synaxarium_screen.dart';
@@ -37,6 +36,7 @@ import '../features/profile/presentation/notification_center_screen.dart';
 import '../features/profile/presentation/profile_preferences_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/profile/presentation/prayer_reminders_screen.dart';
+import '../features/profile/presentation/settings_screen.dart';
 import '../features/profile/presentation/sign_in_screen.dart';
 import '../features/profile/presentation/sign_up_screen.dart';
 import '../features/streak/presentation/daily_verse_screen.dart';
@@ -101,7 +101,9 @@ GoRouter buildRouter() {
           ),
           GoRoute(
             path: RoutePaths.calendar,
-            builder: (context, state) => const CalendarScreen(),
+            builder: (context, state) => CalendarScreen(
+              initialDateKey: state.uri.queryParameters['date'],
+            ),
             routes: [
               GoRoute(
                 path: 'readings',
@@ -113,10 +115,10 @@ GoRouter buildRouter() {
               ),
               GoRoute(
                 path: 'day/:date',
-                builder: (context, state) {
-                  final date = state.pathParameters['date'] ?? 'Today';
-                  return CalendarDayDetailScreen(dateKey: date);
-                },
+                redirect: (context, state) =>
+                    RoutePaths.calendarSelectedDayPath(
+                      state.pathParameters['date'] ?? '',
+                    ),
               ),
               GoRoute(
                 path: 'synaxarium/bookmarks',
@@ -209,7 +211,30 @@ GoRouter buildRouter() {
         },
       ),
       GoRoute(
+        path: RoutePaths.settings,
+        builder: (context, state) => const FallbackBackScope(
+          fallbackPath: RoutePaths.today,
+          child: SettingsScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'preferences',
+            builder: (context, state) => const ProfilePreferencesScreen(),
+          ),
+          GoRoute(
+            path: 'prayer-reminders',
+            builder: (context, state) => const PrayerRemindersScreen(),
+          ),
+          GoRoute(
+            path: 'notifications',
+            builder: (context, state) => const NotificationCenterScreen(),
+          ),
+        ],
+      ),
+      GoRoute(
         path: RoutePaths.profile,
+        redirect: (context, state) =>
+            FeatureFlags.accountFeaturesEnabled ? null : RoutePaths.settings,
         builder: (context, state) => const FallbackBackScope(
           fallbackPath: RoutePaths.today,
           child: SignInGate(

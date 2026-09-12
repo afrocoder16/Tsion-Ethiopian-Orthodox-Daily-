@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/route_paths.dart';
 import '../../../core/auth/sign_in_guard.dart';
+import '../../../core/config/feature_flags.dart';
 import '../../../core/onboarding/onboarding_schedule.dart';
 import '../../../core/providers/onboarding_providers.dart';
 import '../../../core/strings/app_strings.dart';
@@ -22,7 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   );
   bool _checking = true;
   bool _saving = false;
-  bool _showSignInPrompt = true;
+  bool _showSignInPrompt = FeatureFlags.accountFeaturesEnabled;
 
   @override
   void initState() {

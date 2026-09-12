@@ -54,7 +54,7 @@ The five bottom destinations share `AppShell`:
 - `/calendar`
 - `/explore`
 
-Streak, Profile, and patron-saint routes live outside the shell. Legacy `/bible/*` routes remain for compatibility.
+Settings, Streak, Profile, and patron-saint routes live outside the shell. Legacy `/bible/*` routes remain for compatibility.
 
 Navigation conventions:
 
@@ -139,6 +139,8 @@ The bundle currently contains 81 files per language. Keep the asset directories 
 
 The calendar engine lives in `lib/core/calendar/`. It owns Ethiopian and Gregorian conversion, fixed and movable observances, fast rules, month grids, and Bahire Hasab calculations. Calendar changes require golden-date tests.
 
+`CalendarScreen` owns the currently selected Gregorian date. Previous and next buttons drive the internal month `PageController`; user swiping is disabled. Changing months preserves the selected Gregorian day when possible and clamps it to the target month's final day when necessary. A month-grid tap updates the same state, and `calendarDayDetailProvider` plus `CalendarDayDetailAdapter` render the matching Ethiopian date, Evangelist, celebrations, and saints directly below the full calendar. Week rows use flex sizing so both five-week and six-week months fit the fixed calendar card. The former `/calendar/day/:date` route is retained only as a compatibility redirect to `/calendar?date=...`.
+
 Daily Readings are content data, not computed calendar truth. Their current JSON has a duplicated `11-02`, missing `03-06` and `12-25`, and Pagumen 6 in a non-leap-year source file. Correct these against an approved source rather than guessing.
 
 Structured daily-reading models now carry the resolved Bible book ID and chapter into the screen adapter. The reading tile opens `RoutePaths.biblePassagePath(...)` only when those values exist.
@@ -146,6 +148,16 @@ Structured daily-reading models now carry the resolved Bible book ID and chapter
 ## 8. Accounts and synchronization
 
 `FirebaseBootstrap.initialize()` checks `DefaultFirebaseOptions.isConfigured`. The checked-in options intentionally report unconfigured, so account actions return a clear unavailable state instead of crashing.
+
+`FeatureFlags.accountFeaturesEnabled` is currently false. In this mode:
+
+- Profile and auth routes redirect to `/settings`.
+- Normal header shortcuts show Settings instead of Profile.
+- Onboarding does not show an account prompt.
+- `SignInGuard` and `SignInGate` allow personal actions to use their existing local storage without showing sign-in UI.
+- Firebase auth, account profile, and sync implementations remain in the codebase for later use.
+
+To re-enable accounts, configure Firebase first, set the flag to true, then verify sign-up, email and Google sign-in, password reset, Profile, all shared guards, cloud synchronization, and migration of existing local-only data.
 
 When configured, Firebase Auth supplies identity and Firestore receives synchronized bookmarks, streak events, prayer completions, prayer schedules, and personal-prayer entries. Drift remains the immediate local source of truth. Firestore offline persistence and the local retry queue cover reconnection and startup retries.
 
@@ -217,6 +229,6 @@ documentation/
 - `screen_state_adapters.dart` is oversized.
 - Mezmur player state remains coupled to the widget implementation.
 - Prayer audio, Light a Candle persistence, Reflection journaling, and patron-saint persistence are incomplete.
-- Settings are scattered under a sign-in-gated Profile flow.
+- Account re-enabling needs a reviewed local-data migration and device test plan.
 
 See `STATUS.md` for current verification results and product-impact details.

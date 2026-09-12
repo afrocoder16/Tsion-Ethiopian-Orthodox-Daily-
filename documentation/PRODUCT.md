@@ -11,7 +11,7 @@ Tsion is an offline-first daily companion for Ethiopian Orthodox Christians. It 
 - Core Scripture, prayer text, calendar, readings, and Synaxarium content work offline.
 - Ethiopian and Gregorian dates are shown together where useful.
 - Content accuracy is more important than breadth.
-- Sign-in is optional and is reserved for personal or synchronized actions.
+- Personal actions work locally without an account while Firebase is disabled.
 - Unfinished features should not present dead controls or placeholder content.
 - The app supplements Church life and priestly guidance. It does not replace either.
 
@@ -22,7 +22,7 @@ Phase 1 is complete across its eight planned workstreams:
 1. Today hub and daily verse
 2. Offline Bible library, reader, continue reading, and bilingual FTS5 search
 3. Prayer hub, seven prayer texts, prayer completion, schedule, and local reminders
-4. Ethiopian calendar with today, month, day detail, feasts, and fasts
+4. Ethiopian calendar with today, month selection, inline day details, feasts, and fasts
 5. Daily Readings with reference parsing and Bible passage links
 6. Daily saint and Synaxarium views, entries, and bookmarks
 7. Three-task streak flow and onboarding
@@ -116,13 +116,13 @@ Users can open the Bible, select a book and chapter, read a passage, search Amha
 
 Primary routes start under `/prayers`.
 
-Users can open and read the seven standard prayers and Wudase Mariam. Prayer completion, bookmarks, personal prayer lists, Light a Candle, and Daily Reflection are sign-in-gated. Prayer reminders can be configured during onboarding and through Profile after sign-in. Prayer audio is not implemented, so its disabled switch remains an incomplete surface.
+Users can open and read the seven standard prayers and Wudase Mariam. Prayer completion, bookmarks, personal prayer lists, Light a Candle, and Daily Reflection use local device state while accounts are disabled. Prayer reminders can be configured during onboarding and through Settings. Prayer audio is not implemented, so its disabled switch remains an incomplete surface.
 
 ### Calendar and Daily Readings
 
 Primary routes start under `/calendar`.
 
-The Calendar tab combines current status and scrollable month grids. A day opens day detail, daily readings, fasting guidance, or the matching Synaxarium entry. Daily Readings can open structured references in the Bible. The known source-date errors in Section 4 still need correction.
+The Calendar tab keeps the full month grid at the top. Previous and next arrow buttons beside the month title change months, while direct month swiping is disabled. Selecting a date updates an inline section below it with the Ethiopian and Gregorian dates, weekday, Evangelist, celebrations, saints, and Synaxarium actions. It does not open a separate day screen. Legacy `/calendar/day/:date` links redirect to the same unified Calendar view with that date selected. Daily Readings can open structured references in the Bible. The known source-date errors in Section 4 still need correction.
 
 ### Saints
 
@@ -140,29 +140,28 @@ Onboarding supports four-time, seven-time, and custom prayer schedules. Completi
 
 ### Settings, Profile, and sign-in
 
-There is no unified Settings tab. App preferences, prayer reminders, and notification controls live under Profile. The Profile route is sign-in-gated, so these screens are unavailable in the current Firebase-disabled checkout after onboarding.
+Settings is available from the Prayers, Calendar, and Explore headers. App preferences, prayer reminders, and notification controls work locally without an account.
 
-Email/password and Google sign-in code exists, but no account action can complete until Firebase is configured. Apple Sign-In remains an iOS release decision.
+Email/password and Google sign-in code remains in the repository, but all account entry points and prompts are hidden. Direct Profile and auth routes redirect to Settings while `FeatureFlags.accountFeaturesEnabled` is false. Apple Sign-In remains an iOS release decision.
 
-## 6. Sign-in boundaries
+## 6. Local-only account mode
 
 Signed-out users can use Today, Bible reading and search, standard prayer text, Wudase Mariam, Calendar, Daily Readings, fasting guidance, daily Synaxarium content, Explore articles, and onboarding.
 
-The code gates these actions behind sign-in:
+These actions are stored locally without sign-in while account features are disabled:
 
 - Bookmarks
 - Personal prayer list
 - Prayer completion
 - Light a Candle
 - Daily Reflection
-- Profile and its settings screens
-- Cloud synchronization
+- Settings, prayer reminders, and notification preferences
 
-The Mezmur gate remains in code but is currently irrelevant because Mezmur is hidden globally.
+Cloud synchronization does not run in local-only mode. The shared guards remain in code for future account support. The Mezmur gate is currently irrelevant because Mezmur is hidden globally.
 
 ## 7. Known release blockers
 
-- Firebase options are not configured.
+- Firebase options are not configured, so account UI and cloud sync are disabled.
 - Android uses `com.example.tsion_orthodox_daily_app`.
 - iOS uses `com.example.tsionOrthodoxDailyApp`.
 - Android release builds still use the debug signing configuration.
@@ -196,6 +195,6 @@ Do not guess these:
 1. Correct and validate the readings dataset.
 2. Proofread Wudase Mariam and flagged Synaxarium entries against their scans.
 3. Decide application IDs, configure Firebase, and set up release signing.
-4. Make settings available through a deliberate unified flow.
+4. Define how locally stored personal data should join an account when accounts are enabled.
 5. Add real saints-directory and Explore content.
 6. Complete physical-device QA on Android and iOS.

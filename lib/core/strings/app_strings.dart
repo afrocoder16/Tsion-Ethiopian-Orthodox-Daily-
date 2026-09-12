@@ -32,7 +32,7 @@ class AppStrings {
       'Sign in to manage your profile, preferences, and sync settings.';
   static const onboardingTitle = 'Set your prayer rhythm';
   static const onboardingSubtitle =
-      'Choose a reminder pattern. You can change this later in Profile.';
+      'Choose a reminder pattern. You can change this later in Settings.';
   static const onboardingFourTime = '4-time default';
   static const onboardingFourTimeDescription =
       'Morning, noon, evening, and night.';
@@ -53,6 +53,30 @@ class AppStrings {
   static const dailyPrayerBooksEmpty = 'Prayer books are being prepared.';
   static const dailyPrayerBooksError = 'Unable to load prayer books';
   static const exploreDetailError = 'Unable to load detail';
+  static const settingsTitle = 'Settings';
+  static const settingsIntroduction = 'Choose how Tsion works on this device.';
+  static const settingsPreferencesTitle = 'App Preferences';
+  static const settingsPreferencesDescription =
+      'Choose your default calendar display and feast calculation mode.';
+  static const settingsPrayerRemindersTitle = 'Prayer Reminders';
+  static const settingsPrayerRemindersDescription =
+      'Adjust morning, noon, evening, and night prayer times.';
+  static const settingsNotificationsTitle = 'Notification Center';
+  static const settingsNotificationsDescription =
+      'Choose which local notifications you receive.';
+  static const settingsLocalDataNote =
+      'Your preferences, reminders, bookmarks, reading progress, and streak activity stay on this device.';
+  static const calendarSelectedDay = 'Selected Ethiopian Date';
+  static const calendarEvangelist = 'Evangelist';
+  static const calendarCelebrations = 'Celebrations';
+  static const calendarSaintsOfDay = 'Saints of the Day';
+  static const calendarNoCelebrations = 'No celebrations for this day';
+  static const calendarNoSaints = 'No saint data for this day';
+  static const calendarReadSynaxarium = 'Read Synaxarium';
+  static const calendarUnableToLoadSelectedDay =
+      'Unable to load the selected day.';
+  static const calendarPreviousMonth = 'Previous month';
+  static const calendarNextMonth = 'Next month';
 
   static String prayerReminderBody(String label) {
     return 'It is time for $label prayer.';

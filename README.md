@@ -53,7 +53,7 @@ flutter build apk --debug
 
 The Android debug APK is written to `build/app/outputs/flutter-apk/app-debug.apk`.
 
-Firebase is deliberately disabled in this checkout. The core offline reading and calendar experience can run, but account, sign-in, cloud sync, and sign-in-gated features cannot complete until `flutterfire configure` is run and `lib/firebase_options.dart` is replaced.
+Firebase and account UI are deliberately disabled in this checkout. Settings and personal features use local device storage without asking the user to sign in. The authentication and cloud-sync code remains available for later re-enabling after `flutterfire configure` is run and `lib/firebase_options.dart` is replaced.
 
 ## Stack
 

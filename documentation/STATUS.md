@@ -9,7 +9,7 @@ This is the detailed engineering handoff for the current checkout. Use `git bran
 | Check | Result |
 |---|---|
 | `flutter analyze` | Passed with no issues |
-| `flutter test --reporter compact` | 36 of 36 tests passed |
+| `flutter test --reporter compact` | 39 of 39 tests passed |
 | `flutter build apk --debug` | Passed |
 | Debug APK | `build/app/outputs/flutter-apk/app-debug.apk`, 194,989,158 bytes |
 | Android emulator | Pixel 7, Android 17 API 37 |
@@ -18,9 +18,9 @@ This is the detailed engineering handoff for the current checkout. Use `git bran
 | Android toolchain | Healthy |
 | Windows desktop toolchain | Visual Studio missing; unrelated to Android and iOS targets |
 
-The Android walkthrough exercised startup, all five bottom tabs, Bible search, Bible passages, Daily Prayer, Wudase Mariam weekday sections, Calendar, day detail, Synaxarium, Daily Readings, Streak gating, Explore articles, Profile gating, and the sign-in screen.
+The Android walkthrough exercised startup, all five bottom tabs, Bible search, Bible passages, Daily Prayer, Wudase Mariam weekday sections, Calendar inline date selection, Synaxarium, Daily Readings, local Streak behavior, Explore articles, and local Settings.
 
-The app starts and the debug APK installs and launches. Firebase account operations, cloud sync against a live project, physical notification timing, and a real-device iOS run were not validated because their required configuration or devices were not available.
+The app starts and the debug APK installs and launches. Firebase account operations and cloud sync are intentionally hidden in local-only mode. Physical notification timing and a real-device iOS run were not validated because their required devices were not available.
 
 ## 2. Work completed in this audit
 
@@ -61,7 +61,15 @@ Daily Reading preview models now retain a resolved Bible book ID and chapter. Th
 
 ### Calendar crash-state fix
 
-The Calendar screen previously showed `Unable to load calendar` on an ordinary fasting day. `DbCalendarRepository` supplied an empty seasonal label while declaring the day a fast, which violated the screen-state contract. It now uses the resolved top fasting reason as the label. The month grid and day details rendered normally after rebuilding and reinstalling the APK.
+The Calendar screen previously showed `Unable to load calendar` on an ordinary fasting day. `DbCalendarRepository` supplied an empty seasonal label while declaring the day a fast, which violated the screen-state contract. It now uses the resolved top fasting reason as the label. The month grid and inline day details rendered normally after rebuilding and reinstalling the APK.
+
+### Unified Calendar day view
+
+The full month calendar remains at the top of the Calendar tab. Tapping a day selects it in place and updates the Ethiopian date, Gregorian date, weekday, Evangelist, celebrations, saints, and Synaxarium actions below the grid. Previous and next arrow buttons now change months and preserve the selected day; direct month swiping is disabled. Five-week and six-week months share the available height without RenderFlex overflow. The selected date has a primary-color marker while the actual current day retains its green marker. The Spiritual Tracker was removed from the Calendar UI. Legacy `/calendar/day/:date` links redirect to this unified view instead of opening a separate day screen.
+
+### Local-only Settings mode
+
+Account UI is hidden while Firebase is unconfigured. Person shortcuts in Prayers, Calendar, and Explore are replaced by Settings shortcuts. `/profile` and its auth routes redirect to `/settings`, onboarding omits account setup, and shared sign-in guards allow personal actions to use local storage without displaying a prompt. The Firebase and Profile implementation remains in place behind `FeatureFlags.accountFeaturesEnabled` for later re-enabling.
 
 ## 3. Navigation audit and fixes
 
@@ -73,7 +81,7 @@ The following concrete navigation defects were found and corrected:
 4. Several custom back buttons called `pop` even when there was no previous route. Daily Prayer, Streak, Synaxarium, Daily Readings, Reflection, Light a Candle, patron saint, and Profile now use a safe route fallback.
 5. Top-level deep links to Streak, Profile, and patron saint had no useful hardware-back destination. `FallbackBackScope` supplies Today or Books as appropriate.
 6. Unknown routes could strand the user on an error state. Router exceptions now recover to Today.
-7. Loading and error variants of multiple leaf screens had no app bar and therefore no visible back path. Book detail, Reader, Bible library, Bible chapter, Bible passage, Prayer detail, Calendar day, and Daily Readings retain app-bar navigation in those states.
+7. Loading and error variants of multiple leaf screens had no app bar and therefore no visible back path. Book detail, Reader, Bible library, Bible chapter, Bible passage, Prayer detail, and Daily Readings retain app-bar navigation in those states.
 8. Daily Reading tiles looked like destinations but did nothing. Structured references now open the Bible passage; unresolved ones no longer advertise a tap.
 9. Streak created screens directly with `MaterialPageRoute`, bypassing the route map. It now navigates with `RoutePaths`.
 10. Today, Prayers, Calendar, and Explore displayed unsupported or dead header buttons. Only working actions remain visible.
@@ -84,7 +92,7 @@ The following concrete navigation defects were found and corrected:
 15. Book detail displayed a misleading Download control without a download workflow. It was removed; the real offline state remains.
 16. Patron saint showed inactive favorite, share, and change controls. They were removed; its reminder card now has one working toggle surface.
 
-Navigation regression tests cover the hidden Mezmur route, absence of Mezmur and fake cards from normal UI, unknown-route recovery, Wudase section selection, and Wudase back behavior.
+Navigation regression tests cover the hidden Mezmur route, absence of Mezmur and fake cards from normal UI, unknown-route recovery, Wudase section selection and back behavior, legacy Calendar day links opening the selected date inline, and previous/next month controls across a six-week month.
 
 ## 4. Feature walkthrough
 
@@ -96,14 +104,13 @@ Navigation regression tests cover the hidden Mezmur route, absence of Mezmur and
 | Bible search | Working | Search returned results and a result opened the passage |
 | Prayers | Working with gaps | Seven standard texts and Wudase work; prayer audio is not implemented |
 | Wudase Mariam | Working, content review required | All 10 table-of-contents sections open directly |
-| Calendar month | Working | Fasting-label contract bug fixed |
-| Calendar day | Partial | Dates, Evangelist, celebrations, saints, and Synaxarium action render; no reading or prayer actions |
+| Calendar | Working | Arrow-based month navigation, full grid, inline selected-date details, celebrations, saints, and Synaxarium actions |
 | Daily Readings | Working with data defects | Structured Gen 1 reference opened Genesis 1 during the walk |
 | Synaxarium | Working, content review required | Daily entry, saved days, save action, and copy action render |
-| Streak | Implemented but gated | Signed-out route shows the intended sign-in prompt; local behavior is covered by tests |
+| Streak | Working locally | No account prompt while account features are disabled |
 | Explore | Partial | Both bundled articles open and return correctly; no paths, community, or filters |
-| Profile | Blocked by configuration | Sign-in gate and sign-in screen work; account completion is unavailable without Firebase |
-| Settings | Inaccessible after onboarding | Settings are nested under gated Profile and there is no unified settings route |
+| Profile | Hidden | Profile and auth routes redirect to Settings while accounts are disabled |
+| Settings | Working locally | Preferences, prayer reminders, and notification controls are available without an account |
 | Onboarding schedules | Working | Four-time, seven-time, and custom schedules are covered by tests |
 
 ## 5. Broken, incomplete, and release-blocking items
@@ -125,10 +132,9 @@ Navigation regression tests cover the hidden Mezmur route, absence of Mezmur and
 - Prayer detail still has a disabled Audio switch.
 - Light a Candle does not persist names, and its flash toggle does not control the phone light.
 - Daily Reflection displays questions but has no response input or persistence.
-- There is no unified Settings hub.
+- Account and cloud-sync UI is hidden until Firebase is configured.
 - There is no standalone saints list or saints search route.
 - Patron saint uses sample data, has no normal entry point, and does not persist its reminder.
-- Calendar day detail lacks direct Daily Readings and prayer actions.
 - Mezmur remains intentionally hidden pending rights and readiness.
 - Localization infrastructure is absent, and the current theme and launch branding are placeholders.
 
@@ -147,6 +153,6 @@ Navigation regression tests cover the hidden Mezmur route, absence of Mezmur and
 1. Correct the Daily Readings duplicate, missing dates, and leap-day metadata from an approved source, then add dataset-integrity tests.
 2. Review Wudase Mariam and the 24 flagged Synaxarium entries against source scans.
 3. Choose production application IDs, configure Firebase, add release signing, and decide Apple Sign-In.
-4. Create a settings route that remains available for device-local preferences without requiring Firebase.
+4. Define and test the migration from local-only personal data to an account before enabling Firebase UI.
 5. Replace patron-saint sample data and add a real saints directory and search.
 6. Expand Explore and complete physical-device Android and iOS QA.

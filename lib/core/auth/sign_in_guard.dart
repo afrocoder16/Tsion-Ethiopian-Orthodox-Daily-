@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/route_paths.dart';
+import '../config/feature_flags.dart';
 import '../providers/auth_providers.dart';
 import '../strings/app_strings.dart';
 
@@ -35,6 +36,9 @@ class SignInGuard {
     BuildContext context, {
     required SignInFeature feature,
   }) async {
+    if (!FeatureFlags.accountFeaturesEnabled) {
+      return true;
+    }
     if (isSignedIn) {
       return true;
     }
@@ -79,6 +83,9 @@ class SignInGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!FeatureFlags.accountFeaturesEnabled) {
+      return child;
+    }
     final session = ref.watch(authSessionProvider);
     return session.when(
       data: (value) {

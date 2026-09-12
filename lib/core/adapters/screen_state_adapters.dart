@@ -494,7 +494,7 @@ class PrayersAdapter {
   List<IconData> get topBarIcons => const [
     Icons.headphones,
     Icons.calendar_today,
-    Icons.person,
+    Icons.settings_outlined,
   ];
 
   String get primaryLabel => _safeText(state.primaryPrayerCard.label, 'Prayer');
@@ -840,7 +840,10 @@ class CalendarAdapter {
 
   String get topBarSubtitle => _safeText(state.topBar.subtitle, '-');
 
-  List<IconData> get topBarIcons => const [Icons.calendar_today, Icons.person];
+  List<IconData> get topBarIcons => const [
+    Icons.calendar_today,
+    Icons.settings_outlined,
+  ];
 
   List<MonthChipView> get months {
     final items = state.months;
@@ -1202,7 +1205,10 @@ class ExploreAdapter {
 
   String get topBarSubtitle => _safeText(state.topBar.subtitle, '-');
 
-  List<IconData> get topBarIcons => const [Icons.calendar_today, Icons.person];
+  List<IconData> get topBarIcons => const [
+    Icons.calendar_today,
+    Icons.settings_outlined,
+  ];
 
   SectionHeaderView get studyHeader =>
       _sectionHeaderView(state.studyHeader, 'Study');

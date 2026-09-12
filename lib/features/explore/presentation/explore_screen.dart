@@ -219,8 +219,8 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onTap = icon == Icons.person
-        ? () => context.push(RoutePaths.profilePath())
+    final onTap = icon == Icons.settings_outlined
+        ? () => context.push(RoutePaths.settingsPath())
         : icon == Icons.calendar_today
         ? () => context.push(RoutePaths.calendar)
         : null;

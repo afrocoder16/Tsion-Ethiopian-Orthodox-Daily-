@@ -25,6 +25,10 @@ class RoutePaths {
   static const streakReadings = '/streak/readings';
   static const streakSynaxarium = '/streak/synaxarium/:date';
   static const patronSaint = '/patron-saint/:name';
+  static const settings = '/settings';
+  static const settingsPreferences = '/settings/preferences';
+  static const settingsPrayerReminders = '/settings/prayer-reminders';
+  static const settingsNotifications = '/settings/notifications';
   static const profile = '/profile';
   static const profileSignIn = '/profile/sign-in';
   static const profileSignUp = '/profile/sign-up';
@@ -123,6 +127,9 @@ class RoutePaths {
 
   static String calendarDayPath(String dateKey) => '/calendar/day/$dateKey';
 
+  static String calendarSelectedDayPath(String dateKey) =>
+      '$calendar?date=${Uri.encodeQueryComponent(dateKey)}';
+
   static String calendarReadingsPath() => calendarReadings;
 
   static String calendarSynaxariumPath(String dateKey) =>
@@ -136,6 +143,14 @@ class RoutePaths {
 
   static String patronSaintPath(String name) =>
       '/patron-saint/${Uri.encodeComponent(name)}';
+
+  static String settingsPath() => settings;
+
+  static String settingsPreferencesPath() => settingsPreferences;
+
+  static String settingsPrayerRemindersPath() => settingsPrayerReminders;
+
+  static String settingsNotificationsPath() => settingsNotifications;
 
   static String profilePath() => profile;
 

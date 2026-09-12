@@ -267,8 +267,8 @@ class _IconButton extends StatelessWidget {
         onTap ??
         (icon == Icons.calendar_today
             ? () => context.push(RoutePaths.calendar)
-            : icon == Icons.person
-            ? () => context.push(RoutePaths.profilePath())
+            : icon == Icons.settings_outlined
+            ? () => context.push(RoutePaths.settingsPath())
             : null);
     return Padding(
       padding: const EdgeInsets.only(left: 6),

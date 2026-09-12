@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tsion_orthodox_daily_app/core/auth/models/auth_models.dart';
+import 'package:tsion_orthodox_daily_app/core/config/feature_flags.dart';
 import 'package:tsion_orthodox_daily_app/core/db/app_database.dart';
 import 'package:tsion_orthodox_daily_app/core/models/calendar_display_mode.dart';
 import 'package:tsion_orthodox_daily_app/core/providers/auth_providers.dart';
@@ -14,9 +15,10 @@ import 'package:tsion_orthodox_daily_app/core/strings/app_strings.dart';
 import 'package:tsion_orthodox_daily_app/features/prayers/presentation/prayer_detail_screen.dart';
 
 void main() {
-  testWidgets('signed-out user tapping Bookmark gets the prompt', (
+  testWidgets('local-only mode saves a bookmark without a sign-in prompt', (
     tester,
   ) async {
+    expect(FeatureFlags.accountFeaturesEnabled, isFalse);
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
 
@@ -26,8 +28,10 @@ void main() {
     await tester.tap(find.byIcon(Icons.bookmark_border));
     await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.signInUnlockTitle), findsOneWidget);
-    expect(await db.savedItemsDao.listSavedItems(), isEmpty);
+    expect(find.text(AppStrings.signInUnlockTitle), findsNothing);
+    final saved = await db.savedItemsDao.listSavedItems();
+    expect(saved, hasLength(1));
+    expect(saved.single.id, 'prayer-midday');
   });
 
   testWidgets('signed-in user tapping Bookmark saves it', (tester) async {
