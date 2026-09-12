@@ -49,13 +49,13 @@ class _CalendarContent extends ConsumerWidget {
           onModeChanged: (nextMode) =>
               ref.read(calendarDisplayModeProvider.notifier).setMode(nextMode),
           onDayTap: (dateKey) =>
-              context.go('${RoutePaths.calendar}/day/$dateKey'),
+              context.push(RoutePaths.calendarDayPath(dateKey)),
         ),
         const SizedBox(height: 12),
         _SaintPreviewCard(
           view: adapter.saintPreview,
           onReadSaint: () =>
-              context.go(RoutePaths.calendarSynaxariumPath(_todayYmd())),
+              context.push(RoutePaths.calendarSynaxariumPath(_todayYmd())),
         ),
         const SizedBox(height: 12),
         _SpiritualTrackerCard(view: adapter.spiritualTracker),
@@ -452,8 +452,9 @@ class _TopBar extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        if (icons.isNotEmpty) _IconButton(icon: icons.first),
-        if (icons.length > 1) _IconButton(icon: icons[1]),
+        ...icons
+            .where((icon) => icon == Icons.person)
+            .map((icon) => _IconButton(icon: icon)),
       ],
     );
   }

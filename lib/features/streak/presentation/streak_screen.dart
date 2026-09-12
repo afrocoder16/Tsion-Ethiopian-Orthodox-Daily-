@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/adapters/streak_adapters.dart';
@@ -11,9 +12,6 @@ import '../../../core/providers/screen_state_providers.dart';
 import '../../../core/providers/streak_providers.dart';
 import '../../../core/providers/sync_providers.dart';
 import '../../../core/actions/user_actions.dart';
-import '../../calendar/presentation/daily_readings_screen.dart';
-import '../../calendar/presentation/synaxarium_screen.dart';
-import '../../prayers/presentation/prayer_detail_screen.dart';
 
 class StreakScreen extends ConsumerWidget {
   const StreakScreen({super.key});
@@ -87,7 +85,7 @@ class _StreakContent extends ConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => popOrGo(context, RoutePaths.today),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -704,24 +702,6 @@ String _formatYmd(DateTime dateTime) {
 }
 
 void _openStreakDestination(BuildContext context, _RhythmCardItem item) {
-  Widget? page;
-  switch (item.id) {
-    case 'daily-prayer':
-      page = const PrayerDetailScreen(prayerId: 'prayer-midday');
-      break;
-    case 'daily-readings':
-      page = const DailyReadingsScreen();
-      break;
-    case 'daily-saint':
-      page = SynaxariumScreen(dateKey: _todayYmd());
-      break;
-  }
-
-  if (page != null) {
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page!));
-    return;
-  }
-
   final path = item.routePath;
   if (path != null) {
     context.push(path);

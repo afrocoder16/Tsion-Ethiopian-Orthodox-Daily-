@@ -17,9 +17,12 @@ class CalendarDayDetailScreen extends ConsumerWidget {
     final state = ref.watch(calendarDayDetailProvider(dateKey));
     return state.when(
       data: (detail) => _CalendarDayContent(detail: detail),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => Scaffold(
+        appBar: AppBar(title: Text(dateKey)),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
       error: (error, _) => Scaffold(
+        appBar: AppBar(title: Text(dateKey)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -69,7 +72,10 @@ class _CalendarDayContent extends StatelessWidget {
             style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
           const SizedBox(height: 16),
-          const Text('Evangelist', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+          const Text(
+            'Evangelist',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 10),
           _StatChip(label: 'Evangelist', value: adapter.evangelist),
           const SizedBox(height: 20),
@@ -98,8 +104,9 @@ class _CalendarDayContent extends StatelessWidget {
                 title: item.name,
                 subtitle: item.snippet,
                 actionLabel: 'Read Synaxarium',
-                onTap: () =>
-                    context.push(RoutePaths.calendarSynaxariumPath(detail.dateKey)),
+                onTap: () => context.push(
+                  RoutePaths.calendarSynaxariumPath(detail.dateKey),
+                ),
               ),
             ),
         ],

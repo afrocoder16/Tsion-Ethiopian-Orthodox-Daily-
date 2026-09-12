@@ -1,8 +1,10 @@
 import 'package:go_router/go_router.dart';
 
 import 'app_shell.dart';
+import 'navigation_back.dart';
 import 'route_paths.dart';
 import '../core/auth/sign_in_guard.dart';
+import '../core/config/feature_flags.dart';
 import '../features/today/presentation/today_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/bible/presentation/bible_screen.dart';
@@ -44,6 +46,7 @@ import '../features/bible/presentation/patron_saint_screen.dart';
 GoRouter buildRouter() {
   return GoRouter(
     initialLocation: RoutePaths.onboarding,
+    onException: (context, state, router) => router.go(RoutePaths.today),
     routes: [
       GoRoute(
         path: RoutePaths.onboarding,
@@ -68,6 +71,8 @@ GoRouter buildRouter() {
               ),
               GoRoute(
                 path: 'mezmur',
+                redirect: (context, state) =>
+                    FeatureFlags.mezmurEnabled ? null : RoutePaths.prayers,
                 builder: (context, state) => const MezmurScreen(),
               ),
               GoRoute(
@@ -164,7 +169,10 @@ GoRouter buildRouter() {
       ),
       GoRoute(
         path: RoutePaths.streak,
-        builder: (context, state) => const StreakScreen(),
+        builder: (context, state) => const FallbackBackScope(
+          fallbackPath: RoutePaths.today,
+          child: StreakScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'daily-verse',
@@ -194,14 +202,20 @@ GoRouter buildRouter() {
         path: RoutePaths.patronSaint,
         builder: (context, state) {
           final rawName = state.pathParameters['name'] ?? 'Patron Saint';
-          return PatronSaintScreen(name: Uri.decodeComponent(rawName));
+          return FallbackBackScope(
+            fallbackPath: RoutePaths.booksRoot,
+            child: PatronSaintScreen(name: Uri.decodeComponent(rawName)),
+          );
         },
       ),
       GoRoute(
         path: RoutePaths.profile,
-        builder: (context, state) => const SignInGate(
-          feature: SignInFeature.profile,
-          child: ProfileScreen(),
+        builder: (context, state) => const FallbackBackScope(
+          fallbackPath: RoutePaths.today,
+          child: SignInGate(
+            feature: SignInFeature.profile,
+            child: ProfileScreen(),
+          ),
         ),
         routes: [
           GoRoute(
@@ -271,7 +285,10 @@ List<GoRoute> _booksRoutes() {
           path: 'reader/:id',
           builder: (context, state) {
             final id = state.pathParameters['id'] ?? 'book';
-            return ReaderScreen(bookId: id);
+            return ReaderScreen(
+              bookId: id,
+              sectionIndex: _readerSectionIndex(state),
+            );
           },
         ),
         GoRoute(
@@ -327,7 +344,10 @@ List<GoRoute> _legacyBibleRoutes() {
           path: 'book/:id/reader',
           builder: (context, state) {
             final id = state.pathParameters['id'] ?? 'book';
-            return ReaderScreen(bookId: id);
+            return ReaderScreen(
+              bookId: id,
+              sectionIndex: _readerSectionIndex(state),
+            );
           },
         ),
         GoRoute(
@@ -376,4 +396,9 @@ List<GoRoute> _legacyBibleRoutes() {
       ],
     ),
   ];
+}
+
+int? _readerSectionIndex(GoRouterState state) {
+  final index = int.tryParse(state.uri.queryParameters['section'] ?? '');
+  return index != null && index >= 0 ? index : null;
 }

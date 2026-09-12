@@ -440,11 +440,15 @@ class DailyReadingsItemPreview {
     required this.reference,
     required this.body,
     this.note,
+    this.bookId,
+    this.chapter,
   });
 
   final String reference;
   final String body;
   final String? note;
+  final String? bookId;
+  final int? chapter;
 }
 
 class PrayerOfDayPreview {

@@ -75,7 +75,7 @@ class _BookDetailContent extends ConsumerWidget {
                   );
                   ref.invalidate(booksScreenStateProvider);
                   if (context.mounted) {
-                    context.go(RoutePaths.bookReaderPath(detail.id));
+                    context.push(RoutePaths.bookReaderPath(detail.id));
                   }
                 },
               ),
@@ -92,7 +92,7 @@ class _BookDetailContent extends ConsumerWidget {
                   );
                   ref.invalidate(booksScreenStateProvider);
                   if (context.mounted) {
-                    context.go(RoutePaths.bookReaderPath(detail.id));
+                    context.push(RoutePaths.bookReaderPath(detail.id));
                   }
                 },
               ),
@@ -105,8 +105,6 @@ class _BookDetailContent extends ConsumerWidget {
                 icon: Icons.download_done,
                 label: detail.isDownloaded ? 'Offline' : 'Not downloaded',
               ),
-              const SizedBox(width: 10),
-              const _Badge(icon: Icons.cloud_download, label: 'Download'),
             ],
           ),
           const SizedBox(height: 20),
@@ -115,7 +113,14 @@ class _BookDetailContent extends ConsumerWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
-          ...detail.toc.map((item) => _TocItem(title: item)),
+          ...detail.toc.asMap().entries.map(
+            (entry) => _TocItem(
+              title: entry.value,
+              onTap: () => context.push(
+                RoutePaths.bookReaderPath(detail.id, sectionIndex: entry.key),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -127,7 +132,10 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      appBar: AppBar(),
+      body: const Center(child: CircularProgressIndicator()),
+    );
   }
 }
 
@@ -140,6 +148,7 @@ class _ErrorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -234,29 +243,38 @@ class _Badge extends StatelessWidget {
 }
 
 class _TocItem extends StatelessWidget {
-  const _TocItem({required this.title});
+  const _TocItem({required this.title, required this.onTap});
 
   final String title;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-          ),
-          const Spacer(),
-          const Icon(Icons.chevron_right, color: Colors.black38),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F7F7),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.black38),
+          ],
+        ),
       ),
     );
   }

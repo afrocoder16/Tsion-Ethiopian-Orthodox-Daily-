@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
+import '../../../app/route_paths.dart';
 import '../../../core/actions/user_actions.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/providers/repo_providers.dart';
@@ -16,6 +18,12 @@ class DailyReadingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(calendarScreenStateProvider);
     return Scaffold(
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => popOrGo(context, RoutePaths.calendar),
+        ),
+        title: const Text('Daily Readings'),
+      ),
       body: SafeArea(
         child: state.when(
           data: (raw) =>
@@ -43,26 +51,6 @@ class _DailyReadingsContent extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Row(
-          children: [
-            IconButton(
-              onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back),
-            ),
-            const SizedBox(width: 4),
-            const Expanded(
-              child: Text(
-                'Daily Readings',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'serif',
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
@@ -241,43 +229,65 @@ class _ReadingDetailTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xFFF8F5F0),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            item.reference,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.reference,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                if (item.body.trim().isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    item.body,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.45,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+                if (item.note != null && item.note!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    item.note!,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ],
             ),
           ),
-          if (item.body.trim().isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              item.body,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.45,
-                color: Colors.black87,
-              ),
+          if (item.canOpenInBible)
+            const Padding(
+              padding: EdgeInsets.only(left: 8, top: 2),
+              child: Icon(Icons.chevron_right, color: Colors.black38),
             ),
-          ],
-          if (item.note != null && item.note!.trim().isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              item.note!,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
         ],
       ),
+    );
+    if (!item.canOpenInBible) {
+      return content;
+    }
+    return InkWell(
+      onTap: () => context.push(
+        RoutePaths.biblePassagePath(item.bookId!, item.chapter!),
+      ),
+      borderRadius: BorderRadius.circular(14),
+      child: content,
     );
   }
 }

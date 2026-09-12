@@ -1,6 +1,5 @@
 part of 'mezmur_screen.dart';
 
-
 // ── Greeting ──────────────────────────────────────────────────────────────────
 // ── Recently Played ───────────────────────────────────────────────────────────
 class _RecentlyPlayedSection extends StatelessWidget {
@@ -493,7 +492,7 @@ class _CompilationsSection extends StatelessWidget {
   }
 }
 
-// ── Carousel Header — manuscript section heading with gold cross ──────────────
+// Carousel header with a manuscript section heading and gold cross.
 class _CarouselHeader extends StatelessWidget {
   const _CarouselHeader({required this.title});
 
@@ -925,4 +924,3 @@ class _TrackRow extends StatelessWidget {
     );
   }
 }
-

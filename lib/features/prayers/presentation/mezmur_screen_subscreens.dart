@@ -151,7 +151,7 @@ class _TrackListScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Hymns you\'ve blessed — ${tracks.length} tracks',
+                                'Hymns you\'ve blessed: ${tracks.length} tracks',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Color(0xAAF5ECD4),
@@ -381,7 +381,7 @@ class _CantorDetailScreen extends StatelessWidget {
             ],
           ),
 
-          // Hero section — avatar + name + stats + buttons
+          // Hero section with avatar, name, stats, and buttons.
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),

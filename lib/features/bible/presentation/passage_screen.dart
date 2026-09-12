@@ -31,9 +31,12 @@ class PassageScreen extends ConsumerWidget {
         passage: passage,
         trackForContinueReading: trackForContinueReading,
       ),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => Scaffold(
+        appBar: AppBar(title: Text('$bookId $chapter')),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
       error: (error, _) => Scaffold(
+        appBar: AppBar(title: Text('$bookId $chapter')),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -99,7 +99,7 @@ abstract class BookDetailRepository {
 }
 
 abstract class ReaderRepository {
-  Future<ReaderState> fetchReader(String id);
+  Future<ReaderState> fetchReader(String id, {int? sectionIndex});
 }
 
 abstract class BibleLibraryRepository {

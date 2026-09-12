@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
 import '../../../app/route_paths.dart';
+import '../../../core/content/book_content_store.dart';
+import '../../../core/providers/book_flow_providers.dart';
 
-class DailyPrayerScreen extends StatelessWidget {
+class DailyPrayerScreen extends ConsumerWidget {
   const DailyPrayerScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prayerBooks = ref.watch(dailyPrayerBooksProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7F4),
       appBar: AppBar(
@@ -16,13 +21,35 @@ class DailyPrayerScreen extends StatelessWidget {
         title: const Text('Daily Prayer'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => popOrGo(context, RoutePaths.prayers),
         ),
       ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
+            prayerBooks.maybeWhen(
+              data: (books) {
+                final matches = books.where(
+                  (book) => book.id == wudaseMariamBookId,
+                );
+                if (matches.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                final book = matches.first;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: _PrayerSlotCard(
+                    title: book.title,
+                    subtitle: book.description,
+                    icon: Icons.auto_stories_rounded,
+                    onTap: () =>
+                        context.push(RoutePaths.bookDetailPath(book.id)),
+                  ),
+                );
+              },
+              orElse: () => const SizedBox.shrink(),
+            ),
             const Text(
               'Choose a time of day',
               style: TextStyle(
@@ -35,30 +62,26 @@ class DailyPrayerScreen extends StatelessWidget {
             _PrayerSlotCard(
               title: 'Morning Prayer',
               subtitle: 'Start the day in prayer',
-              onTap: () => context.go(
-                RoutePaths.prayerDetailPath('prayer-morning'),
-              ),
+              onTap: () =>
+                  context.push(RoutePaths.prayerDetailPath('prayer-morning')),
             ),
             _PrayerSlotCard(
               title: 'Midday Prayer',
               subtitle: 'The prayer appointed for this hour',
-              onTap: () => context.go(
-                RoutePaths.prayerDetailPath('prayer-midday'),
-              ),
+              onTap: () =>
+                  context.push(RoutePaths.prayerDetailPath('prayer-midday')),
             ),
             _PrayerSlotCard(
               title: 'Afternoon Prayer',
               subtitle: 'Quiet remembrance at mid-afternoon',
-              onTap: () => context.go(
-                RoutePaths.prayerDetailPath('prayer-afternoon'),
-              ),
+              onTap: () =>
+                  context.push(RoutePaths.prayerDetailPath('prayer-afternoon')),
             ),
             _PrayerSlotCard(
               title: 'Night Prayer',
               subtitle: 'Close the day in peace',
-              onTap: () => context.go(
-                RoutePaths.prayerDetailPath('prayer-night'),
-              ),
+              onTap: () =>
+                  context.push(RoutePaths.prayerDetailPath('prayer-night')),
             ),
           ],
         ),
@@ -72,11 +95,13 @@ class _PrayerSlotCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.icon = Icons.wb_twilight,
   });
 
   final String title;
   final String subtitle;
   final VoidCallback onTap;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +126,7 @@ class _PrayerSlotCard extends StatelessWidget {
                   color: const Color(0xFFF0EDE6),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.wb_twilight, color: Colors.black45),
+                child: Icon(icon, color: Colors.black45),
               ),
               const SizedBox(width: 12),
               Expanded(

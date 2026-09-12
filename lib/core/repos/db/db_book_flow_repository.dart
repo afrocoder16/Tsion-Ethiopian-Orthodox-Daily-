@@ -38,23 +38,34 @@ class DbReaderRepository implements ReaderRepository {
   final BookContentStore store;
 
   @override
-  Future<ReaderState> fetchReader(String id) async {
+  Future<ReaderState> fetchReader(String id, {int? sectionIndex}) async {
     final book = await store.findById(id);
     if (book == null) {
       throw StateError('Book content not found: $id');
     }
-    final firstChapter = book.chapters.isNotEmpty
-        ? book.chapters.first.label
-        : book.title;
+    if (sectionIndex != null &&
+        (sectionIndex < 0 || sectionIndex >= book.chapters.length)) {
+      throw RangeError.index(sectionIndex, book.chapters, 'sectionIndex');
+    }
+
+    final selectedChapter = sectionIndex == null
+        ? null
+        : book.chapters[sectionIndex];
+    final chapterLabel =
+        selectedChapter?.label ??
+        (book.chapters.isNotEmpty ? book.chapters.first.label : book.title);
     final content = <String>[];
-    for (final chapter in book.chapters) {
+    final chapters = selectedChapter == null
+        ? book.chapters
+        : [selectedChapter];
+    for (final chapter in chapters) {
       content.add(chapter.label);
       content.addAll(chapter.passages);
     }
     final state = ReaderState(
       bookId: id,
       bookTitle: book.title,
-      chapterLabel: firstChapter,
+      chapterLabel: chapterLabel,
       content: content,
     );
     await db.readingProgressDao.upsertReadingProgress(

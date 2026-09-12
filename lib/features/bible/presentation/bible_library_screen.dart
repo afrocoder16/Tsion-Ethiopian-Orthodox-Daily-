@@ -59,13 +59,13 @@ class _BibleLibraryScreenState extends ConsumerState<BibleLibraryScreen> {
                     title: book.title,
                     subtitle: AppStrings.bibleChaptersCount(book.chapters),
                     onTap: () =>
-                        context.go(RoutePaths.bibleChaptersPath(book.id)),
+                        context.push(RoutePaths.bibleChaptersPath(book.id)),
                   ),
                 )
               else
                 _SearchResults(
                   state: searchState,
-                  onTap: (result) => context.go(
+                  onTap: (result) => context.push(
                     RoutePaths.biblePassagePath(
                       result.bookId,
                       result.chapter,
@@ -79,6 +79,7 @@ class _BibleLibraryScreenState extends ConsumerState<BibleLibraryScreen> {
       },
       loading: () => const _DelayedLoadingScaffold(),
       error: (error, _) => Scaffold(
+        appBar: AppBar(title: const Text(AppStrings.bibleLibraryTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -201,6 +202,7 @@ class _DelayedLoadingScaffoldState extends State<_DelayedLoadingScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text(AppStrings.bibleLibraryTitle)),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

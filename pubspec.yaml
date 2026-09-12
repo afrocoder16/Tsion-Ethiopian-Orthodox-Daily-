@@ -78,6 +78,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/wudase_mariam.json
     - assets/data/daily_verse_entries.json
     - assets/data/prayers.json
     - assets/data/explore_content.json

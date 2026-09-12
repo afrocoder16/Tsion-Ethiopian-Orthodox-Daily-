@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
+import '../../../app/navigation_back.dart';
+import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/screen_state_providers.dart';
@@ -92,7 +92,7 @@ class _LightCandleContent extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => popOrGo(context, RoutePaths.prayers),
                   child: Text(
                     view.cancelLabel,
                     style: const TextStyle(
@@ -178,7 +178,7 @@ class _LightCandleContent extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             FilledButton.icon(
-              onPressed: () => context.pop(),
+              onPressed: () => popOrGo(context, RoutePaths.prayers),
               icon: const Icon(Icons.local_fire_department),
               label: Text(
                 view.submitLabel,

@@ -60,7 +60,7 @@ class _PrayerBookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.go(RoutePaths.bookDetailPath(book.id)),
+      onTap: () => context.push(RoutePaths.bookDetailPath(book.id)),
       borderRadius: BorderRadius.circular(18),
       child: Container(
         padding: const EdgeInsets.all(16),

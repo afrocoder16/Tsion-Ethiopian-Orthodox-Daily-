@@ -1,329 +1,201 @@
 # Tsion Orthodox App: Product Specification
 
-This document defines what Tsion is, what ships in MVP, what waits for Phase 2, the rules that govern sign-in, and the open questions that are not yet answered.
-
-If any of this document conflicts with the code, either the code is wrong or this document is out of date. Fix whichever is wrong and update the other side.
-
----
+This document defines the product as it exists in the current codebase, the completed Phase 1 scope, the current content state, and the work that remains before release.
 
 ## 1. Vision
 
-Build a daily-use Ethiopian Orthodox app that helps believers keep the Church rhythm in their pocket:
+Tsion is an offline-first daily companion for Ethiopian Orthodox Christians. It should help a person return to prayer, Scripture, the Church calendar, the appointed readings, and the saints throughout the day without requiring an account for the core reading experience.
 
-- Ethiopian calendar (13 months) with accurate feasts and fasts via Bahire Hasab
-- Verse of the Day, Daily Readings, Daily Saint, and short teachings
-- Prayer routine with reminders (4 times default, 7 times option, custom schedule)
-- Offline-first Bible with the Ethiopian Orthodox canon structure (81 books)
-- Streaks that reward consistency
-- Optional sign-in for cloud sync, Mezmur playback, and personal features
+## 2. Product principles
 
-## 2. Non-goals for v1
+- Core Scripture, prayer text, calendar, readings, and Synaxarium content work offline.
+- Ethiopian and Gregorian dates are shown together where useful.
+- Content accuracy is more important than breadth.
+- Sign-in is optional and is reserved for personal or synchronized actions.
+- Unfinished features should not present dead controls or placeholder content.
+- The app supplements Church life and priestly guidance. It does not replace either.
 
-- Full social network or chat platform
-- Live-stream hosting (audio comes from a curated library)
-- Replacing priest guidance. Any future AI features are assistive only
+## 3. Phase 1 status
 
-## 3. Success criteria (measurable)
+Phase 1 is complete across its eight planned workstreams:
 
-- D7 retention: users returning at least once per day in the first week
-- Daily hub completion rate (Verse, Prayer, or Readings opened)
-- Calendar trust: near-zero calendar bug reports, validated against known dates
-- Offline reliability: core features usable with no internet
-- Content correctness: releases signed off after review
+1. Today hub and daily verse
+2. Offline Bible library, reader, continue reading, and bilingual FTS5 search
+3. Prayer hub, seven prayer texts, prayer completion, schedule, and local reminders
+4. Ethiopian calendar with today, month, day detail, feasts, and fasts
+5. Daily Readings with reference parsing and Bible passage links
+6. Daily saint and Synaxarium views, entries, and bookmarks
+7. Three-task streak flow and onboarding
+8. Optional Firebase account and sync implementation
 
----
+Phase 1 completion means the implementation exists and its focused tests pass. It does not mean the app is release-ready. Firebase configuration, data correction, content review, identifiers, signing, branding, and device QA remain open.
 
-## 4. The six locked decisions
+## 4. Current content inventory
 
-These were decided after auditing the code and are the ground truth for scope. Any change to these needs a conscious update to this document.
+### Bible
 
-### Decision 1: Content storage (hybrid)
+- 81 Amharic book files and 81 English book files are bundled.
+- Content is seeded into Drift on first launch.
+- SQLite FTS5 supports Amharic and English search.
+- Book, chapter, passage, search, deep-link, and continue-reading flows are implemented.
 
-- Bible verses live in local SQLite with full-text search (FTS5), both English and Amharic, searchable across the whole Bible in both languages.
-- Everything else (prayers, saints, readings plans, mezmur metadata, verse-of-the-day, FAQ) stays as JSON assets loaded at runtime.
-- Rationale: real verse search is a core Bible feature. Other content is small enough that JSON is simpler and works fine.
+The exact Amharic source and rights status still require written confirmation. English and Ethiopian-canon source attribution also needs a final rights pass before release.
 
-### Decision 2: Firebase and offline
+### Standard prayers
 
-- Sign-in is optional but unlocks meaningful features (see Section 6).
-- Signed-in users: sign in once, the app works offline afterward, and it syncs when back online.
-- Signed-out users: the app works fully offline with a meaningful subset of features.
-- Firebase (auth + Firestore) stays for now. Supabase is noted as a future consideration but not planned.
+`assets/data/prayers.json` contains seven prayer records:
 
-### Decision 3: Explore tab
+- Morning Prayer
+- Midday Prayer
+- Afternoon Prayer
+- Night Prayer
+- Trisagion Prayers
+- Psalm 50
+- Prayer of St. Ephrem
 
-- Explore stays visible in MVP.
-- The founder is sourcing real content for Sunbit Timhert Bet, Guided Paths, Community, and Explore categories.
-- Community features (Ask a Question, Read Reflections, Community Prayers) are deferred to Phase 2 in terms of interactivity. In MVP they can be view-only or come-soon states if content is not ready.
+### Wudase Mariam
 
-### Decision 4: Prayer notifications
+`assets/wudase_mariam.json` is integrated into Daily Prayer and Daily Prayers Books. The reader table of contents has 10 ordered sections:
 
-- Core MVP pillar.
-- The app saves reminder times and schedules local notifications from the existing `prayer_schedule` table.
-- Implementation: flutter_local_notifications plus timezone and flutter_timezone, with explicit iOS and Android notification permission handling.
+1. General Daily Prayer
+2. Monday - Wudase Mariam
+3. Tuesday - Wudase Mariam
+4. Wednesday - Wudase Mariam
+5. Thursday - Wudase Mariam
+6. Friday - Wudase Mariam
+7. Saturday - Wudase Mariam
+8. Sunday - Wudase Mariam
+9. Anqetse Birhan
+10. Prayer of Conscience
 
-### Decision 5: Amharic interface localization
+The integration preserves 226 non-empty source text blocks. The supplied extraction metadata reports 0 approved pages, 70 flagged pages, 55 missing transcript pages, and 2 missing named sections. This is draft content. Every section must be checked against the scanned source before release.
 
-- Phase 2. Full ARB / l10n scaffolding retrofit is not a Phase 1 task.
-- Hard rule from now on: no new hardcoded UI strings. All new widget text goes through the localization layer (once scaffolded) or a central strings file so retrofit is possible without touching every widget.
-- Bible content is already bilingual at the data layer.
+### Daily Readings
 
-### Decision 6: Streaks
+Twelve monthly JSON plans are bundled. The current data has known structural errors:
 
-- 3 required tasks: Daily Verse, Prayer, Readings.
-- 3 optional bonus tasks: Daily Saint, Feasts and Fasts, Daily Tip.
-- Streak is kept if all 3 required tasks are completed for the day. Bonus tasks add to a "bonus" counter but do not affect the base streak.
-- This replaces the earlier "0/6 style" streak in old planning docs.
+- Ethiopian date `11-02` appears twice.
+- Ethiopian dates `03-06` and `12-25` are missing.
+- Pagumen 6 appears in a file marked `non_leap_year`.
 
----
+The UI now opens a Bible passage when a reading reference resolves to a structured book and chapter. Unresolved references remain visible but cannot open a passage until their source data is corrected.
 
-## 5. Feature list (MVP scope)
+### Saints and Synaxarium
 
-Each feature is marked with its status as of the last audit and the source of truth for its behavior.
+- A 366-day Amharic Synaxarium is bundled with daily and detail views.
+- The source review manifest flags 24 entries that lack a confidently extracted primary saint.
+- The separate curated saints index is thin, with 10 recurring-date records and one year-specific record.
+- There is no standalone saints list or saints search route yet.
+- The patron saint screen still uses sample profile content and is not linked from the Books UI.
 
-### 5.1 Today Home
+### Explore
 
-Route: `/home`. Bottom tab: Today.
+Explore is content-driven and hides empty sections. The current pack contains two complete articles and no guided-path or community entries. Community interactivity and category filtering are not implemented.
 
-- Verse of the Day hero card. Tap opens the Bible at that verse.
-- "Hear Today's Word" audio card. Plays inline.
-- Orthodox Daily horizontal carousel, in this order: Prayers, Daily Readings, Feasts and Fasts, Daily Saint, Orthodox Tip, Guidance (FAQ), Mezmur, Pray for me list, Nearby Church.
-- Daily Practice widget: 3-task streak status, weekly progress bar.
+### Mezmur
 
-Offline: yes. Sign-in required: no.
+Mezmur is intentionally hidden for this development phase. No Prayers card, Today carousel item, header icon, or other normal UI entry point is shown. Direct navigation to `/prayers/mezmur` redirects to `/prayers`.
 
-### 5.2 Bible
+The screens, player, controller state, metadata, and assets remain in place. Re-enable only after audio rights and product readiness are confirmed. The technical steps are documented in `ARCHITECTURE.md` and `STATUS.md`.
 
-Routes: `/books/bible`, `/books/bible/:book/:chapter`, plus legacy `/bible/...`.
+## 5. Feature behavior
 
-- 81-book Ethiopian canon structure supported. English currently has real text for 77 of 81 books.
-- Book list, chapter navigation, verse display.
-- Deep link from Verse of the Day and Daily Readings opens the exact passage.
-- Continue reading from last position.
-- Full-text verse search through SQLite + FTS5, both English and Amharic.
-- Bookmarks require sign-in (see Section 6).
+### Today
 
-Offline: yes. Sign-in required: only for bookmarks.
+Route: `/today`.
 
-### 5.3 Prayers
+The Today tab shows the daily verse, daily devotion progress, and routed cards for Midday Prayer, Daily Readings, Feasts and Fasts, Today's Saint, and Light a Candle. Header shortcuts open Streak, Reflection, and Calendar. The audio card stays hidden until a real daily-audio source is available.
 
-Route: `/prayers` and `/prayers/:id`.
+### Books and Bible
 
-- Prayer hub with a "prayer for this moment" card that surfaces the currently appointed prayer.
-- Prayer detail with text (Amharic and English content) and completion button.
-- Prayer schedule editor: 4-time default, 7-time option, custom times allowed.
-- Completion tracking, feeds streak.
-- Reminders (local notifications) that fire when configured.
-- Related: Mezmur (audio), Kidase (worship service reference), Light a Candle, Daily Reflection, Fasting Guidance.
+Primary routes start under `/books`. Legacy `/bible` routes remain for compatibility.
 
-Offline: yes for prayer text and schedule. Sign-in required for streak history, Light a Candle, Daily Reflection, and Mezmur playback.
+Users can open the Bible, select a book and chapter, read a passage, search Amharic or English text, resume reading, open the seven-prayer collection, and read Wudase Mariam by selected section. Book filters are not implemented and are not shown.
 
-### 5.4 Calendar (Feasts and Fasts)
+### Prayers
 
-Routes: `/calendar`, `/calendar/today`, `/calendar/month`, `/calendar/day`.
+Primary routes start under `/prayers`.
 
-- Ethiopian date and Gregorian date shown side by side.
-- Today view: fast status, current fast season, feasts and commemorations.
-- Month view: Ethiopian month grid with fasting and feast indicators.
-- Day detail: full observance, links to saint, readings, prayers.
-- Powered by the calendar engine (see ARCHITECTURE.md) using Abushakir.
+Users can open and read the seven standard prayers and Wudase Mariam. Prayer completion, bookmarks, personal prayer lists, Light a Candle, and Daily Reflection are sign-in-gated. Prayer reminders can be configured during onboarding and through Profile after sign-in. Prayer audio is not implemented, so its disabled switch remains an incomplete surface.
 
-Offline: yes. Sign-in required: no.
+### Calendar and Daily Readings
 
-### 5.5 Daily Readings
+Primary routes start under `/calendar`.
 
-Route: `/readings/today`.
+The Calendar tab combines current status and scrollable month grids. A day opens day detail, daily readings, fasting guidance, or the matching Synaxarium entry. Daily Readings can open structured references in the Bible. The known source-date errors in Section 4 still need correction.
 
-- Reading list for today, resolved through the reading plan (12 monthly JSON plans).
-- Tap opens the passage in the Bible.
-- Handles Ethiopian date lookups, LXX Psalm remapping, festal hiatus.
+### Saints
 
-Offline: yes. Sign-in required: no.
+Daily saint content is served through the Synaxarium from Calendar, Today, and Streak. Synaxarium entry detail and bookmarks exist. A full saints directory, saints search, and a real patron-saint selection flow do not exist yet.
 
-### 5.6 Saints
+### Streak
 
-Routes: `/saints`, `/saints/:id`, plus Synaxarium entries and `/patron-saint/:name`.
+Route group: `/streak/*`.
 
-- Daily saint card.
-- Saints list with search.
-- Saint detail with summary and full text.
-- Synaxarium: rich per-day entries with bookmarks.
-- Patron saint feature.
+The implemented required tasks are Daily Verse, Prayer, and Readings. Local progress and weekly status are stored in Drift. Cloud synchronization cannot be exercised while Firebase is disabled.
 
-Offline: yes. Sign-in required for bookmarks.
+### Onboarding
 
-Note: the curated `saints_index.json` is thin. The Synaxarium is rich. Filling out the daily saints coverage outside Synaxarium is content work, not code work.
+Onboarding supports four-time, seven-time, and custom prayer schedules. Completion and schedule persistence are implemented and tested.
 
-### 5.7 Streaks and Daily Practice
+### Settings, Profile, and sign-in
 
-Route: `/streak/*`.
+There is no unified Settings tab. App preferences, prayer reminders, and notification controls live under Profile. The Profile route is sign-in-gated, so these screens are unavailable in the current Firebase-disabled checkout after onboarding.
 
-- Daily practice screen with the streak circle and weekly bar.
-- 3 required tasks: Daily Verse, Prayer, Readings.
-- 3 bonus tasks: Daily Saint, Feasts and Fasts, Daily Tip.
-- Streak logic: base streak requires all 3 required tasks for the day. Bonus tasks tracked separately.
+Email/password and Google sign-in code exists, but no account action can complete until Firebase is configured. Apple Sign-In remains an iOS release decision.
 
-Offline: local streak works. Sign-in required for the whole feature per Decision 6 refinement (see Section 6). Signed-out users see a prompt to sign in to start tracking.
+## 6. Sign-in boundaries
 
-### 5.8 Explore
+Signed-out users can use Today, Bible reading and search, standard prayer text, Wudase Mariam, Calendar, Daily Readings, fasting guidance, daily Synaxarium content, Explore articles, and onboarding.
 
-Bottom tab: Explore.
+The code gates these actions behind sign-in:
 
-- Sunbit Timhert Bet: structured learning (Mistere Beta Kristiyan, Life in the Church).
-- Guided Paths: New to Orthodoxy, Understanding the Liturgy, Living the Fast.
-- Community: Ask a Question, Read Reflections, Community Prayers (interactivity deferred to Phase 2).
-- Explore Categories and Content sections.
-
-Offline: read-only content should work offline. Sign-in required: view is open, interactivity (post, ask) needs sign-in and is Phase 2.
-
-Content sourcing: in progress.
-
-### 5.9 Profile and Sign-in
-
-Routes: `/profile/*`.
-
-- Email and password sign-in via Firebase.
-- Google Sign-In.
-- Sign-in method for iOS App Store approval is an open question (see Section 8).
-- Profile screens: edit profile, forgot password, notification settings, prayer reminders editor.
-
-Sign-in required: yes for the profile area itself.
-
-### 5.10 Settings
-
-Not fully unified today. Preferences live inside Profile (calendar display mode, Ethiopian vs Gregorian feast calc, reminder times). MVP goal is a single Settings hub, but this is medium priority.
-
-### 5.11 Guidance / FAQ
-
-Route: `/guidance` and Fasting Guidance card.
-
-- FAQ list with search, no AI in MVP.
-- AI-powered guidance is a Phase 2 consideration only, and only with citations and a "not a priest" disclaimer.
-
-### 5.12 Nearby Church
-
-MVP: opens external maps search. Full directory is Phase 2.
-
----
-
-## 6. Sign-in gating rules
-
-The rule: **the app is usable and meaningful without signing in. Sign-in unlocks personal features, cross-device sync, and premium content.**
-
-### Signed-out user can:
-
-- Read the Bible
-- View the Calendar, Feasts and Fasts, and Day details
-- Read Daily Readings
-- View Daily Saint and browse Saints
-- Read Prayer text and view the schedule
-- Read the Verse of the Day
-- Play the "Hear Today's Word" daily audio card
-- Read Guidance / FAQ
-- Browse Explore content (interactivity is Phase 2 anyway)
-- Read Fasting Guidance
-
-### Sign-in required for:
-
-- Bookmarks (create and view)
-- Streak tracking and daily practice progress (no streak without sign-in)
-- Personal prayer list ("Pray for me / family")
-- Mezmur playback (streaming, no full MP3 downloads for offline)
+- Bookmarks
+- Personal prayer list
+- Prayer completion
 - Light a Candle
 - Daily Reflection
-- Marking prayers complete (since completion feeds streak, and streak requires sign-in)
-- Anything on the Profile screens
+- Profile and its settings screens
+- Cloud synchronization
 
-### Offline behavior for signed-in features:
+The Mezmur gate remains in code but is currently irrelevant because Mezmur is hidden globally.
 
-- Sign in once, then all sign-in features work offline afterward.
-- Local writes queue and sync when the device is back online.
-- Firestore is the sync target. Local Drift is the source of truth on device.
+## 7. Known release blockers
 
-### Signed-out prompt pattern:
+- Firebase options are not configured.
+- Android uses `com.example.tsion_orthodox_daily_app`.
+- iOS uses `com.example.tsionOrthodoxDailyApp`.
+- Android release builds still use the debug signing configuration.
+- Apple Sign-In has not been decided or implemented.
+- Readings have the duplicate, missing, and leap-day errors listed above.
+- Wudase Mariam and 24 Synaxarium entries need source review.
+- Explore content is thin.
+- Saints list and search are missing.
+- Light a Candle does not persist names or control the phone light.
+- Daily Reflection does not accept or persist journal responses.
+- Prayer audio is not implemented.
+- The theme, app icon, splash, store metadata, license, and final rights confirmations remain open.
 
-When a signed-out user taps a gated feature, show a friendly prompt explaining what sign-in unlocks with a "Sign in" button and a "Not now" option. Do not block the user from continuing to use the free parts of the app.
+See `STATUS.md` for the latest verification commands and file-level findings.
 
----
+## 8. Open founder decisions
 
-## 7. Content and rights
+Do not guess these:
 
-All content in the app is sourced as public domain or otherwise clearly rights-cleared, with the following notes:
+1. Final application IDs and public app name
+2. Apple Sign-In for iOS
+3. Mezmur track list and rights per track
+4. Exact Bible source attribution and rights
+5. Synaxarium rights
+6. Wudase Mariam approval process
+7. Branding, icon, splash, and store presentation
+8. Repository license
 
-- **English Bible**: World English Bible (WEB) is the intended source. 77 of 81 books have real text as of the last audit.
-- **Amharic Bible**: public domain source. Which specific version needs to be documented once confirmed. New Amharic Standard Version is copyrighted and is not used.
-- **Synaxarium**: source PDFs are in the repo. Rights need to be confirmed in writing before release.
-- **Mezmur audio**: rights are unclear as of this document. This is an open question.
-- **Ethiopian unique books (Enoch, Jubilees, etc.)**: public domain English translations available for at least some. Confirmed sources needed before enabling in the app.
+## 9. Next product priorities
 
-Every content item in the app should have a documented source and rights confirmation before it ships. Nothing should be included on the assumption that it is fine.
-
----
-
-## 8. Open questions
-
-These are unresolved and must not be guessed at.
-
-1. **Mezmur audio rights**: what are the exact tracks and confirmed rights per track?
-2. **Sign-in methods**: is Apple Sign-In needed for iOS App Store approval? (Yes, if the app offers third-party sign-in like Google, Apple requires Apple Sign-In too. Confirm and add.)
-3. **Calendar review**: priest or scholar review of golden-date expectations before public launch.
-4. **Branding**: tagline, final color palette, logo. Current theme uses Colors.deepPurple as a placeholder.
-5. **License**: repo has no LICENSE file. Decide before publishing publicly.
-6. **App Store metadata**: name, subtitle, screenshots, description, category.
-7. **Amharic Bible source**: exact version and confirmed public domain status.
-8. **Synaxarium rights**: confirmed sourcing.
-9. **Backend future**: revisit Supabase only if Firebase hits a specific limit or cost problem.
-10. **Launch date**: not set.
-
----
-
-## 9. Roadmap
-
-### Phase 1 (MVP ship)
-
-In priority order:
-
-1. **Completed**: Calendar engine tests for known Easter, Nineveh, Timket, Genna, Meskel, Wed-Fri fast status, and Ethiopian year boundaries.
-2. **Completed**: Prayer notifications with flutter_local_notifications, timezone, flutter_timezone, schedule edits, permissions, and tap deep links.
-3. **Completed**: Bible SQLite migration and FTS5 search for English and Amharic.
-4. **Completed**: Sign-in gating rules from Section 6 through a shared guard and prompt.
-5. **Completed**: Firestore sync service and rules for bookmarks, streak history, prayer completions, prayer schedule, and personal prayer list data.
-6. **Completed**: Cleanup of the unused legacy calendar stub and documentation folder spelling.
-7. **Completed**: Onboarding flow with prayer schedule presets, notification permission, optional sign-in prompt, and completion meta.
-8. **In progress**: Content sourcing for Explore as it becomes available.
-9. **Remaining**: Settings hub to consolidate settings scattered under Profile.
-
-### Phase 2
-
-- Amharic interface localization (full ARB + retrofit).
-- Community interactivity (Ask a Question, Read Reflections, Community Prayers with posting).
-- Mezmur offline downloads (Spotify-style, encrypted, tied to signed-in account).
-- AI Guidance (curated content only, with citations, priest disclaimer).
-- Full church directory with events.
-- Cross-device sync beyond the MVP set.
-- Broader saints coverage outside Synaxarium.
-- Optional: revisit backend (Supabase) if scale or cost becomes a problem.
-
-### Explicitly deferred beyond Phase 2
-
-- Social features (feeds, follows, DMs).
-- Live streaming.
-- AI chat that is not source-cited.
-
----
-
-## 10. What "done" means for MVP
-
-The app ships when:
-
-- Airplane mode works for: Verse of the Day, Bible open and read, Calendar today and month view, Saints daily view, Daily Readings open passage, Prayer text and schedule view.
-- Verse of the Day tap opens the exact verse.
-- Prayer schedule can be edited and notifications fire on time.
-- Calendar engine returns correct observance for any date, validated by tests.
-- Bible full-text search works for both English and Amharic.
-- Sign-in unlocks the gated features, and offline behavior matches Section 6.
-- Signed-in features sync between two devices.
-- No new hardcoded UI strings have been added since the localization rule was set.
-- Streak logic increments correctly and does not double-count or miss days across timezone edges.
-
-MVP fails if any of the above are broken.
+1. Correct and validate the readings dataset.
+2. Proofread Wudase Mariam and flagged Synaxarium entries against their scans.
+3. Decide application IDs, configure Firebase, and set up release signing.
+4. Make settings available through a deliberate unified flow.
+5. Add real saints-directory and Explore content.
+6. Complete physical-device QA on Android and iOS.

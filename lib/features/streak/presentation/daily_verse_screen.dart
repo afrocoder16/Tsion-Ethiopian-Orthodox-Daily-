@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/providers/screen_state_providers.dart';
@@ -28,8 +29,13 @@ class _DailyVerseScreenState extends ConsumerState<DailyVerseScreen> {
     final state = ref.watch(dailyVersePageProvider);
     return state.when(
       data: (page) => _DailyVerseContent(view: page),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      loading: () => Scaffold(
+        appBar: AppBar(
+          leading: BackButton(
+            onPressed: () => popOrGo(context, RoutePaths.streak),
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, _) => Scaffold(
         appBar: AppBar(),
@@ -63,7 +69,7 @@ class _DailyVerseContent extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => popOrGo(context, RoutePaths.streak),
         ),
         title: const Text('Daily Verse'),
         centerTitle: true,
@@ -128,7 +134,7 @@ class _DailyVerseContent extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => context.go(
+                        onPressed: () => context.push(
                           RoutePaths.biblePassagePath(
                             verse.bookId!,
                             verse.chapter!,
@@ -246,7 +252,7 @@ class _SupportingReadingCard extends StatelessWidget {
           Row(
             children: [
               OutlinedButton.icon(
-                onPressed: () => context.go(
+                onPressed: () => context.push(
                   RoutePaths.biblePassagePath(item.bookId, item.chapter),
                 ),
                 icon: const Icon(Icons.menu_book_rounded, size: 16),

@@ -149,7 +149,7 @@ class _TrackArt extends StatelessWidget {
   }
 }
 
-// Artist avatar — illuminated initial with dotted coin border
+// Artist avatar with an illuminated initial and dotted coin border.
 class _ArtistAvatar extends StatelessWidget {
   const _ArtistAvatar({required this.name, required this.size});
   final String name;
@@ -256,7 +256,7 @@ class _CrossPainter extends CustomPainter {
   bool shouldRepaint(_CrossPainter old) => old.color != color;
 }
 
-// 8-pointed Meskel star — used as large watermark in hero card
+// 8-pointed Meskel star used as a large watermark in the hero card.
 class _StarCrossPainter extends CustomPainter {
   const _StarCrossPainter({required this.color});
   final Color color;
@@ -362,7 +362,7 @@ class _BackdropPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    // Begena (lyre) — top left rotated
+    // Begena (lyre), rotated at top left.
     canvas.save();
     canvas.translate(s.width * 0.08, s.height * 0.1);
     canvas.rotate(-0.21);
@@ -389,7 +389,7 @@ class _BackdropPainter extends CustomPainter {
     }
     canvas.restore();
 
-    // Kebero drum — bottom right rotated
+    // Kebero drum, rotated at bottom right.
     canvas.save();
     canvas.translate(s.width * 0.68, s.height * 0.6);
     canvas.rotate(0.26);
@@ -414,7 +414,7 @@ class _BackdropPainter extends CustomPainter {
     canvas.drawLine(Offset(kSz, kSz * 0.15), Offset(kSz * 0.85, kSz * 0.85), p);
     canvas.restore();
 
-    // Tsenatsel (sistrum) — center right
+    // Tsenatsel (sistrum), centered at right.
     canvas.save();
     canvas.translate(s.width * 0.62, s.height * 0.12);
     canvas.rotate(0.14);
@@ -446,4 +446,3 @@ class _BackdropPainter extends CustomPainter {
   @override
   bool shouldRepaint(_BackdropPainter old) => false;
 }
-

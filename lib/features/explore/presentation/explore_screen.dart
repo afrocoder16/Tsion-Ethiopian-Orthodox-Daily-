@@ -51,7 +51,7 @@ class _ExploreContent extends StatelessWidget {
           _HorizontalCards(
             items: adapter.studyItems,
             onTap: (item) =>
-                context.go(RoutePaths.exploreItemPath(item.routeId)),
+                context.push(RoutePaths.exploreItemPath(item.routeId)),
           ),
           const SizedBox(height: 18),
         ],
@@ -61,7 +61,7 @@ class _ExploreContent extends StatelessWidget {
           _SmallTileRow(
             items: adapter.guidedPaths,
             onTap: (item) =>
-                context.go(RoutePaths.explorePathPath(item.routeId)),
+                context.push(RoutePaths.explorePathPath(item.routeId)),
           ),
           const SizedBox(height: 18),
         ],
@@ -71,15 +71,11 @@ class _ExploreContent extends StatelessWidget {
           _SmallTileRow(
             items: adapter.communityItems,
             onTap: (item) =>
-                context.go(RoutePaths.exploreCommunityPath(item.routeId)),
+                context.push(RoutePaths.exploreCommunityPath(item.routeId)),
           ),
           const SizedBox(height: 18),
         ],
         if (adapter.contentItems.isNotEmpty) ...[
-          _SectionTitle(view: adapter.categoriesHeader),
-          const SizedBox(height: 10),
-          _CategoryChips(items: adapter.categories),
-          const SizedBox(height: 18),
           _SectionTitle(view: adapter.contentHeader),
           const SizedBox(height: 10),
           _ContentGrid(items: adapter.contentItems),
@@ -94,7 +90,7 @@ class _ExploreContent extends StatelessWidget {
                   items: adapter.savedItems,
                   icon: adapter.savedIcon,
                   onTap: (item) =>
-                      context.go(RoutePaths.exploreItemPath(item.id)),
+                      context.push(RoutePaths.exploreItemPath(item.id)),
                 ),
         ),
       ],
@@ -225,6 +221,8 @@ class _IconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final onTap = icon == Icons.person
         ? () => context.push(RoutePaths.profilePath())
+        : icon == Icons.calendar_today
+        ? () => context.push(RoutePaths.calendar)
         : null;
     return Padding(
       padding: const EdgeInsets.only(left: 8),
@@ -374,44 +372,6 @@ class _SmallTileRow extends StatelessWidget {
   }
 }
 
-class _CategoryChips extends StatelessWidget {
-  const _CategoryChips({required this.items});
-
-  final List<CategoryChipView> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final label = items[index];
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: label.isSelected ? const Color(0xFFE7E0D6) : Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-            ),
-            child: Text(
-              label.label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: label.isSelected ? Colors.black87 : Colors.black54,
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
 class _ContentGrid extends StatelessWidget {
   const _ContentGrid({required this.items});
 
@@ -447,7 +407,7 @@ class _ContentCard extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return GestureDetector(
-          onTap: () => context.go(RoutePaths.exploreItemPath(item.routeId)),
+          onTap: () => context.push(RoutePaths.exploreItemPath(item.routeId)),
           child: Container(
             width: 200,
             padding: const EdgeInsets.all(12),

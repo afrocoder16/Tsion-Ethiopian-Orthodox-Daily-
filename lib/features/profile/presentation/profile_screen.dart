@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/providers/auth_providers.dart';
 import '../../../core/providers/calendar_preferences_provider.dart';
@@ -17,7 +18,12 @@ class ProfileScreen extends ConsumerWidget {
     final session = sessionValue.asData?.value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => popOrGo(context, RoutePaths.today),
+        ),
+        title: const Text('Profile'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

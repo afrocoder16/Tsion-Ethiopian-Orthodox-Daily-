@@ -31,21 +31,12 @@ class _BooksContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filters = adapter.filterChips;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _SearchBar(
           placeholder: adapter.searchPlaceholder,
-          onTap: () => context.go(RoutePaths.bibleLibraryPath()),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            const _FilterButton(),
-            const SizedBox(width: 10),
-            Expanded(child: _FilterChips(filters: filters)),
-          ],
+          onTap: () => context.push(RoutePaths.bibleLibraryPath()),
         ),
         const SizedBox(height: 22),
         _SectionHeader(view: adapter.continueReadingHeader),
@@ -55,16 +46,16 @@ class _BooksContent extends StatelessWidget {
           actionLabel: adapter.continueReadingActionLabel,
           onTap: (item) {
             if (item.id == 'book-daily-prayers') {
-              context.go(RoutePaths.dailyPrayersBooksPath());
+              context.push(RoutePaths.dailyPrayersBooksPath());
               return;
             }
             if (item.id == 'book-bible') {
-              context.go(RoutePaths.bibleLibraryPath());
+              context.push(RoutePaths.bibleLibraryPath());
               return;
             }
             if (item.isBible) {
               final chapter = _parseChapterNumber(item.subtitle) ?? 1;
-              context.go(
+              context.push(
                 RoutePaths.biblePassagePath(
                   item.routeId,
                   chapter,
@@ -73,7 +64,7 @@ class _BooksContent extends StatelessWidget {
               );
               return;
             }
-            context.go(RoutePaths.bookReaderPath(item.routeId));
+            context.push(RoutePaths.bookReaderPath(item.routeId));
           },
         ),
         // The patron saint card returns once real saint selection exists;
@@ -87,13 +78,13 @@ class _BooksContent extends StatelessWidget {
             items: adapter.bibleShelf.take(3).toList(),
             onTap: (item) {
               if (item.id == 'book-daily-prayers') {
-                context.go(RoutePaths.dailyPrayersBooksPath());
+                context.push(RoutePaths.dailyPrayersBooksPath());
                 return;
               }
               if (item.isBible) {
-                context.go(RoutePaths.bibleLibraryPath());
+                context.push(RoutePaths.bibleLibraryPath());
               } else {
-                context.go(RoutePaths.bookDetailPath(item.routeId));
+                context.push(RoutePaths.bookDetailPath(item.routeId));
               }
             },
           ),
@@ -110,7 +101,7 @@ class _BooksContent extends StatelessWidget {
             child: _BooksGrid(
               items: adapter.orthodoxBooks,
               onTap: (item) {
-                context.go(RoutePaths.bookDetailPath(item.routeId));
+                context.push(RoutePaths.bookDetailPath(item.routeId));
               },
             ),
           ),
@@ -214,62 +205,6 @@ class _SearchBar extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _FilterButton extends StatelessWidget {
-  const _FilterButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F3F3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Icon(Icons.tune, size: 18, color: Colors.black54),
-    );
-  }
-}
-
-class _FilterChips extends StatelessWidget {
-  const _FilterChips({required this.filters});
-
-  final List<BooksFilterChipView> filters;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: filters.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final label = filters[index].label;
-          final isSelected = filters[index].isSelected;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFE7E0D6) : Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.black87 : Colors.black54,
-              ),
-            ),
-          );
-        },
       ),
     );
   }

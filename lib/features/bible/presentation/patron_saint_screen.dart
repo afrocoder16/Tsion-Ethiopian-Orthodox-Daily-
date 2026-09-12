@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
+import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
@@ -66,11 +67,10 @@ class _PatronSaintContent extends StatelessWidget {
           children: [
             Row(
               children: [
-                _HeaderButton(icon: Icons.close, onTap: () => context.pop()),
-                const Spacer(),
-                _HeaderButton(icon: Icons.favorite_border, onTap: () {}),
-                const SizedBox(width: 10),
-                _HeaderButton(icon: Icons.ios_share, onTap: () {}),
+                _HeaderButton(
+                  icon: Icons.close,
+                  onTap: () => popOrGo(context, RoutePaths.booksRoot),
+                ),
               ],
             ),
             const SizedBox(height: 18),
@@ -137,25 +137,13 @@ class _PatronSaintContent extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             _ActionCard(
-              icon: Icons.lock_outline,
-              title: view.changeTitle,
-              subtitle: view.changeSubtitle,
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: Color(0xFF7A6642),
-                size: 28,
-              ),
-              onTap: () {},
-            ),
-            const SizedBox(height: 12),
-            _ActionCard(
               icon: Icons.notifications_none,
               title: view.reminderTitle,
               trailing: Switch(
                 value: reminderEnabled,
                 onChanged: onReminderChanged,
               ),
-              onTap: () {},
+              onTap: () => onReminderChanged(!reminderEnabled),
             ),
             const SizedBox(height: 12),
             _ContentCard(
@@ -270,14 +258,12 @@ class _ActionCard extends StatelessWidget {
   const _ActionCard({
     required this.icon,
     required this.title,
-    this.subtitle,
     this.trailing,
     this.onTap,
   });
 
   final IconData icon;
   final String title;
-  final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
 
@@ -316,16 +302,6 @@ class _ActionCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle!,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF776E60),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

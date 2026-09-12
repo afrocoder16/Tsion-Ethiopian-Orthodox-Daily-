@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/auth/sign_in_guard.dart';
+import '../../../core/config/feature_flags.dart';
 import '../../../core/providers/prayer_flow_providers.dart';
 import '../../../core/providers/screen_state_providers.dart';
 
@@ -47,40 +48,42 @@ class _PrayersContent extends ConsumerWidget {
           title: adapter.primaryTitle,
           subtitle: adapter.primarySubtitle,
           actionLabel: adapter.primaryActionLabel,
-          onCardTap: () => context.go(RoutePaths.dailyPrayerPath()),
+          onCardTap: () => context.push(RoutePaths.dailyPrayerPath()),
           onActionTap: () {
-            context.go(RoutePaths.prayerDetailPath(adapter.primaryPrayerId));
+            context.push(RoutePaths.prayerDetailPath(adapter.primaryPrayerId));
           },
         ),
         const SizedBox(height: 18),
         const _QuietDivider(),
         const SizedBox(height: 16),
-        _SectionTitle(title: adapter.mezmurHeader.title),
-        const SizedBox(height: 12),
-        _DevotionalGrid(
-          items: adapter.mezmurItems,
-          onTap: (item) {
-            if (item.id == 'devotional-mezmur') {
-              context.go(RoutePaths.mezmurPath());
-            }
-          },
-        ),
-        const SizedBox(height: 18),
+        if (FeatureFlags.mezmurEnabled) ...[
+          _SectionTitle(title: adapter.mezmurHeader.title),
+          const SizedBox(height: 12),
+          _DevotionalGrid(
+            items: adapter.mezmurItems,
+            onTap: (item) {
+              if (item.id == 'devotional-mezmur') {
+                context.push(RoutePaths.mezmurPath());
+              }
+            },
+          ),
+          const SizedBox(height: 18),
+        ],
         _SectionTitle(title: adapter.devotionalHeader.title),
         const SizedBox(height: 12),
         _DevotionalGrid(
           items: adapter.devotionalItems,
           onTap: (item) {
             if (item.id == 'devotional-daily-reflection') {
-              context.go(RoutePaths.reflectionPath());
+              context.push(RoutePaths.reflectionPath());
               return;
             }
             if (item.id == 'devotional-light-candle') {
-              context.go(RoutePaths.lightCandlePath());
+              context.push(RoutePaths.lightCandlePath());
               return;
             }
             if (item.id == 'devotional-fasting') {
-              context.go(RoutePaths.calendarFastingPath());
+              context.push(RoutePaths.calendarFastingPath());
             }
           },
         ),
@@ -96,7 +99,7 @@ class _PrayersContent extends ConsumerWidget {
                   context,
                   feature: SignInFeature.personalPrayerList,
                   action: () {
-                    context.go(RoutePaths.prayerDetailPath(item.routeId));
+                    context.push(RoutePaths.prayerDetailPath(item.routeId));
                   },
                 );
           },
@@ -110,7 +113,7 @@ class _PrayersContent extends ConsumerWidget {
             final recentId =
                 ref.read(recentPrayerIdProvider).valueOrNull ??
                 adapter.primaryPrayerId;
-            context.go(RoutePaths.prayerDetailPath(recentId));
+            context.push(RoutePaths.prayerDetailPath(recentId));
           },
         ),
       ],
@@ -210,11 +213,13 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        _IconButton(
-          icon: icons.isNotEmpty ? icons.first : Icons.headphones,
-          onTap: () => context.go(RoutePaths.mezmurPath()),
-        ),
-        const SizedBox(width: 6),
+        if (FeatureFlags.mezmurEnabled) ...[
+          _IconButton(
+            icon: icons.isNotEmpty ? icons.first : Icons.headphones,
+            onTap: () => context.push(RoutePaths.mezmurPath()),
+          ),
+          const SizedBox(width: 6),
+        ],
         GestureDetector(
           onTap: () => context.push(RoutePaths.streak),
           child: _StreakIcon(isActive: streakActive),
@@ -260,7 +265,9 @@ class _IconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolvedOnTap =
         onTap ??
-        (icon == Icons.person
+        (icon == Icons.calendar_today
+            ? () => context.push(RoutePaths.calendar)
+            : icon == Icons.person
             ? () => context.push(RoutePaths.profilePath())
             : null);
     return Padding(

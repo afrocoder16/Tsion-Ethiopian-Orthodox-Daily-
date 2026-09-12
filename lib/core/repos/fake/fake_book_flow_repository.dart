@@ -20,12 +20,12 @@ class FakeBookDetailRepository implements BookDetailRepository {
 
 class FakeReaderRepository implements ReaderRepository {
   @override
-  Future<ReaderState> fetchReader(String id) {
+  Future<ReaderState> fetchReader(String id, {int? sectionIndex}) {
     return Future.value(
       ReaderState(
         bookId: id,
         bookTitle: _titleFromId(id),
-        chapterLabel: 'Chapter 1',
+        chapterLabel: 'Chapter ${(sectionIndex ?? 0) + 1}',
         content: const [
           'Placeholder passage text for this book. Scroll to read.',
           'This is sample content rendered from the repository layer.',

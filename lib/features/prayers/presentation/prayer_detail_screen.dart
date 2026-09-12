@@ -21,9 +21,12 @@ class PrayerDetailScreen extends ConsumerWidget {
     final state = ref.watch(prayerDetailProvider(prayerId));
     return state.when(
       data: (detail) => _PrayerDetailContent(detail: detail),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
       error: (error, _) => Scaffold(
+        appBar: AppBar(),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

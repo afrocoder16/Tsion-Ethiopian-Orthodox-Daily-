@@ -29,10 +29,12 @@ class ExploreDetailScreen extends ConsumerWidget {
           ],
         ),
       ),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      loading: () => Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, _) => Scaffold(
+        appBar: AppBar(),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

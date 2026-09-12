@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/navigation_back.dart';
 import '../../../app/route_paths.dart';
 import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/calendar_day_detail_providers.dart';
@@ -31,7 +32,9 @@ class SynaxariumScreen extends ConsumerWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Read Synaxarium'),
-              leading: BackButton(onPressed: () => context.pop()),
+              leading: BackButton(
+                onPressed: () => popOrGo(context, RoutePaths.calendar),
+              ),
               actions: [
                 IconButton(
                   tooltip: 'Saved days',

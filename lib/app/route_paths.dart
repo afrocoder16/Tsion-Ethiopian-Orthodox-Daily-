@@ -12,6 +12,7 @@ class RoutePaths {
   static const prayerDetail = '/prayers/:id';
   static const legacyPrayerDetail = '/prayers/detail/:id';
   static const calendar = '/calendar';
+  static const calendarDay = '/calendar/day/:date';
   static const calendarFasting = '/calendar/fasting';
   static const calendarReadings = '/calendar/readings';
   static const calendarSynaxarium = '/calendar/synaxarium/:date';
@@ -63,7 +64,13 @@ class RoutePaths {
 
   static String onboardingPath() => onboarding;
 
-  static String bookReaderPath(String id) => '/books/reader/$id';
+  static String bookReaderPath(String id, {int? sectionIndex}) {
+    final base = '/books/reader/$id';
+    if (sectionIndex == null) {
+      return base;
+    }
+    return '$base?section=$sectionIndex';
+  }
 
   static String dailyPrayersBooksPath() => dailyPrayersBooks;
 
@@ -113,6 +120,8 @@ class RoutePaths {
       '/streak/synaxarium/$dateKey';
 
   static String calendarFastingPath() => calendarFasting;
+
+  static String calendarDayPath(String dateKey) => '/calendar/day/$dateKey';
 
   static String calendarReadingsPath() => calendarReadings;
 

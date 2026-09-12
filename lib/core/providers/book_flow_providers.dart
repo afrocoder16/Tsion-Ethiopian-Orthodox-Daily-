@@ -91,23 +91,28 @@ final bibleSeedFutureProvider = FutureProvider<BibleSeedResult>((ref) {
 });
 
 /// Content-backed books shown on the Daily Prayers collection screen.
-final dailyPrayerBooksProvider = FutureProvider.autoDispose<List<BookContent>>(
-  (ref) async {
-    final books = await ref.watch(bookContentStoreProvider).listBooks();
-    return books
-        .where((book) => dailyPrayerBookIds.contains(book.id))
-        .toList(growable: false);
-  },
-);
+final dailyPrayerBooksProvider = FutureProvider.autoDispose<List<BookContent>>((
+  ref,
+) async {
+  final books = await ref.watch(bookContentStoreProvider).listBooks();
+  return books
+      .where((book) => dailyPrayerBookIds.contains(book.id))
+      .toList(growable: false);
+});
 
 final bookDetailProvider = FutureProvider.family
     .autoDispose<BookDetailState, String>(
       (ref, id) => ref.watch(bookDetailRepositoryProvider).fetchDetail(id),
     );
 
-final readerProvider = FutureProvider.family.autoDispose<ReaderState, String>(
-  (ref, id) => ref.watch(readerRepositoryProvider).fetchReader(id),
-);
+typedef ReaderRequest = ({String bookId, int? sectionIndex});
+
+final readerProvider = FutureProvider.family
+    .autoDispose<ReaderState, ReaderRequest>(
+      (ref, request) => ref
+          .watch(readerRepositoryProvider)
+          .fetchReader(request.bookId, sectionIndex: request.sectionIndex),
+    );
 
 final bibleLibraryProvider = FutureProvider.autoDispose<BibleLibraryState>((
   ref,

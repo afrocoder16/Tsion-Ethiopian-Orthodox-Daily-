@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
+import '../../../app/navigation_back.dart';
+import '../../../app/route_paths.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/auth/sign_in_guard.dart';
 import '../../../core/providers/screen_state_providers.dart';
@@ -42,7 +42,7 @@ class _ReflectionContent extends StatelessWidget {
         Row(
           children: [
             IconButton(
-              onPressed: () => context.pop(),
+              onPressed: () => popOrGo(context, RoutePaths.prayers),
               icon: const Icon(Icons.arrow_back),
             ),
             const SizedBox(width: 4),

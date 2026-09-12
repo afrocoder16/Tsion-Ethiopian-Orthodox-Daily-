@@ -27,7 +27,7 @@ class BibleChapterScreen extends ConsumerWidget {
                 .map(
                   (chapter) => _ChapterTile(
                     label: 'Chapter $chapter',
-                    onTap: () => context.go(
+                    onTap: () => context.push(
                       RoutePaths.biblePassagePath(
                         bookId,
                         chapter,
@@ -40,9 +40,12 @@ class BibleChapterScreen extends ConsumerWidget {
           ),
         );
       },
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => Scaffold(
+        appBar: AppBar(title: Text(bookId)),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
       error: (error, _) => Scaffold(
+        appBar: AppBar(title: Text(bookId)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -6,6 +6,7 @@ import '../../../app/route_paths.dart';
 import '../../../core/actions/user_actions.dart';
 import '../../../core/adapters/screen_state_adapters.dart';
 import '../../../core/adapters/streak_adapters.dart';
+import '../../../core/config/feature_flags.dart';
 import '../../../core/icons/icon_registry.dart';
 import '../../../core/providers/calendar_preferences_provider.dart';
 import '../../../core/providers/repo_providers.dart';
@@ -113,18 +114,34 @@ class _TodayContent extends ConsumerWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: header.actions
-                      .map(
-                        (action) => _IconRowButton(
-                          icon: action.icon,
-                          onPressed: action.iconKey == iconKeyStreak
-                              ? () => context.push(RoutePaths.streak)
-                              : action.iconKey == iconKeyAudio
-                              ? () => context.go(RoutePaths.mezmurPath())
-                              : action.iconKey == iconKeyInfo
-                              ? () => context.go(RoutePaths.reflectionPath())
-                              : null,
-                        ),
+                      .where(
+                        (action) =>
+                            action.iconKey == iconKeyStreak ||
+                            action.iconKey == iconKeyInfo ||
+                            action.iconKey == iconKeyCalendar ||
+                            (FeatureFlags.mezmurEnabled &&
+                                action.iconKey == iconKeyAudio),
                       )
+                      .map<Widget>((action) {
+                        final VoidCallback? onPressed =
+                            action.iconKey == iconKeyStreak
+                            ? () => context.push(RoutePaths.streak)
+                            : FeatureFlags.mezmurEnabled &&
+                                  action.iconKey == iconKeyAudio
+                            ? () => context.push(RoutePaths.mezmurPath())
+                            : action.iconKey == iconKeyInfo
+                            ? () => context.push(RoutePaths.reflectionPath())
+                            : action.iconKey == iconKeyCalendar
+                            ? () => context.push(RoutePaths.calendar)
+                            : null;
+                        if (onPressed == null) {
+                          return const SizedBox.shrink();
+                        }
+                        return _IconRowButton(
+                          icon: action.icon,
+                          onPressed: onPressed,
+                        );
+                      })
                       .toList(),
                 ),
               ),
@@ -154,19 +171,33 @@ class _TodayContent extends ConsumerWidget {
         _SectionHeader(view: adapter.orthodoxDailyHeader),
         const SizedBox(height: 12),
         _Carousel(
-          items: adapter.orthodoxDailyItems,
+          items: _visibleTodayItems(adapter.orthodoxDailyItems),
           onTap: (item) => _handleCarouselTap(context, item),
         ),
         const SizedBox(height: 24),
         _SectionHeader(view: adapter.studyWorshipHeader),
         const SizedBox(height: 12),
         _Carousel(
-          items: adapter.studyWorshipItems,
+          items: _visibleTodayItems(adapter.studyWorshipItems),
           onTap: (item) => _handleCarouselTap(context, item),
         ),
       ],
     );
   }
+}
+
+List<TodayCarouselView> _visibleTodayItems(List<TodayCarouselView> items) {
+  const routedItemIds = <String>{
+    'today-carousel-midday-prayer',
+    'today-carousel-daily-readings',
+    'today-carousel-feasts-fasts',
+    'today-carousel-todays-saint',
+    'today-carousel-light-candle',
+    if (FeatureFlags.mezmurEnabled) 'today-carousel-mezmur',
+  };
+  return items
+      .where((item) => routedItemIds.contains(item.id))
+      .toList(growable: false);
 }
 
 String _weekdayName(int weekday) {
@@ -211,28 +242,28 @@ String _normalizeGregorianDate(String value) {
 }
 
 void _handleCarouselTap(BuildContext context, TodayCarouselView item) {
-  if (item.id == 'today-carousel-mezmur') {
-    context.go(RoutePaths.mezmurPath());
+  if (FeatureFlags.mezmurEnabled && item.id == 'today-carousel-mezmur') {
+    context.push(RoutePaths.mezmurPath());
     return;
   }
   if (item.id == 'today-carousel-light-candle') {
-    context.go(RoutePaths.lightCandlePath());
+    context.push(RoutePaths.lightCandlePath());
     return;
   }
   if (item.id == 'today-carousel-feasts-fasts') {
-    context.go(RoutePaths.calendarFastingPath());
+    context.push(RoutePaths.calendarFastingPath());
     return;
   }
   if (item.id == 'today-carousel-daily-readings') {
-    context.go(RoutePaths.calendarReadingsPath());
+    context.push(RoutePaths.calendarReadingsPath());
     return;
   }
   if (item.id == 'today-carousel-midday-prayer') {
-    context.go(RoutePaths.prayerDetailPath('prayer-midday'));
+    context.push(RoutePaths.prayerDetailPath('prayer-midday'));
     return;
   }
   if (item.id == 'today-carousel-todays-saint') {
-    context.go(RoutePaths.calendarSynaxariumPath(_todayYmd()));
+    context.push(RoutePaths.calendarSynaxariumPath(_todayYmd()));
     return;
   }
   // Every carousel item the repositories emit is routed above.
@@ -314,17 +345,17 @@ class _InlineErrorCard extends StatelessWidget {
 }
 
 class _IconRowButton extends StatelessWidget {
-  const _IconRowButton({required this.icon, this.onPressed});
+  const _IconRowButton({required this.icon, required this.onPressed});
 
   final IconData icon;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: IconButton(
-        onPressed: onPressed ?? () {},
+        onPressed: onPressed,
         icon: Icon(icon, size: 20),
         splashRadius: 18,
         constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
@@ -437,7 +468,6 @@ class _VerseCard extends StatelessWidget {
   }
 }
 
-
 class _DailyDevotionCard extends StatelessWidget {
   const _DailyDevotionCard({required this.adapter, required this.onTap});
 
@@ -494,7 +524,7 @@ class _DailyDevotionCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                        fontSize: 12,
+                          fontSize: 12,
                           color: Colors.black54,
                         ),
                       ),
@@ -502,7 +532,11 @@ class _DailyDevotionCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.chevron_right, size: 20, color: Colors.black38),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: Colors.black38,
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -787,15 +821,6 @@ class _SectionHeader extends StatelessWidget {
             letterSpacing: 1.1,
           ),
         ),
-        const Spacer(),
-        if (view.showSeeAll)
-          Text(
-            view.seeAllLabel,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.black.withValues(alpha: 0.6),
-            ),
-          ),
       ],
     );
   }

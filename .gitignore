@@ -52,6 +52,7 @@ readings_data_issues.txt
 # except the content bundles referenced by pubspec.yaml (the app cannot
 # build from a fresh clone without them).
 /assets/*
+!/assets/wudase_mariam.json
 !/assets/data/
 !/assets/80-weahadu-main/
 /assets/80-weahadu-main/*

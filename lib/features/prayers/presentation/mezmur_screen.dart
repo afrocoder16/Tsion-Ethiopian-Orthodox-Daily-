@@ -18,8 +18,7 @@ part 'mezmur_screen_sections.dart';
 part 'mezmur_screen_player.dart';
 part 'mezmur_screen_subscreens.dart';
 
-
-// ── Palette — Ethiopian Orthodox manuscript aesthetic ────────────────────────
+// Palette: Ethiopian Orthodox manuscript aesthetic.
 // Parchment + sepia ink + aged gold + liturgical oxblood
 const _screenBackground = Color(0xFFFBF5E1); // parchment surface
 const _panelBackground = Color(0xFFF5ECD4); // parchment card
@@ -61,7 +60,7 @@ int _artVariant(String seed) {
   return h % 5;
 }
 
-// Generative meskel-cross tile — manuscript style
+// Generative meskel-cross tile in manuscript style.
 // ── Browse filter enum ────────────────────────────────────────────────────────
 enum _BrowseFilter { all, artists, albums, tracks, compilations }
 

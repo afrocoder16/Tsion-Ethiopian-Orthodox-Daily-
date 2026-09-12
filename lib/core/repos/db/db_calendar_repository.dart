@@ -71,7 +71,7 @@ class DbCalendarRepository implements CalendarRepository {
       ),
       fastStatus: ui.FastStatus(
         isFasting: todayObservance.fastStatus.isFastingDay,
-        fastName: todayObservance.fastStatus.seasonNameKey,
+        fastName: topReason,
         notes: todayObservance.fastStatus.notesKey,
         fastReasons: fastReasons,
         topFastReason: topReason,
@@ -108,6 +108,13 @@ class DbCalendarRepository implements CalendarRepository {
                         reference: passage.reference.source,
                         body: passage.resolvedText?.combinedText ?? '',
                         note: passage.note,
+                        bookId:
+                            passage.resolvedText?.bookId ??
+                            passage.reference.bookId,
+                        chapter:
+                            passage.resolvedText?.verses.firstOrNull?.chapter ??
+                            passage.reference.chapter ??
+                            passage.reference.fromChapter,
                       ),
                     )
                     .toList(growable: false),

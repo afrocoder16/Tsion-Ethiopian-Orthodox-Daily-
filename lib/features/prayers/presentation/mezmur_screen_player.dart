@@ -105,7 +105,7 @@ class _MiniPlayerBar extends StatelessWidget {
                           ),
                           visualDensity: VisualDensity.compact,
                         ),
-                        // Play/pause — gold ring button
+                        // Play/pause gold ring button.
                         GestureDetector(
                           onTap: onPlayPause,
                           child: Container(
@@ -138,7 +138,7 @@ class _MiniPlayerBar extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Progress bar — gold on burgundy
+                  // Gold progress bar on burgundy.
                   ClipRRect(
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
@@ -749,4 +749,3 @@ class _EmptyState extends StatelessWidget {
     );
   }
 }
-

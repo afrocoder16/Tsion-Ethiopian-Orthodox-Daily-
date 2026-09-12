@@ -300,9 +300,9 @@ class DailyVerseRepository {
   final DailyReadingsRepository _dailyReadingsRepository;
   List<DailyVerseEntry>? _cache;
 
-  // June/August/November data has been audited and fixed — no longer held.
-  // june 10/21 still missing gospel+psalm (source PDF needed — falls back gracefully).
-  // august 12/8 and 12/10 missing psalm only (gospel present — will serve correctly).
+  // June/August/November data has been audited and fixed; no longer held.
+  // june 10/21 still missing gospel+psalm (source PDF needed; falls back gracefully).
+  // august 12/8 and 12/10 missing psalm only (gospel present; will serve correctly).
   static const Set<String> _heldReviewDocuments = <String>{};
 
   Future<DailyVerseEntry> loadForDate(DateTime date) async {
@@ -350,7 +350,11 @@ class DailyVerseRepository {
       result.add(
         DailyVerseSupportingEntry(
           label: label,
-          reference: _formatLiturgicalReference(reference, firstVerse, lastVerse),
+          reference: _formatLiturgicalReference(
+            reference,
+            firstVerse,
+            lastVerse,
+          ),
           previewBody: preview.text,
           bookId: reference.bookId!,
           chapter: chapter,

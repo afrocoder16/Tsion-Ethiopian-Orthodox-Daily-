@@ -10,19 +10,21 @@ import '../../../core/providers/repo_providers.dart';
 import '../../../core/providers/sync_providers.dart';
 
 class ReaderScreen extends ConsumerWidget {
-  const ReaderScreen({super.key, required this.bookId});
+  const ReaderScreen({super.key, required this.bookId, this.sectionIndex});
 
   final String bookId;
+  final int? sectionIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(readerProvider(bookId));
+    final request = (bookId: bookId, sectionIndex: sectionIndex);
+    final state = ref.watch(readerProvider(request));
     return state.when(
       data: (reader) => _ReaderContent(reader: reader),
       loading: () => const _Loading(),
       error: (error, _) => _ErrorCard(
         message: 'Unable to load reader.',
-        onRetry: () => ref.refresh(readerProvider(bookId)),
+        onRetry: () => ref.refresh(readerProvider(request)),
       ),
     );
   }
@@ -136,7 +138,10 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      appBar: AppBar(),
+      body: const Center(child: CircularProgressIndicator()),
+    );
   }
 }
 
@@ -149,6 +154,7 @@ class _ErrorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

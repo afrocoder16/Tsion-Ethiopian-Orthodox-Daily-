@@ -730,11 +730,17 @@ class DailyReadingsItemView {
     required this.reference,
     required this.body,
     this.note,
+    this.bookId,
+    this.chapter,
   });
 
   final String reference;
   final String body;
   final String? note;
+  final String? bookId;
+  final int? chapter;
+
+  bool get canOpenInBible => bookId != null && chapter != null;
 }
 
 class PrayerOfDayView {
@@ -1077,6 +1083,8 @@ class CalendarAdapter {
                     reference: _safeText(item.reference, '-'),
                     body: _safeText(item.body, ''),
                     note: _safeOptional(item.note),
+                    bookId: _safeOptional(item.bookId),
+                    chapter: item.chapter,
                   ),
                 )
                 .toList(),

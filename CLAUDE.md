@@ -1,152 +1,148 @@
 # CLAUDE.md
 
-You are working in the Tsion Orthodox app repository. Read this file first.
+Read this file first when working in the Tsion Orthodox app repository. It is the current project handoff, not a substitute for the deeper product and architecture documents.
 
-This file exists so you do not re-audit the codebase from scratch every session. It gives you the mental model, the current status, the rules, and what to work on next. For depth, read the other three docs.
+## Project in brief
 
----
-
-## The project in 3 sentences
-
-Tsion is an offline-first Ethiopian Orthodox daily companion app built in Flutter for iOS and Android. It has a Today hub, an offline Bible in Amharic and English, prayers with schedule and reminders, feasts and fasts driven by the Ethiopian calendar and Bahire Hasab, daily readings, saints, and a streak system. Sign-in is optional but unlocks bookmarks, streak tracking, personal prayer list, Mezmur playback, Light a Candle, and Daily Reflection.
+Tsion is an offline-first Ethiopian Orthodox daily companion built with Flutter for Android and iOS. Its core reading experience includes Today, an Amharic and English Bible, prayer texts, Ethiopian calendar data, Daily Readings, Synaxarium entries, Explore articles, and a three-task streak flow. Accounts are optional, but Firebase is deliberately unconfigured in this checkout, so account-backed features cannot currently complete.
 
 Developer: solo, midvora.com.
 
----
+## Read next
 
-## Read these next when needed
+- `README.md` for setup and the shortest status overview.
+- `documentation/PRODUCT.md` for product scope, content inventory, and release blockers.
+- `documentation/ARCHITECTURE.md` for the data pipeline, navigation rules, and engineering conventions.
+- `documentation/STATUS.md` for the latest audit, test results, feature walk, and file-level findings.
 
-- `README.md` for a quick overview.
-- `documentation/PRODUCT.md` for what the app is, the features, MVP scope, Phase 2, sign-in rules, open questions.
-- `documentation/ARCHITECTURE.md` for the technical guide (the 6-layer pipeline, schemas, conventions).
+## Mental model
 
----
+The standard feature pipeline is:
 
-## The mental model (memorize this)
+```text
+GoRouter route
+  -> Consumer screen
+  -> screen-state provider
+  -> repository provider and real/fake switch
+  -> Drift, JSON assets, or CalendarEngine
+  -> adapter and rendered widget
+```
 
-Router picks a screen. Screen watches a ScreenState provider. A repo switch hands it a Db*Repository. The repo joins three data sources: Drift (user state and Bible verses in Phase 1), JSON assets (all other content), and CalendarEngine (Ethiopian date and Bahire Hasab math via abushakir). An Adapter turns the ScreenState into a view-model the widget renders.
+Start with these files:
 
-Two files reveal the whole architecture:
+- `lib/core/providers/repo_providers.dart` for repository wiring and the real/fake switch.
+- `lib/app/route_paths.dart` for the route map.
+- `lib/app/app_router.dart` for route construction and redirects.
+- `lib/core/adapters/screen_state_adapters.dart` for UI view models.
 
-- `lib/core/providers/repo_providers.dart` (the wiring hub and db-vs-fake switch)
-- `lib/app/route_paths.dart` (the navigation map)
+## Current snapshot
 
-Start there for any change.
+Last audited: 2026-09-12.
 
----
+Phase 1's eight workstreams are implemented. Phase 2 content packs now drive prayers, Explore, non-Bible books, Wudase Mariam, Daily Readings, daily verses, and the Synaxarium. This does not mean the product is release-ready.
 
-## Current status snapshot (update this section as you work)
+Latest local verification:
 
-**Last audit**: 2026-07-06 (Phase 1 claim audit + full architecture audit).
+- `flutter analyze`: clean.
+- `flutter test`: see `documentation/STATUS.md` for the final pass count.
+- `flutter build apk --debug`: succeeds and writes `build/app/outputs/flutter-apk/app-debug.apk`.
+- Android emulator walk: startup, Today, Bible search and passage, Prayers, Wudase weekday sections, Calendar, Synaxarium, and Daily Readings passage links exercised.
+- `flutter doctor -v`: Android toolchain healthy; Visual Studio is missing only for Windows desktop development.
 
-**Branch**: `main` holds Phase 1 (reviewed and merged 2026-07-06). Phase 2 (full content, no placeholders — plan in the founder's plan file) is in progress on `phase2/content-pipes`: content packs now drive prayers (`assets/data/prayers.json`), Explore (`assets/data/explore_content.json`, tiles exist only when content does), non-Bible books (`assets/data/books/*.json`, auto-discovered), and the Amharic Synaxarium (366 days bundled, am/en toggle). All placeholder text, dead tiles, and fake stats were removed or wired to real destinations. Founder drops sourced content into the packs — no code changes needed. Still pending in Phase 2: mezmur cloud streaming (Firebase Storage, approved), launch fixes (Ethiopic font, real bundle IDs, icons/splash), and the founder sourcing list (prayer texts review, feast descriptions, explore lessons, book texts, readings gaps).
+Content snapshot:
 
-**Builds**: yes, cleanly. `flutter analyze` is clean and the Phase 1 test suite (24 tests) is green as of the latest run. The content assets referenced by `pubspec.yaml` (Bible am/en JSON, readings, daily verse) are tracked in git, so fresh clones build; previously `.gitignore` excluded all of `/assets/` and the iPhone test run on the Mac failed on missing assets. iOS: `ios/Podfile` added and deployment target raised to 15.0 (Firebase requires it). iOS signing on the test Mac uses team D8ZVP9436N, bundle id com.samson.tsionOrthodoxDaily — those signing values live only on the Mac, do not wipe them there. A real-device iOS run has not completed yet; that is the next validation step.
+- Bible: 81 Amharic files and 81 English files.
+- Standard prayers: 7.
+- Wudase Mariam: 10 table-of-contents sections and 226 non-empty text blocks. Source metadata still reports 70 flagged pages, 55 missing transcript pages, 2 missing named sections, and 0 approved pages.
+- Explore: 2 complete articles, no guided or community entries.
+- Synaxarium: 366 daily entry assets; 24 entries flagged for missing confident primary-saint extraction.
+- Daily Readings: 365 records but only 364 unique dates. `11-02` is duplicated, `03-06` and `12-25` are missing, and Pagumen 6 is marked as non-leap-year content.
 
-**Architecture audit outcomes (2026-07-06)**: Ethiopian month names/aliases live in `core/calendar/ethiopian_months.dart` (single source; calendar, synaxarium, and saints repos delegate to it — celebrations kept a stricter local matcher on purpose). `mezmur_screen.dart` is split into part files (`_art`, `_sections`, `_player`, `_subscreens`). Known debt, in priority order: audio player lives in mezmur widget state (extract a controller before any background-audio work), ~430 hardcoded colors and ~120 hardcoded strings in feature screens (Rules 9 and 1), big JSON parses run on the UI thread (wrap in `compute()`), `_ethMonthAmharic` still returns English names (content decision), `screen_state_adapters.dart` is one 45-class file.
+## Mezmur is intentionally hidden
 
-**What is done**:
+Mezmur code, data, player state, and assets remain in the repository. The feature is hidden from Today and Prayers, and `/prayers/mezmur` redirects to `/prayers`.
 
-- Calendar engine (rich, using abushakir) with golden-date tests, Today home, Bible library and reader in Drift with FTS5 search, deep-links, prayers hub and detail, prayer schedule editor, local prayer notifications, calendar today/month/day views, daily readings with the reference parser, Synaxarium (2.7 MB), profile and auth (Firebase, email/password and Google), sign-in gating, Firestore sync service and rules, streaks (3-task version), onboarding, mezmur player, Hear Today's Word audio.
+The controlling switch is `FeatureFlags.mezmurEnabled` in `lib/core/config/feature_flags.dart`. Do not remove the retained implementation. Re-enable it only after audio rights and product readiness are confirmed, then follow the verification steps in `documentation/ARCHITECTURE.md`.
 
-**What is partial**:
+## What works now
 
-- Saints "daily" coverage outside Synaxarium is thin.
-- Settings live scattered under Profile, no unified hub.
-- Explore tab has real structure but content is being sourced.
-- Firestore sync has the MVP service, queue, startup pull, and rules. There is no explicit connectivity listener because no connectivity dependency is approved; Firestore offline persistence handles reconnect and startup flush handles local queue retries.
+- Offline Bible seeding, reading, bilingual FTS5 search, deep links, and continue-reading state.
+- Seven standard prayer texts plus the Wudase Mariam section reader.
+- Ethiopian calendar month and day views, feasts, fasts, and Synaxarium access.
+- Daily Reading references that open Bible passages when the source resolves to a structured book and chapter.
+- Onboarding with four-time, seven-time, and custom prayer schedules.
+- Local three-task streak tracking.
+- Firebase auth and Firestore sync code paths fail safely while configuration is absent.
+- Leaf routes preserve their origin through `push`; direct deep links and custom back buttons use explicit fallbacks.
 
-**What is missing**:
+## Known incomplete or blocked work
 
-- Localization scaffolding (no ARB, no l10n). Phase 2, but no new hardcoded strings from now on.
-- Unified Settings hub.
-- Content sourcing and rights confirmation before public launch.
-- Apple Sign-In if iOS ships with Google Sign-In.
+- Correct the Daily Readings dataset errors before release.
+- Proofread Wudase Mariam and the 24 flagged Synaxarium entries against approved sources.
+- Replace Android and iOS example application IDs, configure Firebase, and add Android release signing.
+- Decide whether Apple Sign-In is required for the iOS release.
+- Make settings available through a deliberate unified flow. They are currently under the sign-in-gated Profile path.
+- Add a real saints directory and search experience.
+- Expand Explore beyond its two articles.
+- Replace the sample patron-saint profile and persist its reminder.
+- Implement prayer audio, Light a Candle persistence and hardware-light behavior, and Reflection journaling.
+- Add localization infrastructure and replace the placeholder theme and launch branding.
+- Complete physical-device notification QA and a real-device iOS run.
 
-**Open questions** (do not guess these, ask):
+## Priority order
 
-- Mezmur audio rights.
-- Apple Sign-In for iOS App Store.
-- Branding: tagline, final colors, logo. Current theme uses `Colors.deepPurple` as a placeholder.
-- License for the repo.
-- Exact Amharic Bible source and public-domain confirmation.
-- Synaxarium rights confirmation.
+1. Correct and validate Daily Readings data.
+2. Review Wudase Mariam and flagged Synaxarium source content.
+3. Decide production IDs, configure Firebase, and configure release signing.
+4. Design a unified, accessible settings flow.
+5. Add saints-directory and Explore content.
+6. Complete Android and iOS physical-device QA.
 
----
+Do not jump ahead when a change depends on a founder decision.
 
-## What to work on next
+## Engineering rules
 
-Post-Phase-1 priority order. Do not jump ahead unless the founder says so.
+1. Do not add hardcoded UI strings. Use the strings or localization layer.
+2. Use `RoutePaths`, never literal route strings in widgets.
+3. Use `context.go` for root or tab replacement and `context.push` for leaf destinations.
+4. Give direct-link leaf screens a safe back fallback through `popOrGo` or `FallbackBackScope`.
+5. Follow the repository interface, `Db*Repository`, `Fake*Repository`, and provider-switch pattern for data-reading features.
+6. Keep content in JSON assets and user state in Drift. Bible content is the deliberate exception because Drift and FTS5 power its reader and search.
+7. Screens consume `*ScreenState` through adapters. Do not query Drift directly in widgets.
+8. Database changes require a migration, schema-version bump, and migration tests.
+9. Calendar logic changes require tests against known dates.
+10. Sign-in gating belongs in the shared guard, not scattered null checks.
+11. Do not add hardcoded colors. Use the app theme.
+12. Do not expose placeholder content, inactive buttons, or dead tap surfaces.
+13. Preserve unrelated user changes in a dirty working tree.
 
-1. **Settings hub**. Consolidate the settings scattered under Profile into one place.
-2. **Content sourcing and rights pass**. Confirm Mezmur audio rights, Synaxarium rights, Amharic Bible source, and sources for Ethiopian unique books before public launch.
-3. **Apple Sign-In decision**. Add Apple Sign-In if iOS ships with Google Sign-In.
-4. **Explore content wiring** as the founder sources it.
-5. **Phase 2 localization scaffold**. Add ARB/l10n and retrofit existing UI strings.
-6. **Release hardening**. Priest or scholar review of calendar expectations, app store metadata, branding, license, and final QA.
+## Important gotchas
 
----
+- `useDbReposProvider` defaults to true and switches all supported features between production and fake repositories.
+- Bible assets must remain tracked because first-launch seeding reads them into Drift.
+- The calendar engine in `lib/core/calendar/` is the authoritative Ethiopian-date implementation.
+- Streaks are a hub. Daily Verse, Prayer, and Readings write streak events.
+- Profile and auth are a self-contained feature island and do not use the repository switch.
+- Firebase initialization is intentionally safe when `DefaultFirebaseOptions.isConfigured` is false.
+- Riverpod is version 2. Do not upgrade it casually.
+- `sqlite3_flutter_libs` is end-of-life; plan its replacement before changing it.
+- Android exact prayer alarms use `USE_EXACT_ALARM` and `AndroidScheduleMode.exactAllowWhileIdle`.
 
-## Rules for any code you write
+## Founder decisions required
 
-These are firm. If you break one, document why.
+Ask before changing any of these:
 
-1. **No hardcoded UI strings.** Route through a strings file or the localization layer (once scaffolded). If you write `'Prayer Reminders'` in a widget, undo it.
-2. **Use `RoutePaths`, never string literal routes.** Every new route gets a template and a type-safe builder there.
-3. **Follow the repo switch pattern.** New data-reading features get a repository interface, a `Db*Repository`, and a `Fake*Repository`, wired through `repo_providers.dart`.
-4. **Do not mix content and user state.** Content -> JSON assets (except Bible, which lives in Drift after Phase 1). User state -> Drift.
-5. **Screens read `*ScreenState` through adapters.** No raw DB queries in widgets.
-6. **DB changes need a migration and a schemaVersion bump.**
-7. **Sign-in gating goes through one guard**, not scattered null checks.
-8. **Every new calendar function ships with tests against known dates.**
-9. **No new hardcoded colors.** Use `app_theme.dart`. `deepPurple` seed is a placeholder.
-10. **If you find a TODO or "not implemented" comment, either fix it or open an issue.** Do not add more.
+- Public application IDs and app name.
+- Mezmur tracks, audio sources, or audio rights.
+- Apple Sign-In policy.
+- Bible and Synaxarium source attribution or rights.
+- Wudase Mariam approval criteria.
+- Branding, final colors, logo, icon, splash, and store presentation.
+- Repository license.
+- Dependencies, architecture, sign-in boundaries, or MVP scope.
 
----
+## Updating this handoff
 
-## Gotchas
+Update the snapshot, blockers, and priority list when project status changes materially. Record detailed command results and feature-walk findings in `documentation/STATUS.md`. Check the current Git branch at runtime instead of encoding a long-lived branch assumption here.
 
-- **Calendar engine location**: `core/calendar/` is the real engine. The old empty legacy stub was removed.
-- **Repo switch**: `useDbReposProvider` (default true) toggles the whole app between real repos and fakes. Useful for UI work and tests. Do not accidentally flip it in production code.
-- **Bible passage flow is different**: Bible content is seeded from bundled JSON into Drift and searched through FTS5. Keep the JSON assets because the seed reads from them.
-- **Streaks are a hub, not a leaf**: multiple features write streak events. `buildStreakTasks()` defines the tasks. Visiting `/streak/daily-verse`, a prayer, or readings marks that task complete.
-- **Profile / Auth is a self-contained island** and does not participate in the repo switch pattern.
-- **`sqlite3_flutter_libs` latest is EOL** at the time of the last audit. Do not blindly upgrade; check for a replacement.
-- **Riverpod is v2, not v3.** Do not upgrade without a plan.
-- **Local notifications are installed** for prayer reminders. Android exact alarms use `USE_EXACT_ALARM` and `AndroidScheduleMode.exactAllowWhileIdle`.
-
----
-
-## Signed-out vs signed-in behavior
-
-Signed-out user can read the Bible, view the calendar and feasts and fasts, read Daily Readings, view Daily Saint, read prayer text, read the Verse of the Day, play the Hear Today's Word daily audio, and read Guidance / FAQ.
-
-Sign-in is required for: bookmarks, streak, personal prayer list, Mezmur playback, Light a Candle, Daily Reflection, marking prayers complete (feeds streak), and the Profile screens.
-
-Sign-in once, then all sign-in features work offline. Writes queue and sync when back online.
-
-Do not put a signed-out user behind a wall. When they tap a gated feature, show a friendly prompt with what sign-in unlocks. Never block them from the rest of the app.
-
----
-
-## When to ask the founder before proceeding
-
-Ask before doing any of these. Do not assume.
-
-- Adding a new dependency to `pubspec.yaml`.
-- Changing the stack (state management, routing, DB).
-- Changing what features are MVP vs Phase 2.
-- Changing sign-in gating rules.
-- Changing content sources.
-- Anything in the "Open questions" list above.
-- Any change that affects more than 10 files or touches architecture.
-
-For everything else within the current priorities: proceed, and report back with what you did and why.
-
----
-
-## How to update this file
-
-When the status changes materially, update the "Current status snapshot" and "What to work on next" sections in this file. Keep the rules and the mental model stable. If a rule genuinely needs to change, discuss it with the founder first.
-
-Last updated: initial creation, June 2026.
+Last updated: 2026-09-12.
